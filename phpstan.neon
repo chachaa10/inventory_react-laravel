@@ -18,7 +18,5 @@ parameters:
 
     tmpDir: /tmp/phpstan
 
-    memoryLimit: 512M
-
     parallel:
         maximumNumberOfProcesses: 1

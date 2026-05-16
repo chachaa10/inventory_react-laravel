@@ -34,7 +34,7 @@ jobs:
           npm install
 
       - name: Static Analysis (PHPStan)
-        run: phpstan
+        run: php -d memory_limit=512M vendor/bin/phpstan
 
       - name: Lint PHP (Rector + Pint)
         run: composer test:lint

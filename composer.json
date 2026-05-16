@@ -64,7 +64,7 @@
             "pint --parallel --test"
         ],
         "test:types": [
-            "phpstan",
+            "php -d memory_limit=512M vendor/bin/phpstan",
             "npm run typecheck"
         ],
         "test:lint": [
