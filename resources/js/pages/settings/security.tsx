@@ -103,7 +103,9 @@ export default function Security({
                                     placeholder="Current password"
                                 />
 
-                                <InputError message={formErrors.current_password} />
+                                <InputError
+                                    message={formErrors.current_password}
+                                />
                             </div>
 
                             <div className="grid gap-2">
