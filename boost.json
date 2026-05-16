@@ -1,5 +1,8 @@
 {
-    "agents": ["opencode", "gemini"],
+    "agents": [
+        "opencode",
+        "gemini"
+    ],
     "cloud": false,
     "guidelines": true,
     "mcp": true,
@@ -9,6 +12,8 @@
         "fortify-development",
         "laravel-best-practices",
         "wayfinder-development",
-        "pest-testing"
+        "pest-testing",
+        "inertia-react-development",
+        "tailwindcss-development"
     ]
 }
