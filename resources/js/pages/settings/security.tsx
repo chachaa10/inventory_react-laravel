@@ -2,7 +2,7 @@ import { Form, Head } from '@inertiajs/react';
 import { ShieldCheck } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
-import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
+import { update } from '@/actions/App/Http/Controllers/Settings/SecurityController';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
@@ -66,7 +66,7 @@ export default function Security({
                 />
 
                 <Form
-                    {...SecurityController.update.form()}
+                    {...update.form()}
                     options={{
                         preserveScroll: true,
                     }}
@@ -76,18 +76,18 @@ export default function Security({
                         'current_password',
                     ]}
                     resetOnSuccess
-                    onError={(errors) => {
-                        if (errors.password) {
+                    onError={(formErrors) => {
+                        if (formErrors.password) {
                             passwordInput.current?.focus();
                         }
 
-                        if (errors.current_password) {
+                        if (formErrors.current_password) {
                             currentPasswordInput.current?.focus();
                         }
                     }}
                     className="space-y-6"
                 >
-                    {({ errors, processing }) => (
+                    {({ errors: formErrors, processing }) => (
                         <>
                             <div className="grid gap-2">
                                 <Label htmlFor="current_password">
@@ -103,7 +103,7 @@ export default function Security({
                                     placeholder="Current password"
                                 />
 
-                                <InputError message={errors.current_password} />
+                                <InputError message={formErrors.current_password} />
                             </div>
 
                             <div className="grid gap-2">
@@ -119,7 +119,7 @@ export default function Security({
                                     passwordrules={passwordRules}
                                 />
 
-                                <InputError message={errors.password} />
+                                <InputError message={formErrors.password} />
                             </div>
 
                             <div className="grid gap-2">
@@ -137,7 +137,7 @@ export default function Security({
                                 />
 
                                 <InputError
-                                    message={errors.password_confirmation}
+                                    message={formErrors.password_confirmation}
                                 />
                             </div>
 
