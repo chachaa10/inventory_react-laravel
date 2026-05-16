@@ -1,8 +1,5 @@
 {
-    "agents": [
-        "opencode",
-        "gemini"
-    ],
+    "agents": ["opencode", "gemini"],
     "cloud": false,
     "guidelines": true,
     "mcp": true,
