@@ -1,0 +1,109 @@
+parameters:
+	ignoreErrors:
+		-
+			rawMessage: 'Method App\Actions\Fortify\CreateNewUser::passwordRules() should return array<int, array<mixed>|Illuminate\Contracts\Validation\ValidationRule|string> but returns array<int, Illuminate\Validation\Rules\Password|string>.'
+			identifier: return.type
+			count: 1
+			path: app/Actions/Fortify/CreateNewUser.php
+
+		-
+			rawMessage: 'Method App\Actions\Fortify\ResetUserPassword::passwordRules() should return array<int, array<mixed>|Illuminate\Contracts\Validation\ValidationRule|string> but returns array<int, Illuminate\Validation\Rules\Password|string>.'
+			identifier: return.type
+			count: 1
+			path: app/Actions/Fortify/ResetUserPassword.php
+
+		-
+			rawMessage: Cannot access property $email_verified_at on App\Models\User|null.
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Settings/ProfileController.php
+
+		-
+			rawMessage: 'Cannot call method delete() on App\Models\User|null.'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Settings/ProfileController.php
+
+		-
+			rawMessage: 'Cannot call method fill() on App\Models\User|null.'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Settings/ProfileController.php
+
+		-
+			rawMessage: 'Cannot call method isDirty() on App\Models\User|null.'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Settings/ProfileController.php
+
+		-
+			rawMessage: 'Cannot call method save() on App\Models\User|null.'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Settings/ProfileController.php
+
+		-
+			rawMessage: 'Cannot call method hasEnabledTwoFactorAuthentication() on App\Models\User|null.'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Settings/SecurityController.php
+
+		-
+			rawMessage: 'Cannot call method toPasswordRulesString() on Illuminate\Validation\Rules\Password|null.'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Settings/SecurityController.php
+
+		-
+			rawMessage: 'Cannot call method update() on App\Models\User|null.'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Settings/SecurityController.php
+
+		-
+			rawMessage: 'Method App\Http\Requests\Settings\PasswordUpdateRequest::passwordRules() should return array<int, array<mixed>|Illuminate\Contracts\Validation\ValidationRule|string> but returns array<int, Illuminate\Validation\Rules\Password|string>.'
+			identifier: return.type
+			count: 1
+			path: app/Http/Requests/Settings/PasswordUpdateRequest.php
+
+		-
+			rawMessage: 'Method App\Http\Requests\Settings\ProfileDeleteRequest::passwordRules() should return array<int, array<mixed>|Illuminate\Contracts\Validation\ValidationRule|string> but returns array<int, Illuminate\Validation\Rules\Password|string>.'
+			identifier: return.type
+			count: 1
+			path: app/Http/Requests/Settings/ProfileDeleteRequest.php
+
+		-
+			rawMessage: Cannot access property $id on App\Models\User|null.
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Requests/Settings/ProfileUpdateRequest.php
+
+		-
+			rawMessage: 'Cannot call method toPasswordRulesString() on Illuminate\Validation\Rules\Password|null.'
+			identifier: method.nonObject
+			count: 2
+			path: app/Providers/FortifyServiceProvider.php
+
+		-
+			rawMessage: 'Parameter #1 $value of static method Illuminate\Support\Str::lower() expects string, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: app/Providers/FortifyServiceProvider.php
+
+		-
+			rawMessage: 'Parameter #1 $string of function rtrim expects string, bool|string given.'
+			identifier: argument.type
+			count: 1
+			path: config/filesystems.php
+
+		-
+			rawMessage: 'Cannot call method name() on mixed.'
+			identifier: method.nonObject
+			count: 1
+			path: routes/settings.php
+
+		-
+			rawMessage: 'Cannot call method name() on mixed.'
+			identifier: method.nonObject
+			count: 2
+			path: routes/web.php
