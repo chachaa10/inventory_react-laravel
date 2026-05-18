@@ -1,6 +1,6 @@
 <?php
 
-test('returns a successful response', function (): void {
+test('home page loads', function (): void {
     $response = $this->get(route('home'));
 
     $response->assertOk();

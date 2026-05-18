@@ -146,6 +146,96 @@
     }
     html {
         @apply font-sans;
+        scrollbar-width: none;
+    }
+    html::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+@keyframes pulse-soft {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.65;
+    }
+}
+
+@keyframes draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes wiggle {
+    0%,
+    100% {
+        transform: rotate(0);
+    }
+    25% {
+        transform: rotate(1.5deg);
+    }
+    75% {
+        transform: rotate(-1.5deg);
+    }
+}
+
+@keyframes bar-grow {
+    0%,
+    100% {
+        transform: scaleY(1);
+        transform-origin: bottom;
+    }
+    50% {
+        transform: scaleY(1.08);
+        transform-origin: bottom;
+    }
+}
+
+.animate-float {
+    animation: float 4s ease-in-out infinite;
+}
+
+.animate-pulse-soft {
+    animation: pulse-soft 3s ease-in-out infinite;
+}
+
+.animate-wiggle {
+    animation: wiggle 5s ease-in-out infinite;
+}
+
+.animate-bar-grow {
+    animation: bar-grow 3s ease-in-out infinite;
+}
+
+.animate-draw {
+    stroke-dasharray: 30;
+    stroke-dashoffset: 30;
+    animation: draw 1.5s ease-out forwards;
+}
+
+.animate-fade-in {
+    animation: fade-in 0.6s ease-out both;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
     }
 }
 

@@ -1,9 +1,16 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
+import {
+    LayoutGrid,
+    Package,
+    Tags,
+    ArrowLeftRight,
+    Truck,
+    Users,
+    ShoppingCart,
+} from 'lucide-react';
 
 import AppLogo from '@/components/app-logo';
-import { NavFooter } from '@/components/nav-footer';
-import { NavMain } from '@/components/nav-main';
+import { NavMain, NavGroupSection } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
     Sidebar,
@@ -15,7 +22,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import type { NavItem } from '@/types';
+import type { NavGroup, NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
     {
@@ -25,18 +32,31 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
-];
+const inventoryGroup: NavGroup = {
+    label: 'Inventory',
+    items: [
+        { title: 'Products', href: '/products', icon: Package },
+        { title: 'Categories', href: '/categories', icon: Tags },
+        {
+            title: 'Stock Movements',
+            href: '/stock-movements',
+            icon: ArrowLeftRight,
+        },
+    ],
+};
+
+const purchasingGroup: NavGroup = {
+    label: 'Purchasing',
+    items: [{ title: 'Suppliers', href: '/suppliers', icon: Truck }],
+};
+
+const salesGroup: NavGroup = {
+    label: 'Sales',
+    items: [
+        { title: 'Customers', href: '/customers', icon: Users },
+        { title: 'Orders', href: '/orders', icon: ShoppingCart },
+    ],
+};
 
 export function AppSidebar() {
     return (
@@ -55,10 +75,12 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain items={mainNavItems} />
+                <NavGroupSection group={inventoryGroup} />
+                <NavGroupSection group={purchasingGroup} />
+                <NavGroupSection group={salesGroup} />
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
