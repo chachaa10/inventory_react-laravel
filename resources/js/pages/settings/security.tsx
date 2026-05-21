@@ -18,6 +18,7 @@ type Props = {
     canManageTwoFactor?: boolean;
     requiresConfirmation?: boolean;
     twoFactorEnabled?: boolean;
+    hasPassword?: boolean;
     passwordRules: string;
 };
 
@@ -25,6 +26,7 @@ export default function Security({
     canManageTwoFactor = false,
     requiresConfirmation = false,
     twoFactorEnabled = false,
+    hasPassword = true,
     passwordRules,
 }: Props) {
     const passwordInput = useRef<HTMLInputElement>(null);
@@ -61,8 +63,10 @@ export default function Security({
             <div className="space-y-6">
                 <Heading
                     variant="small"
-                    title="Update password"
-                    description="Ensure your account is using a long, random password to stay secure"
+                    title={hasPassword ? 'Change password' : 'Set password'}
+                    description={hasPassword
+                        ? 'Ensure your account is using a long, random password to stay secure'
+                        : 'Create a password so you can log in without Google'}
                 />
 
                 <Form
@@ -89,27 +93,29 @@ export default function Security({
                 >
                     {({ errors: formErrors, processing }) => (
                         <>
+                            {hasPassword && (
+                                <div className="grid gap-2">
+                                    <Label htmlFor="current_password">
+                                        Current password
+                                    </Label>
+
+                                    <PasswordInput
+                                        id="current_password"
+                                        ref={currentPasswordInput}
+                                        name="current_password"
+                                        className="mt-1 block w-full"
+                                        autoComplete="current-password"
+                                        placeholder="Current password"
+                                    />
+
+                                    <InputError
+                                        message={formErrors.current_password}
+                                    />
+                                </div>
+                            )}
+
                             <div className="grid gap-2">
-                                <Label htmlFor="current_password">
-                                    Current password
-                                </Label>
-
-                                <PasswordInput
-                                    id="current_password"
-                                    ref={currentPasswordInput}
-                                    name="current_password"
-                                    className="mt-1 block w-full"
-                                    autoComplete="current-password"
-                                    placeholder="Current password"
-                                />
-
-                                <InputError
-                                    message={formErrors.current_password}
-                                />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">New password</Label>
+                                <Label htmlFor="password">{hasPassword ? 'New password' : 'Password'}</Label>
 
                                 <PasswordInput
                                     id="password"
