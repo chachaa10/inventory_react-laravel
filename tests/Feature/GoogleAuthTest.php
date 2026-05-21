@@ -43,6 +43,7 @@ test('new user is created via Google OAuth callback', function (): void {
 
     $user = User::query()->where('email', 'john@example.com')->first();
     expect($user->email_verified_at)->not->toBeNull();
+    expect($user->password)->toBeNull();
 });
 
 test('existing user is linked via Google OAuth callback', function (): void {

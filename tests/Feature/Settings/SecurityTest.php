@@ -112,3 +112,90 @@ test('correct password must be provided to update password', function (): void {
         ->assertSessionHasErrors('current_password')
         ->assertRedirect(route('security.edit'));
 });
+
+test('security page shows hasPassword false for users without password', function (): void {
+    $this->skipUnlessFortifyHas(Features::twoFactorAuthentication());
+
+    Features::twoFactorAuthentication([
+        'confirm' => false,
+        'confirmPassword' => false,
+    ]);
+
+    $user = User::factory()->create(['password' => null]);
+
+    $this->actingAs($user)
+        ->get(route('security.edit'))
+        ->assertInertia(fn (Assert $page): Assert => $page
+            ->component('settings/security')
+            ->where('hasPassword', false),
+        );
+});
+
+test('security page shows hasPassword true for users with password', function (): void {
+    $this->skipUnlessFortifyHas(Features::twoFactorAuthentication());
+
+    Features::twoFactorAuthentication([
+        'confirm' => false,
+        'confirmPassword' => false,
+    ]);
+
+    $user = User::factory()->create(['password' => 'hashed-password']);
+
+    $this->actingAs($user)
+        ->get(route('security.edit'))
+        ->assertInertia(fn (Assert $page): Assert => $page
+            ->component('settings/security')
+            ->where('hasPassword', true),
+        );
+});
+
+test('user without password can set password without current password', function (): void {
+    $user = User::factory()->create(['password' => null]);
+
+    $response = $this
+        ->actingAs($user)
+        ->from(route('security.edit'))
+        ->put(route('user-password.update'), [
+            'password' => 'new-password',
+            'password_confirmation' => 'new-password',
+        ]);
+
+    $response
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('security.edit'));
+
+    expect(Hash::check('new-password', $user->refresh()->password))->toBeTrue();
+});
+
+test('user without password does not need current_password field', function (): void {
+    $user = User::factory()->create(['password' => null]);
+
+    $response = $this
+        ->actingAs($user)
+        ->from(route('security.edit'))
+        ->put(route('user-password.update'), [
+            'password' => 'new-password',
+            'password_confirmation' => 'new-password',
+        ]);
+
+    $response->assertSessionHasNoErrors();
+});
+
+test('user without password can access security page without password confirmation', function (): void {
+    $this->skipUnlessFortifyHas(Features::twoFactorAuthentication());
+
+    Features::twoFactorAuthentication([
+        'confirm' => true,
+        'confirmPassword' => true,
+    ]);
+
+    $user = User::factory()->create(['password' => null]);
+
+    $this->actingAs($user)
+        ->get(route('security.edit'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page): Assert => $page
+            ->component('settings/security')
+            ->where('hasPassword', false),
+        );
+});
