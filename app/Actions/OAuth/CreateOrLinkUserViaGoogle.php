@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Actions\OAuth;
 
 use App\Models\User;
-use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
 class CreateOrLinkUserViaGoogle
@@ -28,7 +27,6 @@ class CreateOrLinkUserViaGoogle
             'name' => $googleUser->getName(),
             'email' => $googleUser->getEmail(),
             'google_id' => $googleUser->getId(),
-            'password' => bcrypt(Str::random(32)),
         ]), fn ($user) => $user->forceFill(['email_verified_at' => now()])->save());
     }
 }

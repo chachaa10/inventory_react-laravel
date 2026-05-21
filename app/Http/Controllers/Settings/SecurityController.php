@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\ConfirmPasswordIfApplicable;
 use App\Http\Requests\Settings\PasswordUpdateRequest;
 use App\Http\Requests\Settings\TwoFactorAuthenticationRequest;
 use Illuminate\Http\RedirectResponse;
@@ -22,7 +23,7 @@ class SecurityController extends Controller implements HasMiddleware
     {
         return Features::canManageTwoFactorAuthentication()
             && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword')
-                ? [new Middleware('password.confirm', only: ['edit'])]
+                ? [new Middleware(ConfirmPasswordIfApplicable::class, only: ['edit'])]
                 : [];
     }
 
@@ -31,15 +32,18 @@ class SecurityController extends Controller implements HasMiddleware
      */
     public function edit(TwoFactorAuthenticationRequest $request): Response
     {
+        $user = $request->user();
+
         $props = [
             'canManageTwoFactor' => Features::canManageTwoFactorAuthentication(),
+            'hasPassword' => $user !== null && $user->password !== null,
             'passwordRules' => Password::defaults()->toPasswordRulesString(),
         ];
 
         if (Features::canManageTwoFactorAuthentication()) {
             $request->ensureStateIsValid();
 
-            $props['twoFactorEnabled'] = $request->user()->hasEnabledTwoFactorAuthentication();
+            $props['twoFactorEnabled'] = $user->hasEnabledTwoFactorAuthentication();
             $props['requiresConfirmation'] = Features::optionEnabled(Features::twoFactorAuthentication(), 'confirm');
         }
 
@@ -54,6 +58,8 @@ class SecurityController extends Controller implements HasMiddleware
         $request->user()->update([
             'password' => $request->password,
         ]);
+
+        $request->session()->put('auth.password_confirmed_at', time());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Password updated.')]);
 
