@@ -59,6 +59,7 @@
         "lint": [
             "rector",
             "pint --parallel",
+            "@test:types",
             "npm run check"
         ],
         "lint:check": [

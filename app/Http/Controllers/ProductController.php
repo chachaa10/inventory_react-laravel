@@ -6,15 +6,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         return Inertia::render('products/Index');
     }
 
-    public function create()
+    public function create(): Response
     {
         return Inertia::render('products/Create');
     }
@@ -29,7 +30,7 @@ class ProductController extends Controller
         //
     }
 
-    public function edit(string $id)
+    public function edit(string $id): Response
     {
         return Inertia::render('products/Edit');
     }
