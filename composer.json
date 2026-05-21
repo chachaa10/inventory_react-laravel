@@ -75,6 +75,11 @@
             "npm run lint:check",
             "npm run format:check"
         ],
+        "clean": [
+            "@php artisan optimize:clear",
+            "rm -rf public/build",
+            "rm -rf resources/js/actions resources/js/routes resources/js/wayfinder"
+        ],
         "ci:check": [
             "Composer\\Config::disableProcessTimeout",
             "@test:types",

@@ -1,0 +1,20 @@
+import { cn, toUrl } from '@/lib/utils';
+
+describe('cn', () => {
+    it('merges class names', () => {
+        expect(cn('px-4', 'py-2')).toBe('px-4 py-2');
+    });
+
+    it('handles conditional classes', () => {
+        const isHidden = false;
+        expect(cn('base', isHidden && 'hidden', 'visible')).toBe(
+            'base visible',
+        );
+    });
+});
+
+describe('toUrl', () => {
+    it('passes through string URLs', () => {
+        expect(toUrl('/dashboard')).toBe('/dashboard');
+    });
+});
