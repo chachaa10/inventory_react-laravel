@@ -139,12 +139,6 @@ parameters:
 			path: config/database.php
 
 		-
-			rawMessage: Fetching deprecated class constant MYSQL_ATTR_SSL_CA of class PDO.
-			identifier: classConstant.deprecated
-			count: 2
-			path: config/database.php
-
-		-
 			rawMessage: 'Cannot call method name() on mixed.'
 			identifier: method.nonObject
 			count: 1
