@@ -6,16 +6,7 @@ import { useState } from 'react';
 import { DataGrid } from '@/common/DataGrid';
 import { SearchBar } from '@/common/SearchBar';
 import { Button } from '@/components/ui/button';
-
-type StockMovement = {
-    id: number;
-    product: string;
-    type: 'in' | 'out' | 'adjustment';
-    qty: number;
-    reference: string | null;
-    user: string;
-    date: string;
-};
+import type { StockMovement } from '@/types';
 
 const sampleData: StockMovement[] = [
     {
@@ -78,6 +69,7 @@ const columns: ColumnDef<StockMovement>[] = [
                 adjustment:
                     'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400',
             };
+
             return (
                 <span
                     className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${colors[t]}`}

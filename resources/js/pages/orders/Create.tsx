@@ -3,14 +3,7 @@ import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-
-type LineItem = {
-    id: string;
-    product_id: string;
-    product_name: string;
-    qty: number;
-    unit_price: number;
-};
+import type { LineItem } from '@/types';
 
 export default function OrdersCreate() {
     const [customer_id, setCustomerId] = useState('');
@@ -55,6 +48,7 @@ export default function OrdersCreate() {
             '3': { name: 'USB-C Cable', price: 12.99 },
         };
         const product = products[productId];
+
         if (product) {
             setLineItems((prev) =>
                 prev.map((item) =>

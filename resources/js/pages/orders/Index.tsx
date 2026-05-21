@@ -6,16 +6,7 @@ import { useState } from 'react';
 import { DataGrid } from '@/common/DataGrid';
 import { SearchBar } from '@/common/SearchBar';
 import { Button } from '@/components/ui/button';
-
-type Order = {
-    id: number;
-    order_number: string;
-    customer: string;
-    status: 'pending' | 'completed' | 'cancelled';
-    total: number;
-    items: number;
-    date: string;
-};
+import type { Order } from '@/types';
 
 const sampleData: Order[] = [
     {

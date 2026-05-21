@@ -3,11 +3,12 @@ import { ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import type { StockMovementType } from '@/types';
 
 export default function StockMovementsCreate() {
     const [form, setForm] = useState({
         product_id: '',
-        type: 'in' as 'in' | 'out' | 'adjustment',
+        type: 'in' as StockMovementType,
         qty: '',
         reference: '',
         notes: '',

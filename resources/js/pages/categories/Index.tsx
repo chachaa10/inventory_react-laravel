@@ -13,14 +13,7 @@ import {
     SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet';
-
-type Category = {
-    id: number;
-    name: string;
-    slug: string;
-    description: string | null;
-    products_count: number;
-};
+import type { Category } from '@/types';
 
 const sampleData: Category[] = [
     {
@@ -193,7 +186,9 @@ export default function CategoriesIndex() {
             <ConfirmDialog
                 open={deleteId !== null}
                 onOpenChange={(open) => {
-                    if (!open) setDeleteId(null);
+                    if (!open) {
+                        setDeleteId(null);
+                    }
                 }}
                 onConfirm={() => {
                     setDeleteId(null);

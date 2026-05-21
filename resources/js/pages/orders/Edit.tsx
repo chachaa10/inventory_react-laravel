@@ -4,8 +4,7 @@ import { useState } from 'react';
 
 import { ConfirmDialog } from '@/common/ConfirmDialog';
 import { Button } from '@/components/ui/button';
-
-type OrderStatus = 'pending' | 'completed' | 'cancelled';
+import type { OrderStatus } from '@/types';
 
 const order: {
     id: number;
@@ -99,9 +98,9 @@ export default function OrdersEdit() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {order.items.map((item, i) => (
+                                    {order.items.map((item) => (
                                         <tr
-                                            key={i}
+                                            key={item.product}
                                             className="border-b border-border last:border-0 hover:bg-muted/50"
                                         >
                                             <td className="h-12 px-4 text-foreground">

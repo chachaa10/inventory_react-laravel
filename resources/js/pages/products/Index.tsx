@@ -8,16 +8,7 @@ import { EmptyState } from '@/common/EmptyState';
 import { SearchBar } from '@/common/SearchBar';
 import { StatusBadge } from '@/common/StatusBadge';
 import { Button } from '@/components/ui/button';
-
-type Product = {
-    id: number;
-    name: string;
-    sku: string;
-    category: string;
-    stock_qty: number;
-    reorder_level: number;
-    price: number;
-};
+import type { Product } from '@/types';
 
 const sampleData: Product[] = [
     {

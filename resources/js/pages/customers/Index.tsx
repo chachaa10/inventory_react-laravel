@@ -13,14 +13,7 @@ import {
     SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet';
-
-type Customer = {
-    id: number;
-    name: string;
-    email: string | null;
-    phone: string | null;
-    is_active: boolean;
-};
+import type { Customer } from '@/types';
 
 const sampleData: Customer[] = [
     {
@@ -200,7 +193,9 @@ export default function CustomersIndex() {
             <ConfirmDialog
                 open={deleteId !== null}
                 onOpenChange={(open) => {
-                    if (!open) setDeleteId(null);
+                    if (!open) {
+                        setDeleteId(null);
+                    }
                 }}
                 onConfirm={() => setDeleteId(null)}
                 title="Delete Customer"
