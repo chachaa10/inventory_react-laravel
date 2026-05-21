@@ -1,8 +1,10 @@
 includes:
     - phpstan-baseline.neon
-    - vendor/larastan/larastan/extension.neon
-    - vendor/nesbot/carbon/extension.neon
     - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-dangerous-calls.neon
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-execution-calls.neon
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-insecure-calls.neon
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-loose-calls.neon
 
 parameters:
 
@@ -16,7 +18,24 @@ parameters:
 
     level: max
 
-    tmpDir: /tmp/phpstan
+    tmpDir: var/cache/phpstan
 
     parallel:
         maximumNumberOfProcesses: 1
+
+    checkUninitializedProperties: true
+    treatPhpDocTypesAsCertain: false
+    reportPossiblyNonexistentGeneralArrayOffset: true
+    reportPossiblyNonexistentConstantArrayOffset: true
+
+    disallowedFunctionCalls:
+        -
+            function: 'dd()'
+            message: 'use a logger or proper exception handling'
+        -
+            function: 'dump()'
+            message: 'use a logger or proper exception handling'
+        -
+            function: 'compact()'
+            message: 'use explicit array construction instead'
+
