@@ -1,4 +1,4 @@
-import { Link, usePage } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { Box } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -10,8 +10,6 @@ export default function AuthSplitLayout({
     title,
     description,
 }: AuthLayoutProps) {
-    const { auth } = usePage().props;
-
     return (
         <div className="flex min-h-screen flex-col bg-background">
             <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
