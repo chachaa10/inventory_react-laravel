@@ -17,8 +17,9 @@ import {
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { cn } from '@/lib/utils';
 import type { NavItem, NavGroup } from '@/types';
+import { EMPTY_ITEMS } from '@/types/defaults';
 
-export function NavMain({ items = [] }: { items: NavItem[] }) {
+export function NavMain({ items = EMPTY_ITEMS }: { items: NavItem[] }) {
     const { isCurrentUrl } = useCurrentUrl();
 
     return (

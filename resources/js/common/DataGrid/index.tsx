@@ -1,11 +1,10 @@
+import type { ColumnDef, SortingState } from '@tanstack/react-table';
 import {
     flexRender,
     getCoreRowModel,
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
-    type ColumnDef,
-    type SortingState,
 } from '@tanstack/react-table';
 import { ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';

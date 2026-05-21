@@ -35,6 +35,7 @@ import { useInitials } from '@/hooks/use-initials';
 import { cn, toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
+import { EMPTY_BREADCRUMBS } from '@/types/defaults';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
@@ -64,7 +65,7 @@ const rightNavItems: NavItem[] = [
 const activeItemStyles =
     'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
 
-export function AppHeader({ breadcrumbs = [] }: Props) {
+export function AppHeader({ breadcrumbs = EMPTY_BREADCRUMBS }: Props) {
     const page = usePage();
     const { auth } = page.props;
     const getInitials = useInitials();
