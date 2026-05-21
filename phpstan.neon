@@ -39,3 +39,9 @@ parameters:
             function: 'compact()'
             message: 'use explicit array construction instead'
 
+    ignoreErrors:
+        -
+            identifier: classConstant.deprecated
+            path: config/database.php
+            reportUnmatched: false
+
