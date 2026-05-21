@@ -209,9 +209,21 @@
                 "prefer": "type-imports",
                 "fixStyle": "separate-type-imports"
             }
-        ]
+        ],
+        "react/jsx-no-useless-fragment": "error",
+        "react/self-closing-comp": "error",
+        "typescript/no-unnecessary-condition": "error",
+        "unicorn/throw-new-error": "error"
     },
     "overrides": [
+        {
+            "files": ["resources/js/test/**"],
+            "rules": {
+                "import/no-unassigned-import": "off",
+                "no-constant-binary-expression": "off",
+                "typescript/no-unnecessary-condition": "off"
+            }
+        },
         {
             "files": ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
             "rules": {

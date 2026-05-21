@@ -16,42 +16,38 @@ export function Breadcrumbs({
 }: {
     breadcrumbs: BreadcrumbItemType[];
 }) {
-    return (
-        <>
-            {breadcrumbs.length > 0 && (
-                <Breadcrumb>
-                    <BreadcrumbList>
-                        {breadcrumbs.map((item, index) => {
-                            const isLast = index === breadcrumbs.length - 1;
+    return breadcrumbs.length > 0 ? (
+        <Breadcrumb>
+            <BreadcrumbList>
+                {breadcrumbs.map((item, index) => {
+                    const isLast = index === breadcrumbs.length - 1;
 
-                            return (
-                                <Fragment
-                                    key={
-                                        typeof item.href === 'string'
-                                            ? item.href
-                                            : index
-                                    }
-                                >
-                                    <BreadcrumbItem>
-                                        {isLast ? (
-                                            <BreadcrumbPage>
-                                                {item.title}
-                                            </BreadcrumbPage>
-                                        ) : (
-                                            <BreadcrumbLink asChild>
-                                                <Link href={item.href}>
-                                                    {item.title}
-                                                </Link>
-                                            </BreadcrumbLink>
-                                        )}
-                                    </BreadcrumbItem>
-                                    {!isLast && <BreadcrumbSeparator />}
-                                </Fragment>
-                            );
-                        })}
-                    </BreadcrumbList>
-                </Breadcrumb>
-            )}
-        </>
-    );
+                    return (
+                        <Fragment
+                            key={
+                                typeof item.href === 'string'
+                                    ? item.href
+                                    : index
+                            }
+                        >
+                            <BreadcrumbItem>
+                                {isLast ? (
+                                    <BreadcrumbPage>
+                                        {item.title}
+                                    </BreadcrumbPage>
+                                ) : (
+                                    <BreadcrumbLink asChild>
+                                        <Link href={item.href}>
+                                            {item.title}
+                                        </Link>
+                                    </BreadcrumbLink>
+                                )}
+                            </BreadcrumbItem>
+                            {!isLast && <BreadcrumbSeparator />}
+                        </Fragment>
+                    );
+                })}
+            </BreadcrumbList>
+        </Breadcrumb>
+    ) : null;
 }
