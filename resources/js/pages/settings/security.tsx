@@ -64,9 +64,11 @@ export default function Security({
                 <Heading
                     variant="small"
                     title={hasPassword ? 'Change password' : 'Set password'}
-                    description={hasPassword
-                        ? 'Ensure your account is using a long, random password to stay secure'
-                        : 'Create a password so you can log in without Google'}
+                    description={
+                        hasPassword
+                            ? 'Ensure your account is using a long, random password to stay secure'
+                            : 'Create a password so you can log in without Google'
+                    }
                 />
 
                 <Form
@@ -115,7 +117,9 @@ export default function Security({
                             )}
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password">{hasPassword ? 'New password' : 'Password'}</Label>
+                                <Label htmlFor="password">
+                                    {hasPassword ? 'New password' : 'Password'}
+                                </Label>
 
                                 <PasswordInput
                                     id="password"

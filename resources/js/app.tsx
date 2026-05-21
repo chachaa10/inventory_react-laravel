@@ -12,6 +12,7 @@ const appName = import.meta.env.VITE_APP_NAME || 'Inventory';
 
 function FlashToastListener() {
     useFlashToast();
+
     return null;
 }
 

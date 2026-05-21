@@ -25,7 +25,7 @@ class ConfirmPasswordIfApplicable
         $confirmedAt = $request->session()->get('auth.password_confirmed_at');
 
         if ($confirmedAt === null || (time() - $confirmedAt) > config('auth.password_timeout', 10800)) {
-            return redirect()->route('password.confirm');
+            return to_route('password.confirm');
         }
 
         /** @var Response $response */
