@@ -1,5 +1,6 @@
 import { Form, Head } from '@inertiajs/react';
 
+import GoogleAuthButton from '@/components/google-auth-button';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import TextLink from '@/components/text-link';
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
@@ -34,6 +36,16 @@ export default function Login({
             >
                 {({ processing, errors }) => (
                     <>
+                        <GoogleAuthButton label="Log in with Google" />
+
+                        <div className="flex items-center gap-3">
+                            <Separator className="flex-1" />
+                            <span className="text-xs tracking-widest text-muted-foreground uppercase">
+                                or
+                            </span>
+                            <Separator className="flex-1" />
+                        </div>
+
                         <div className="grid gap-6">
                             <div className="grid gap-2">
                                 <Label htmlFor="email">Email address</Label>
