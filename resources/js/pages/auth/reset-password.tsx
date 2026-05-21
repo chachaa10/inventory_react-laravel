@@ -38,7 +38,7 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                                 readOnly
                             />
                             <InputError
-                                message={errors.email}
+                                message={errors['email']}
                                 className="mt-2"
                             />
                         </div>
@@ -54,7 +54,7 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                                 placeholder="Password"
                                 passwordrules={passwordRules}
                             />
-                            <InputError message={errors.password} />
+                            <InputError message={errors['password']} />
                         </div>
 
                         <div className="grid gap-2">
@@ -70,7 +70,7 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                                 passwordrules={passwordRules}
                             />
                             <InputError
-                                message={errors.password_confirmation}
+                                message={errors['password_confirmation']}
                                 className="mt-2"
                             />
                         </div>

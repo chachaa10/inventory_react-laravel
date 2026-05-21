@@ -73,7 +73,7 @@ export default function TwoFactorChallenge() {
                                         required
                                     />
                                     <InputError
-                                        message={errors.recovery_code}
+                                        message={errors['recovery_code']}
                                     />
                                 </>
                             ) : (
@@ -101,7 +101,7 @@ export default function TwoFactorChallenge() {
                                             </InputOTPGroup>
                                         </InputOTP>
                                     </div>
-                                    <InputError message={errors.code} />
+                                    <InputError message={errors['code']} />
                                 </div>
                             )}
 

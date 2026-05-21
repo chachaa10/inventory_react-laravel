@@ -52,7 +52,7 @@ export default function Register({ passwordRules }: Props) {
                                     placeholder="Full name"
                                 />
                                 <InputError
-                                    message={errors.name}
+                                    message={errors['name']}
                                     className="mt-2"
                                 />
                             </div>
@@ -68,7 +68,7 @@ export default function Register({ passwordRules }: Props) {
                                     name="email"
                                     placeholder="email@example.com"
                                 />
-                                <InputError message={errors.email} />
+                                <InputError message={errors['email']} />
                             </div>
 
                             <div className="grid gap-2">
@@ -82,7 +82,7 @@ export default function Register({ passwordRules }: Props) {
                                     placeholder="Password"
                                     passwordrules={passwordRules}
                                 />
-                                <InputError message={errors.password} />
+                                <InputError message={errors['password']} />
                             </div>
 
                             <div className="grid gap-2">
@@ -99,7 +99,7 @@ export default function Register({ passwordRules }: Props) {
                                     passwordrules={passwordRules}
                                 />
                                 <InputError
-                                    message={errors.password_confirmation}
+                                    message={errors['password_confirmation']}
                                 />
                             </div>
 

@@ -56,7 +56,7 @@ export default function Profile({
 
                                 <InputError
                                     className="mt-2"
-                                    message={errors.name}
+                                    message={errors['name']}
                                 />
                             </div>
 
@@ -76,7 +76,7 @@ export default function Profile({
 
                                 <InputError
                                     className="mt-2"
-                                    message={errors.email}
+                                    message={errors['email']}
                                 />
                             </div>
 

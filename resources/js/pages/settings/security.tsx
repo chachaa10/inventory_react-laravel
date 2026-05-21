@@ -83,11 +83,11 @@ export default function Security({
                     ]}
                     resetOnSuccess
                     onError={(formErrors) => {
-                        if (formErrors.password) {
+                        if (formErrors['password']) {
                             passwordInput.current?.focus();
                         }
 
-                        if (formErrors.current_password) {
+                        if (formErrors['current_password']) {
                             currentPasswordInput.current?.focus();
                         }
                     }}
@@ -111,7 +111,7 @@ export default function Security({
                                     />
 
                                     <InputError
-                                        message={formErrors.current_password}
+                                        message={formErrors['current_password']}
                                     />
                                 </div>
                             )}
@@ -131,7 +131,7 @@ export default function Security({
                                     passwordrules={passwordRules}
                                 />
 
-                                <InputError message={formErrors.password} />
+                                <InputError message={formErrors['password']} />
                             </div>
 
                             <div className="grid gap-2">
@@ -149,7 +149,9 @@ export default function Security({
                                 />
 
                                 <InputError
-                                    message={formErrors.password_confirmation}
+                                    message={
+                                        formErrors['password_confirmation']
+                                    }
                                 />
                             </div>
 

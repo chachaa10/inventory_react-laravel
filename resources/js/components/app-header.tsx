@@ -38,7 +38,7 @@ import type { BreadcrumbItem, NavItem } from '@/types';
 import { EMPTY_BREADCRUMBS } from '@/types/defaults';
 
 type Props = {
-    breadcrumbs?: BreadcrumbItem[];
+    breadcrumbs?: BreadcrumbItem[] | undefined;
 };
 
 const mainNavItems: NavItem[] = [

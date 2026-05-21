@@ -4,7 +4,7 @@ import type { BreadcrumbItem } from '@/types/navigation';
 
 export type AppLayoutProps = {
     children: ReactNode;
-    breadcrumbs?: BreadcrumbItem[];
+    breadcrumbs?: BreadcrumbItem[] | undefined;
 };
 
 export type AppVariant = 'header' | 'sidebar';
@@ -15,8 +15,8 @@ export type FlashToast = {
 };
 
 export type AuthLayoutProps = {
-    children?: ReactNode;
-    name?: string;
-    title?: string;
-    description?: string;
+    children?: ReactNode | undefined;
+    name?: string | undefined;
+    title?: string | undefined;
+    description?: string | undefined;
 };

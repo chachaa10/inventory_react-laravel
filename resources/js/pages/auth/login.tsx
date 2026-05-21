@@ -59,7 +59,7 @@ export default function Login({
                                     autoComplete="email"
                                     placeholder="email@example.com"
                                 />
-                                <InputError message={errors.email} />
+                                <InputError message={errors['email']} />
                             </div>
 
                             <div className="grid gap-2">
@@ -83,7 +83,7 @@ export default function Login({
                                     autoComplete="current-password"
                                     placeholder="Password"
                                 />
-                                <InputError message={errors.password} />
+                                <InputError message={errors['password']} />
                             </div>
 
                             <div className="flex items-center space-x-3">

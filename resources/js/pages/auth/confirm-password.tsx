@@ -25,7 +25,7 @@ export default function ConfirmPassword() {
                                 autoFocus
                             />
 
-                            <InputError message={errors.password} />
+                            <InputError message={errors['password']} />
                         </div>
 
                         <div className="flex items-center">
