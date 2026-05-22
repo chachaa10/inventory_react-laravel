@@ -6,6 +6,7 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
     - vite@8.0.14
+    - shadcn@4.8.0
 
 publicHoistPattern:
     - '@inertiajs/core'
