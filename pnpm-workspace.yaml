@@ -2,7 +2,7 @@ packages:
     - '.'
 
 allowBuilds:
-    msw: set this to true or false
+    msw: true
 
 minimumReleaseAgeExclude:
     - vite@8.0.14
