@@ -1,5 +1,11 @@
 packages:
     - '.'
 
+allowBuilds:
+    msw: set this to true or false
+
+minimumReleaseAgeExclude:
+    - vite@8.0.14
+
 publicHoistPattern:
     - '@inertiajs/core'

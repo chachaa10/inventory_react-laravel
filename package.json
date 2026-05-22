@@ -12,12 +12,12 @@
         "lint:check": "oxlint",
         "lint:fix": "oxlint --fix",
         "clean": "rm -rf node_modules/.vite",
-        "clean:all": "npm run clean && rm -rf node_modules",
+        "clean:all": "pnpm run clean && rm -rf node_modules",
         "typecheck": "tsc --noEmit",
         "test": "vitest",
         "test:run": "vitest run",
         "test:coverage": "vitest run --coverage",
-        "check": "npm run format && npm run lint && npm run test:run && npm run build"
+        "check": "pnpm run format && pnpm run lint && pnpm run test:run && pnpm run build"
     },
     "devDependencies": {
         "@laravel/vite-plugin-wayfinder": "^0.1.7",
@@ -60,7 +60,7 @@
         "clsx": "^2.1.1",
         "concurrently": "^9.2.1",
         "input-otp": "^1.4.2",
-        "laravel-vite-plugin": "^3.1",
+        "laravel-vite-plugin": "^3.1.0",
         "lucide-react": "^1.16.0",
         "next-themes": "^0.4.6",
         "radix-ui": "^1.4.3",

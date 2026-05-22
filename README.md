@@ -5,7 +5,7 @@ A modern, single-page inventory management application built with Laravel, Inert
 ## Requirements
 
 - **PHP** — see `composer.json` (`"php"` key in `require`)
-- **Node** — see `.nvmrc` or `package.json` (`engines.node`)
+- **PNPM** — see `package.json`
 - **Database** — SQLite (default) or any database supported by Laravel
 - **Composer** — see `composer.json` (`require`)
 
@@ -15,7 +15,7 @@ A modern, single-page inventory management application built with Laravel, Inert
 composer run setup
 ```
 
-This runs `composer install`, creates `.env`, generates an app key, runs migrations, installs npm dependencies, and builds assets.
+This runs `composer install`, creates `.env`, generates an app key, runs migrations, installs pnpm dependencies, and builds assets.
 
 For development:
 
@@ -32,7 +32,7 @@ Starts the Laravel server, queue worker, log monitor, and Vite dev server concur
 | Command            | Description                         |
 | ------------------ | ----------------------------------- |
 | `composer run dev` | Start all dev services concurrently |
-| `npm run dev`      | Start Vite dev server only          |
+| `pnpm run dev`     | Start Vite dev server only          |
 
 ### Code Quality
 
@@ -40,10 +40,10 @@ Starts the Laravel server, queue worker, log monitor, and Vite dev server concur
 | ------------------------- | -------------------------- |
 | `composer run lint`       | Run Rector + Pint          |
 | `composer run lint:check` | Dry-run linters (CI)       |
-| `npm run lint`            | Run oxlint                 |
-| `npm run format`          | Run oxfmt                  |
-| `npm run typecheck`       | Run TypeScript type checks |
-| `npm run check`           | Run all checks             |
+| `pnpm run lint`           | Run oxlint                 |
+| `pnpm run format`         | Run oxfmt                  |
+| `pnpm run typecheck`      | Run TypeScript type checks |
+| `pnpm run check`          | Run all checks             |
 
 ### Testing
 

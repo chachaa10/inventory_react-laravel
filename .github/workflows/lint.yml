@@ -28,10 +28,20 @@ jobs:
         with:
           php-version: '8.4'
 
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
       - name: Install Dependencies
         run: |
           composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-          npm install
+          pnpm install
 
       - name: Static Analysis (PHPStan)
         run: php -d memory_limit=512M vendor/bin/phpstan
@@ -40,4 +50,4 @@ jobs:
         run: composer test:lint
 
       - name: Lint Frontend
-        run: npm run lint
+        run: pnpm run lint

@@ -5,7 +5,7 @@
 - Conventions: Strictly follow existing code structure/naming. Use descriptive names (e.g., `isRegisteredForDiscounts`). Reuse existing components.
 - Structure: Stick to existing dirs; no new base folders/dependencies without approval.
 - Docs: Only create docs if explicitly requested.
-- Frontend: If UI changes aren't visible, ask user to run `npm run build/dev` or `composer run dev`.
+- Frontend: If UI changes aren't visible, ask user to run `pnpm run build/dev` or `composer run dev`.
 
 ## Tools & Verification
 
