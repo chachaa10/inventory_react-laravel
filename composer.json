@@ -87,6 +87,7 @@
             "rm -rf public/build",
             "rm -rf resources/js/actions resources/js/routes resources/js/wayfinder"
         ],
+        "db:refresh": "@php artisan migrate:fresh --seed --force",
         "db:reset": "@php scripts/db-reset.php",
         "ci:check": [
             "Composer\\Config::disableProcessTimeout",

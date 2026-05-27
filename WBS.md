@@ -27,15 +27,15 @@
 
 ### 1.4 Eloquent Models & Factories
 
-- [ ] 1.4.1 Create `Category` model + factory
-- [ ] 1.4.2 Create `Supplier` model + factory
-- [ ] 1.4.3 Create `Product` model + factory
-- [ ] 1.4.4 Create `Customer` model + factory
-- [ ] 1.4.5 Create `StockMovement` model + factory
-- [ ] 1.4.6 Create `Order` model + factory
-- [ ] 1.4.7 Create `OrderItem` model + factory
-- [ ] 1.4.8 Create `User` model updates (role enum, casts)
-- [ ] 1.4.9 Create database seeder with realistic demo data
+- [x] 1.4.1 Create `Category` model + factory
+- [x] 1.4.2 Create `Supplier` model + factory
+- [x] 1.4.3 Create `Product` model + factory
+- [x] 1.4.4 Create `Customer` model + factory
+- [x] 1.4.5 Create `StockMovement` model + factory
+- [x] 1.4.6 Create `Order` model + factory
+- [x] 1.4.7 Create `OrderItem` model + factory
+- [x] 1.4.8 Create `User` model updates (role enum, casts)
+- [x] 1.4.9 Create database seeder with realistic demo data
 
 ### 1.5 Frontend Foundation
 
