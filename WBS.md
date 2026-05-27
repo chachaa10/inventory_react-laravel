@@ -39,14 +39,14 @@
 
 ### 1.5 Frontend Foundation
 
-- [ ] 1.5.1 Create `DataGrid` reusable component (`@tanstack/react-table`)
-- [ ] 1.5.2 Create `SearchBar` debounced input component
-- [ ] 1.5.3 Create `ConfirmDialog` destructive confirmation modal
-- [ ] 1.5.4 Create `EmptyState` placeholder component
-- [ ] 1.5.5 Create `KPICard` dashboard metric component
-- [ ] 1.5.6 Create `StatusBadge` stock status badge component
-- [ ] 1.5.7 Set up sidebar navigation (Dashboard, Inventory, Purchasing, Sales, Settings)
-- [ ] 1.5.8 Set up Inertia shared props for auth user with role
+- [x] 1.5.1 Create `DataGrid` reusable component (`@tanstack/react-table`)
+- [x] 1.5.2 Create `SearchBar` debounced input component
+- [x] 1.5.3 Create `ConfirmDialog` destructive confirmation modal
+- [x] 1.5.4 Create `EmptyState` placeholder component
+- [x] 1.5.5 Create `KPICard` dashboard metric component
+- [x] 1.5.6 Create `StatusBadge` stock status badge component
+- [x] 1.5.7 Set up sidebar navigation (Dashboard, Inventory, Purchasing, Sales, Settings)
+- [x] 1.5.8 Set up Inertia shared props for auth user with role
 
 ## 2. Catalog Domain
 
