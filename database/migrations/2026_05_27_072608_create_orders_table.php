@@ -10,9 +10,10 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('customer_id')->constrained()->nullOnDelete();
+            $table->string('customer_name');
+            $table->string('customer_email')->nullable();
             $table->string('order_number')->unique();
-            $table->string('status'); // pending, completed, cancelled
+            $table->string('status');
             $table->decimal('total', 12, 2);
             $table->text('notes')->nullable();
             $table->foreignId('user_id')->constrained()->restrictOnDelete();

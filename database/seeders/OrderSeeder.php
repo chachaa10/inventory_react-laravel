@@ -14,7 +14,8 @@ class OrderSeeder extends Seeder
     public function run(): void
     {
         $order = Order::factory()->create([
-            'customer_id' => 1,
+            'customer_name' => 'Alice Johnson',
+            'customer_email' => 'alice@example.com',
             'order_number' => 'ORD-20260527-0001',
             'status' => 'completed',
             'total' => 74.97,

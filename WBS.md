@@ -88,17 +88,6 @@
 - [ ] 3.1.7 Build `Suppliers/Index.tsx` (DataGrid + Sheet-based CRUD)
 - [ ] 3.1.8 Write Pest feature tests for Supplier CRUD + policy
 
-### 3.2 Customers (Sheet-based CRUD)
-
-- [ ] 3.2.1 Create `CustomerController` + routes
-- [ ] 3.2.2 Create `StoreCustomerRequest` / `UpdateCustomerRequest`
-- [ ] 3.2.3 Create `Actions/Parties/CreateCustomerAction`
-- [ ] 3.2.4 Create `Actions/Parties/UpdateCustomerAction`
-- [ ] 3.2.5 Create `Actions/Parties/DeactivateCustomerAction`
-- [ ] 3.2.6 Create `CustomerPolicy` (admin: all, staff: view only)
-- [ ] 3.2.7 Build `Customers/Index.tsx` (DataGrid + Sheet-based CRUD)
-- [ ] 3.2.8 Write Pest feature tests for Customer CRUD + policy
-
 ## 4. Inventory Domain
 
 ### 4.1 Stock Movements
@@ -126,7 +115,7 @@
 - [ ] 5.1.4 Create `Actions/Sales/CancelOrderAction` (transaction: cancel + stock restoration)
 - [ ] 5.1.5 Create `OrderPolicy` (admin/staff: create & view; admin: cancel)
 - [ ] 5.1.6 Build `Orders/Index.tsx` (DataGrid with status filter)
-- [ ] 5.1.7 Build `Orders/Create.tsx` (customer select + dynamic line items via `useOrderForm`)
+- [ ] 5.1.7 Build `Orders/Create.tsx` (customer name input + dynamic line items via `useOrderForm`)
 - [ ] 5.1.8 Build `Orders/Edit.tsx` (cancel action with ConfirmDialog)
 - [ ] 5.1.9 Create `useOrderForm` hook (line items array, subtotals, total computation)
 - [ ] 5.1.10 Write Pest feature tests for order lifecycle (create, cancel, stock sync)

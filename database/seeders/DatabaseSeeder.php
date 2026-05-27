@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\Category;
-use App\Models\Customer;
 use App\Models\Product;
 use App\Models\StockMovement;
 use App\Models\Supplier;
@@ -42,14 +41,6 @@ class DatabaseSeeder extends Seeder
             ['name' => 'CleanSupply Co.', 'email' => 'info@cleansupply.com', 'phone' => '555-0103', 'address' => '789 Industrial Blvd, Chicago, IL'],
             ['name' => 'PackRight Ltd.', 'email' => 'hello@packright.com', 'phone' => '555-0104', 'address' => '321 Warehouse Dr, Houston, TX'],
             ['name' => 'BevDistro', 'email' => 'contact@bevdistro.com', 'phone' => '555-0105', 'address' => '654 Beverage St, Portland, OR'],
-        ]);
-
-        $customers = Customer::factory()->createMany([
-            ['name' => 'Alice Johnson', 'email' => 'alice@example.com', 'phone' => '555-1001', 'address' => '111 Oak Street, Springfield, IL'],
-            ['name' => 'Bob Smith', 'email' => 'bob@example.com', 'phone' => '555-1002', 'address' => '222 Maple Ave, Denver, CO'],
-            ['name' => 'Carol Davis', 'email' => 'carol@example.com', 'phone' => '555-1003', 'address' => '333 Pine Road, Austin, TX'],
-            ['name' => 'Dave Wilson', 'email' => 'dave@example.com', 'phone' => '555-1004', 'address' => '444 Elm Street, Seattle, WA'],
-            ['name' => 'Eve Martinez', 'email' => 'eve@example.com', 'phone' => '555-1005', 'address' => '555 Birch Lane, Miami, FL'],
         ]);
 
         $productData = [
