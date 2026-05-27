@@ -62,16 +62,16 @@ Build a dual-role (admin + staff) inventory management system with 6 database en
 - **Role Model**: A `role` enum column on the `users` table (`admin`, `staff`). No separate roles/pivot table — 80/20. Admin has full access. Staff is restricted to operational tasks via Policies.
 - **Policies**: `ProductPolicy`, `OrderPolicy`, `StockMovementPolicy`, `CategoryPolicy`, `SupplierPolicy` control authorization. Permission matrix:
 
-    | Action                                       | Admin | Staff |
-    | -------------------------------------------- | ----- | ----- |
-    | View any entity                              | ✅    | ✅    |
-    | Create product, order, stock movement        | ✅    | ✅    |
-    | Record stock movement                        | ✅    | ✅    |
-    | Update product, order                        | ✅    | ✅    |
-    | Create/edit categories, suppliers            | ✅    | ❌    |
-    | Delete any entity                            | ✅    | ❌    |
-    | Export CSV                                   | ✅    | ❌    |
-    | Manage staff accounts                        | ✅    | ❌    |
+    | Action                                | Admin | Staff |
+    | ------------------------------------- | ----- | ----- |
+    | View any entity                       | ✅    | ✅    |
+    | Create product, order, stock movement | ✅    | ✅    |
+    | Record stock movement                 | ✅    | ✅    |
+    | Update product, order                 | ✅    | ✅    |
+    | Create/edit categories, suppliers     | ✅    | ❌    |
+    | Delete any entity                     | ✅    | ❌    |
+    | Export CSV                            | ✅    | ❌    |
+    | Manage staff accounts                 | ✅    | ❌    |
 
 - **Form Requests**: One `Store{Entity}Request` and one `Update{Entity}Request` per entity with validation rules, authorization logic, and custom error messages.
 
@@ -249,27 +249,27 @@ The following decisions were made during schema review and deviate from the init
 
 ### Schema Changes
 
-| Change                                     | Original                  | Revised                                 | Rationale                                                                                            |
-| ------------------------------------------ | ------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `products.category_id`                     | nullable, cascadeOnDelete | **required**, nullOnDelete              | Products must belong to a category. Soft-deleting a category shouldn't cascade-delete products.      |
-| `products.unit`                            | (not present)             | **added** — string, default `'pcs'`     | Without unit, stock_qty is ambiguous (pieces vs kg vs liters). Default 'pcs' covers the common case. |
-| `stock_movements.before_qty` / `after_qty` | (not present)             | **added** — integer                     | Self-verifying audit trail. Enables rebuilding stock_qty from scratch and detecting drift.           |
-| `stock_movements.product_id` FK            | cascadeOnDelete           | **restrictOnDelete**                    | Force-deleting a product must not wipe its stock movement history.                                   |
-| `stock_movements.user_id` FK               | cascadeOnDelete           | **restrictOnDelete**                    | Deleting a user must not wipe their audit trail.                                                     |
-| `orders.customer_id` FK → inline fields   | customers table + FK      | **dropped**. `customer_name`, `customer_email` on orders | Customer entity removed (80/20). Inline fields on order are sufficient for MVP.                     |
-| `orders.user_id` FK                        | cascadeOnDelete           | **restrictOnDelete**                    | Same rationale as stock_movements — retain user attribution in transactions.                         |
-| `order_items.product_id` FK                | cascadeOnDelete           | **restrictOnDelete**                    | Force-deleting a product must not wipe order line items.                                             |
-| `date:orders.status` string                | plain string (comment)    | **PHP backed enum** `OrderStatus`       | Type safety, autocomplete, validation. Column stays string in DB.                                    |
-| `stock_movements.type` string              | plain string (comment)    | **PHP backed enum** `StockMovementType` | Same rationale.                                                                                      |
-| `order_number` format                      | unspecified               | **`ORD-{YYYYMMDD}-{XXXX}`**             | Date-based with daily-reset sequence. Self-documenting, sortable, human-readable.                    |
+| Change                                     | Original                  | Revised                                                  | Rationale                                                                                            |
+| ------------------------------------------ | ------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `products.category_id`                     | nullable, cascadeOnDelete | **required**, nullOnDelete                               | Products must belong to a category. Soft-deleting a category shouldn't cascade-delete products.      |
+| `products.unit`                            | (not present)             | **added** — string, default `'pcs'`                      | Without unit, stock_qty is ambiguous (pieces vs kg vs liters). Default 'pcs' covers the common case. |
+| `stock_movements.before_qty` / `after_qty` | (not present)             | **added** — integer                                      | Self-verifying audit trail. Enables rebuilding stock_qty from scratch and detecting drift.           |
+| `stock_movements.product_id` FK            | cascadeOnDelete           | **restrictOnDelete**                                     | Force-deleting a product must not wipe its stock movement history.                                   |
+| `stock_movements.user_id` FK               | cascadeOnDelete           | **restrictOnDelete**                                     | Deleting a user must not wipe their audit trail.                                                     |
+| `orders.customer_id` FK → inline fields    | customers table + FK      | **dropped**. `customer_name`, `customer_email` on orders | Customer entity removed (80/20). Inline fields on order are sufficient for MVP.                      |
+| `orders.user_id` FK                        | cascadeOnDelete           | **restrictOnDelete**                                     | Same rationale as stock_movements — retain user attribution in transactions.                         |
+| `order_items.product_id` FK                | cascadeOnDelete           | **restrictOnDelete**                                     | Force-deleting a product must not wipe order line items.                                             |
+| `date:orders.status` string                | plain string (comment)    | **PHP backed enum** `OrderStatus`                        | Type safety, autocomplete, validation. Column stays string in DB.                                    |
+| `stock_movements.type` string              | plain string (comment)    | **PHP backed enum** `StockMovementType`                  | Same rationale.                                                                                      |
+| `order_number` format                      | unspecified               | **`ORD-{YYYYMMDD}-{XXXX}`**                              | Date-based with daily-reset sequence. Self-documenting, sortable, human-readable.                    |
 
 ### Behavioral Changes
 
-| Behavior             | Original                 | Revised                                         | Rationale                                                                                                         |
-| -------------------- | ------------------------ | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| SKU uniqueness       | unique (deleted ignored) | **permanently unique** (including soft-deleted) | Reusing a SKU from a discontinued product confuses old orders and movements.                                      |
-| Product->category FK | cascadeOnDelete          | **nullOnDelete**                                | Category deletion archived → products lose category reference but survive.                                        |
-| Order tax/discount   | unspecified              | **skipped for MVP**                             | 80/20 — line item subtotals + total cover the MVP. Tax logic adds complexity without proportional learning value. |
+| Behavior             | Original                 | Revised                                                | Rationale                                                                                                                              |
+| -------------------- | ------------------------ | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| SKU uniqueness       | unique (deleted ignored) | **permanently unique** (including soft-deleted)        | Reusing a SKU from a discontinued product confuses old orders and movements.                                                           |
+| Product->category FK | cascadeOnDelete          | **nullOnDelete**                                       | Category deletion archived → products lose category reference but survive.                                                             |
+| Order tax/discount   | unspecified              | **skipped for MVP**                                    | 80/20 — line item subtotals + total cover the MVP. Tax logic adds complexity without proportional learning value.                      |
 | Customer entity      | separate entity + CRUD   | **removed** — inline `customer_name`/`email` on orders | 80/20 — managing customer master data adds ~200 lines of code for no inventory logic benefit. Staff types customer name on order form. |
 
 ## Further Notes

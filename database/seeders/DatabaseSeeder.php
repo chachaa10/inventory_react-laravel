@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $admin = User::factory()->create([
+        User::factory()->create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
             'role' => 'admin',
@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
             'role' => 'staff',
         ]);
 
-        $categories = Category::factory()->createMany([
+        Category::factory()->createMany([
             ['name' => 'Electronics', 'slug' => 'electronics', 'description' => 'Electronic devices and accessories'],
             ['name' => 'Office Supplies', 'slug' => 'office-supplies', 'description' => 'Stationery and office essentials'],
             ['name' => 'Cleaning', 'slug' => 'cleaning', 'description' => 'Cleaning products and equipment'],
@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Beverages', 'slug' => 'beverages', 'description' => 'Drinks and refreshments'],
         ]);
 
-        $suppliers = Supplier::factory()->createMany([
+        Supplier::factory()->createMany([
             ['name' => 'TechDistributor Inc.', 'email' => 'orders@techdistributor.com', 'phone' => '555-0101', 'address' => '123 Tech Lane, Silicon Valley, CA'],
             ['name' => 'OfficeMart', 'email' => 'sales@officemart.com', 'phone' => '555-0102', 'address' => '456 Business Ave, New York, NY'],
             ['name' => 'CleanSupply Co.', 'email' => 'info@cleansupply.com', 'phone' => '555-0103', 'address' => '789 Industrial Blvd, Chicago, IL'],

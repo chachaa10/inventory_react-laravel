@@ -29,7 +29,7 @@ class OrderSeeder extends Seeder
             ['order_id' => $order->id, 'product_id' => 8, 'qty' => 2, 'unit_price' => 9.50, 'subtotal' => 19.00],
         ]);
 
-        $movement1 = StockMovement::factory()->create([
+        StockMovement::factory()->create([
             'product_id' => 3,
             'type' => 'out',
             'qty' => 2,
@@ -42,7 +42,7 @@ class OrderSeeder extends Seeder
             'movementable_type' => Order::class,
         ]);
 
-        $movement2 = StockMovement::factory()->create([
+        StockMovement::factory()->create([
             'product_id' => 1,
             'type' => 'out',
             'qty' => 1,
