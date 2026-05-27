@@ -52,14 +52,14 @@
 
 ### 2.1 Categories (Sheet-based CRUD)
 
-- [ ] 2.1.1 Create `CategoryController` + routes
-- [ ] 2.1.2 Create `StoreCategoryRequest` / `UpdateCategoryRequest`
-- [ ] 2.1.3 Create `Actions/Catalog/CreateCategoryAction`
-- [ ] 2.1.4 Create `Actions/Catalog/UpdateCategoryAction`
-- [ ] 2.1.5 Create `Actions/Catalog/DeleteCategoryAction`
-- [ ] 2.1.6 Create `CategoryPolicy` (admin: all, staff: view only)
-- [ ] 2.1.7 Build `Categories/Index.tsx` (DataGrid + Sheet-based create/edit)
-- [ ] 2.1.8 Write Pest feature tests for Category CRUD + policy
+- [x] 2.1.1 Create `CategoryController` + routes
+- [x] 2.1.2 Create `StoreCategoryRequest` / `UpdateCategoryRequest`
+- [x] 2.1.3 Create `Actions/Catalog/CreateCategoryAction`
+- [x] 2.1.4 Create `Actions/Catalog/UpdateCategoryAction`
+- [x] 2.1.5 Create `Actions/Catalog/DeleteCategoryAction`
+- [x] 2.1.6 Create `CategoryPolicy` (admin: all, staff: view only)
+- [x] 2.1.7 Build `Categories/Index.tsx` (DataGrid + Sheet-based create/edit)
+- [x] 2.1.8 Write Pest feature tests for Category CRUD + policy
 
 ### 2.2 Products (Dedicated Pages)
 

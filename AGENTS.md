@@ -41,9 +41,22 @@
 - `router.cancel()` → `router.cancelAll()`.
 - Deferred props need skeleton loading states.
 
+### Form Conventions
+
+- **Use `<Form>` component** (not `useForm`). Every form in the codebase uses `<Form>` with Wayfinder `.form()` spread.
+- **Create/Edit toggle**: Use `key={editing?.id ?? 'create'}` on `<Form>` to remount when switching modes. Set initial values via `defaultValue` on inputs.
+- **Delete operations**: Use `<Form {...destroy.form(id)}>` inside `<Dialog>` with `<button type="submit">`, not `router.delete()`.
+- **Errors**: Access via `errors['field']` bracket notation (required by strict TS `noUncheckedIndexedAccess`).
+- **Validation**: Laravel redirects back with validation errors on failure; `<Form>` render props provide `errors` automatically.
+
+### Oxlint: `react/no-unstable-nested-components`
+
+Extract tanstack/react-table `cell` renderers to module-level functions, passing callbacks as parameters. Do NOT use eslint-disable comments.
+
 ## Wayfinder & Pint
 
-- Wayfinder: Import TS functions from `@/actions/` (controllers) or `@/routes/` (named routes).
+- Wayfinder: `@laravel/vite-plugin-wayfinder` with `formVariants: true` generates virtual modules (not on disk). Import from `@/actions/App/Http/Controllers/{Controller}` for controller actions, or `@/routes/{group}` for named routes.
+- `.form()` returns `{ action: string, method: 'post' }` — PATCH/DELETE are spoofed via `_method` query param.
 - Pint: If PHP files modified, MUST run `vendor/bin/pint --dirty --format agent` before finalizing.
 
 ## Testing (Pest)

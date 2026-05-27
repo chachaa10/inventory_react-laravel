@@ -1,48 +1,85 @@
-import { Head } from '@inertiajs/react';
+import { Form, Head } from '@inertiajs/react';
+import type { ColumnDef } from '@tanstack/react-table';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-import { ConfirmDialog } from '@/common/ConfirmDialog';
+import {
+    store as createCategory,
+    update as updateCategory,
+    destroy as deleteCategory,
+} from '@/actions/App/Http/Controllers/CategoryController';
+import { DataGrid } from '@/common/DataGrid';
 import { EmptyState } from '@/common/EmptyState';
 import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
     Sheet,
     SheetContent,
     SheetDescription,
     SheetHeader,
     SheetTitle,
-    SheetTrigger,
 } from '@/components/ui/sheet';
+import { Textarea } from '@/components/ui/textarea';
 import type { Category } from '@/types';
 
-const sampleData: Category[] = [
-    {
-        id: 1,
-        name: 'Electronics',
-        slug: 'electronics',
-        description: 'Devices and accessories',
-        products_count: 45,
-    },
-    {
-        id: 2,
-        name: 'Office Supplies',
-        slug: 'office-supplies',
-        description: 'Stationery and desk items',
-        products_count: 22,
-    },
-    {
-        id: 3,
-        name: 'Clothing',
-        slug: 'clothing',
-        description: null,
-        products_count: 32,
-    },
-];
+type CategoryPage = {
+    data: Category[];
+};
 
-export default function CategoriesIndex() {
-    const [editing, setEditing] = useState<Category | null>(null);
+type CategoriesIndexProps = {
+    categories: CategoryPage;
+};
+
+function createActionsColumn(
+    onEdit: (cat: Category) => void,
+    onDelete: (id: number) => void,
+): ColumnDef<Category> {
+    return {
+        id: 'actions',
+        cell: ({ row }) => (
+            <div className="inline-flex items-center gap-1">
+                <Button variant="ghost" size="xs" onClick={() => onEdit(row.original)}>
+                    <Pencil className="h-3.5 w-3.5" />
+                </Button>
+                <Button variant="ghost" size="xs" onClick={() => onDelete(row.original.id)}>
+                    <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                </Button>
+            </div>
+        ),
+    };
+}
+
+export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
     const [sheetOpen, setSheetOpen] = useState(false);
+    const [editing, setEditing] = useState<Category | null>(null);
     const [deleteId, setDeleteId] = useState<number | null>(null);
+
+    function openCreate() {
+        setEditing(null);
+        setSheetOpen(true);
+    }
+
+    function openEdit(cat: Category) {
+        setEditing(cat);
+        setSheetOpen(true);
+    }
+
+    const columns: ColumnDef<Category>[] = [
+
+        { accessorKey: 'name', header: 'Name' },
+        { accessorKey: 'description', header: 'Description' },
+        { accessorKey: 'products_count', header: 'Products' },
+        createActionsColumn(openEdit, setDeleteId),
+    ];
 
     return (
         <>
@@ -57,125 +94,97 @@ export default function CategoriesIndex() {
                         Organize products into categories.
                     </p>
                 </div>
-                <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-                    <SheetTrigger asChild>
-                        <Button size="sm" onClick={() => setEditing(null)}>
-                            <Plus className="h-4 w-4" />
-                            Add Category
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent>
-                        <SheetHeader>
-                            <SheetTitle>
-                                {editing ? 'Edit Category' : 'Create Category'}
-                            </SheetTitle>
-                            <SheetDescription>
-                                {editing
-                                    ? 'Update the category details.'
-                                    : 'Add a new category to organize products.'}
-                            </SheetDescription>
-                        </SheetHeader>
-                        <div className="mt-6 space-y-4">
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-medium text-foreground">
-                                    Name
-                                </label>
-                                <input
-                                    type="text"
-                                    defaultValue={editing?.name ?? ''}
-                                    className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground focus:ring-2 focus:ring-ring focus:outline-none"
-                                    placeholder="e.g. Electronics"
-                                />
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-medium text-foreground">
-                                    Description
-                                </label>
-                                <textarea
-                                    defaultValue={editing?.description ?? ''}
-                                    rows={3}
-                                    className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus:ring-2 focus:ring-ring focus:outline-none"
-                                    placeholder="Optional description"
-                                />
-                            </div>
-                            <div className="pt-4">
-                                <Button className="w-full">
-                                    {editing ? 'Update' : 'Create'}
-                                </Button>
-                            </div>
-                        </div>
-                    </SheetContent>
-                </Sheet>
+                <Button size="sm" onClick={openCreate}>
+                    <Plus className="h-4 w-4" />
+                    Add Category
+                </Button>
             </div>
 
-            {sampleData.length > 0 ? (
-                <div className="overflow-hidden rounded-xl border border-border">
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b border-border">
-                                <th className="h-10 px-4 text-left text-xs font-medium text-muted-foreground">
-                                    Name
-                                </th>
-                                <th className="h-10 px-4 text-left text-xs font-medium text-muted-foreground">
-                                    Description
-                                </th>
-                                <th className="h-10 px-4 text-left text-xs font-medium text-muted-foreground">
-                                    Products
-                                </th>
-                                <th className="h-10 px-4 text-right text-xs font-medium text-muted-foreground">
-                                    Actions
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {sampleData.map((cat) => (
-                                <tr
-                                    key={cat.id}
-                                    className="border-b border-border last:border-0 hover:bg-muted/50"
-                                >
-                                    <td className="h-12 px-4 font-medium text-foreground">
-                                        {cat.name}
-                                    </td>
-                                    <td className="h-12 px-4 text-muted-foreground">
-                                        {cat.description ?? '-'}
-                                    </td>
-                                    <td className="h-12 px-4 text-foreground">
-                                        {cat.products_count}
-                                    </td>
-                                    <td className="h-12 px-4 text-right">
-                                        <div className="inline-flex items-center gap-1">
-                                            <Button
-                                                variant="ghost"
-                                                size="xs"
-                                                onClick={() => {
-                                                    setEditing(cat);
-                                                    setSheetOpen(true);
-                                                }}
-                                            >
-                                                <Pencil className="h-3.5 w-3.5" />
-                                            </Button>
-                                            <Button
-                                                variant="ghost"
-                                                size="xs"
-                                                onClick={() =>
-                                                    setDeleteId(cat.id)
-                                                }
-                                            >
-                                                <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                                            </Button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+            <Sheet
+                open={sheetOpen}
+                onOpenChange={(open) => {
+                    setSheetOpen(open);
+
+                    if (!open) {
+                        setEditing(null);
+                    }
+                }}
+            >
+                <SheetContent>
+                    <Form
+                        {...(editing ? updateCategory.form(editing.id) : createCategory.form())}
+                        key={editing?.id ?? 'create'}
+                        onSuccess={() => {
+                            setSheetOpen(false);
+                            setEditing(null);
+                        }}
+                        resetOnSuccess
+                    >
+                        {({ processing, errors }) => (
+                            <>
+                                <SheetHeader>
+                                    <SheetTitle>
+                                        {editing ? 'Edit Category' : 'Create Category'}
+                                    </SheetTitle>
+                                    <SheetDescription>
+                                        {editing
+                                            ? 'Update the category details.'
+                                            : 'Add a new category to organize products.'}
+                                    </SheetDescription>
+                                </SheetHeader>
+                                <div className="mt-6 space-y-4">
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="name">Name</Label>
+                                        <Input
+                                            id="name"
+                                            name="name"
+                                            defaultValue={editing?.name ?? ''}
+                                            placeholder="e.g. Electronics"
+                                        />
+                                        {errors['name'] && (
+                                            <p className="text-sm text-destructive">
+                                                {errors['name']}
+                                            </p>
+                                        )}
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="description">Description</Label>
+                                        <Textarea
+                                            id="description"
+                                            name="description"
+                                            defaultValue={editing?.description ?? ''}
+                                            rows={3}
+                                            placeholder="Optional description"
+                                        />
+                                    </div>
+                                    <div className="pt-4">
+                                        <Button
+                                            className="w-full"
+                                            type="submit"
+                                            disabled={processing}
+                                        >
+                                            {processing
+                                                ? 'Saving...'
+                                                : editing
+                                                  ? 'Update'
+                                                  : 'Create'}
+                                        </Button>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                    </Form>
+                </SheetContent>
+            </Sheet>
+
+            {categories.data.length > 0 ? (
+                <DataGrid columns={columns} data={categories.data} />
             ) : (
                 <EmptyState
                     title="No categories yet"
                     description="Create your first category to start organizing products."
                     action={
-                        <Button size="sm" onClick={() => setSheetOpen(true)}>
+                        <Button size="sm" onClick={openCreate}>
                             <Plus className="h-4 w-4" />
                             Add Category
                         </Button>
@@ -183,21 +192,47 @@ export default function CategoriesIndex() {
                 />
             )}
 
-            <ConfirmDialog
+            <Dialog
                 open={deleteId !== null}
                 onOpenChange={(open) => {
                     if (!open) {
                         setDeleteId(null);
                     }
                 }}
-                onConfirm={() => {
-                    setDeleteId(null);
-                }}
-                title="Delete Category"
-                description="Are you sure? Products in this category will not be deleted, but they will become uncategorized."
-                confirmLabel="Delete"
-                destructive
-            />
+            >
+                <Form
+                    {...deleteCategory.form(deleteId!)}
+                    key={deleteId}
+                    onSuccess={() => setDeleteId(null)}
+                >
+                    {({ processing }) => (
+                        <DialogContent showCloseButton={false} className="sm:max-w-sm">
+                            <DialogHeader>
+                                <DialogTitle>Delete Category</DialogTitle>
+                                <DialogDescription>
+                                    Are you sure? Products in this category will not be deleted,
+                                    but they will become uncategorized.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setDeleteId(null)}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    variant="destructive"
+                                    type="submit"
+                                    disabled={processing}
+                                >
+                                    Delete
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    )}
+                </Form>
+            </Dialog>
         </>
     );
 }
