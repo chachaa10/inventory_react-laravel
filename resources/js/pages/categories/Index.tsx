@@ -1,4 +1,4 @@
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, usePage } from '@inertiajs/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
@@ -47,10 +47,18 @@ function createActionsColumn(
         id: 'actions',
         cell: ({ row }) => (
             <div className="inline-flex items-center gap-1">
-                <Button variant="ghost" size="xs" onClick={() => onEdit(row.original)}>
+                <Button
+                    variant="ghost"
+                    size="xs"
+                    onClick={() => onEdit(row.original)}
+                >
                     <Pencil className="h-3.5 w-3.5" />
                 </Button>
-                <Button variant="ghost" size="xs" onClick={() => onDelete(row.original.id)}>
+                <Button
+                    variant="ghost"
+                    size="xs"
+                    onClick={() => onDelete(row.original.id)}
+                >
                     <Trash2 className="h-3.5 w-3.5 text-destructive" />
                 </Button>
             </div>
@@ -73,12 +81,13 @@ export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
         setSheetOpen(true);
     }
 
-    const columns: ColumnDef<Category>[] = [
+    const canManage = usePage().props.auth.user['role'] === 'admin';
 
+    const columns: ColumnDef<Category>[] = [
         { accessorKey: 'name', header: 'Name' },
         { accessorKey: 'description', header: 'Description' },
         { accessorKey: 'products_count', header: 'Products' },
-        createActionsColumn(openEdit, setDeleteId),
+        ...(canManage ? [createActionsColumn(openEdit, setDeleteId)] : []),
     ];
 
     return (
@@ -94,10 +103,12 @@ export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
                         Organize products into categories.
                     </p>
                 </div>
-                <Button size="sm" onClick={openCreate}>
-                    <Plus className="h-4 w-4" />
-                    Add Category
-                </Button>
+                {canManage && (
+                    <Button size="sm" onClick={openCreate}>
+                        <Plus className="h-4 w-4" />
+                        Add Category
+                    </Button>
+                )}
             </div>
 
             <Sheet
@@ -112,7 +123,9 @@ export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
             >
                 <SheetContent>
                     <Form
-                        {...(editing ? updateCategory.form(editing.id) : createCategory.form())}
+                        {...(editing
+                            ? updateCategory.form(editing.id)
+                            : createCategory.form())}
                         key={editing?.id ?? 'create'}
                         onSuccess={() => {
                             setSheetOpen(false);
@@ -124,7 +137,9 @@ export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
                             <>
                                 <SheetHeader>
                                     <SheetTitle>
-                                        {editing ? 'Edit Category' : 'Create Category'}
+                                        {editing
+                                            ? 'Edit Category'
+                                            : 'Create Category'}
                                     </SheetTitle>
                                     <SheetDescription>
                                         {editing
@@ -148,11 +163,15 @@ export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
                                         )}
                                     </div>
                                     <div className="space-y-1.5">
-                                        <Label htmlFor="description">Description</Label>
+                                        <Label htmlFor="description">
+                                            Description
+                                        </Label>
                                         <Textarea
                                             id="description"
                                             name="description"
-                                            defaultValue={editing?.description ?? ''}
+                                            defaultValue={
+                                                editing?.description ?? ''
+                                            }
                                             rows={3}
                                             placeholder="Optional description"
                                         />
@@ -182,57 +201,69 @@ export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
             ) : (
                 <EmptyState
                     title="No categories yet"
-                    description="Create your first category to start organizing products."
+                    description={
+                        canManage
+                            ? 'Create your first category to start organizing products.'
+                            : 'No categories have been created yet.'
+                    }
                     action={
-                        <Button size="sm" onClick={openCreate}>
-                            <Plus className="h-4 w-4" />
-                            Add Category
-                        </Button>
+                        canManage ? (
+                            <Button size="sm" onClick={openCreate}>
+                                <Plus className="h-4 w-4" />
+                                Add Category
+                            </Button>
+                        ) : undefined
                     }
                 />
             )}
 
-            <Dialog
-                open={deleteId !== null}
-                onOpenChange={(open) => {
-                    if (!open) {
-                        setDeleteId(null);
-                    }
-                }}
-            >
-                <Form
-                    {...deleteCategory.form(deleteId!)}
-                    key={deleteId}
-                    onSuccess={() => setDeleteId(null)}
+            {deleteId !== null && (
+                <Dialog
+                    open
+                    onOpenChange={(open) => {
+                        if (!open) {
+                            setDeleteId(null);
+                        }
+                    }}
                 >
-                    {({ processing }) => (
-                        <DialogContent showCloseButton={false} className="sm:max-w-sm">
-                            <DialogHeader>
-                                <DialogTitle>Delete Category</DialogTitle>
-                                <DialogDescription>
-                                    Are you sure? Products in this category will not be deleted,
-                                    but they will become uncategorized.
-                                </DialogDescription>
-                            </DialogHeader>
-                            <DialogFooter>
-                                <Button
-                                    variant="outline"
-                                    onClick={() => setDeleteId(null)}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    variant="destructive"
-                                    type="submit"
-                                    disabled={processing}
-                                >
-                                    Delete
-                                </Button>
-                            </DialogFooter>
-                        </DialogContent>
-                    )}
+                    <Form
+                        {...deleteCategory.form(deleteId)}
+                        key={deleteId}
+                        onSuccess={() => setDeleteId(null)}
+                    >
+                        {({ processing }) => (
+                            <DialogContent
+                                showCloseButton={false}
+                                className="sm:max-w-sm"
+                            >
+                                <DialogHeader>
+                                    <DialogTitle>Delete Category</DialogTitle>
+                                    <DialogDescription>
+                                        Are you sure? Products in this category
+                                        will not be deleted, but they will become
+                                        uncategorized.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter>
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => setDeleteId(null)}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        variant="destructive"
+                                        type="submit"
+                                        disabled={processing}
+                                    >
+                                        Delete
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        )}
                 </Form>
             </Dialog>
+            )}
         </>
     );
 }

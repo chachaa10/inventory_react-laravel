@@ -49,6 +49,13 @@
 - **Errors**: Access via `errors['field']` bracket notation (required by strict TS `noUncheckedIndexedAccess`).
 - **Validation**: Laravel redirects back with validation errors on failure; `<Form>` render props provide `errors` automatically.
 
+### Authorization-based UI hiding
+
+- Access user role via `usePage().props.auth.user['role']` (bracket notation due to strict TS index signature).
+- Conditionally include DataGrid columns: `...(canManage ? [createActionsColumn(...)] : [])`.
+- Hide create buttons and EmptyState CTAs when user lacks permission (pass `action={undefined}`).
+- Route-level `auth` middleware guarantees user is non-null on protected pages.
+
 ### Oxlint: `react/no-unstable-nested-components`
 
 Extract tanstack/react-table `cell` renderers to module-level functions, passing callbacks as parameters. Do NOT use eslint-disable comments.
