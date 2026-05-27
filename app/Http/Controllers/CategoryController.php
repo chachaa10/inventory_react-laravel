@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Actions\Catalog\CreateCategoryAction;
 use App\Actions\Catalog\DeleteCategoryAction;
 use App\Actions\Catalog\UpdateCategoryAction;
+use App\Exceptions\CannotDeleteCategoryWithProductsException;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
@@ -37,6 +38,8 @@ class CategoryController extends Controller
             $request->string('description')->toString(),
         );
 
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Category created successfully.']);
+
         return to_route('categories.index');
     }
 
@@ -50,6 +53,8 @@ class CategoryController extends Controller
             $request->string('description')->toString(),
         );
 
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Category updated successfully.']);
+
         return to_route('categories.index');
     }
 
@@ -57,11 +62,14 @@ class CategoryController extends Controller
     {
         $this->authorize('delete', $category);
 
-        if ($category->loadCount('products')->products_count > 0) {
-            return to_route('categories.index');
-        }
+        throw_if(
+            $category->loadCount('products')->products_count > 0,
+            CannotDeleteCategoryWithProductsException::class,
+        );
 
         $action->execute($category);
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Category deleted successfully.']);
 
         return to_route('categories.index');
     }

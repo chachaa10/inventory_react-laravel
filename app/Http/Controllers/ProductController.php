@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Actions\Catalog\CreateProductAction;
 use App\Actions\Catalog\DeleteProductAction;
 use App\Actions\Catalog\UpdateProductAction;
+use App\Exceptions\CannotDeleteProductWithStockMovementsException;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
@@ -77,6 +78,8 @@ class ProductController extends Controller
             $request->file('image'),
         );
 
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Product created successfully.']);
+
         return to_route('products.index');
     }
 
@@ -93,6 +96,8 @@ class ProductController extends Controller
             $request->file('image'),
         );
 
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Product updated successfully.']);
+
         return to_route('products.index');
     }
 
@@ -100,11 +105,14 @@ class ProductController extends Controller
     {
         $this->authorize('delete', $product);
 
-        if ($product->loadCount('stockMovements')->stock_movements_count > 0) {
-            return to_route('products.index');
-        }
+        throw_if(
+            $product->loadCount('stockMovements')->stock_movements_count > 0,
+            CannotDeleteProductWithStockMovementsException::class,
+        );
 
         $action->execute($product);
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Product deleted successfully.']);
 
         return to_route('products.index');
     }

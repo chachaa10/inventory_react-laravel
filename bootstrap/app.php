@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -25,5 +32,28 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (Throwable $e, Request $request) {
+            if ($e instanceof HttpException
+                || $e instanceof ValidationException
+                || $e instanceof AuthenticationException
+            ) {
+                return;
+            }
+
+            report($e);
+
+            Inertia::flash('toast', ['type' => 'error', 'message' => 'Something went wrong.']);
+
+            return back();
+        });
+
+        $exceptions->respond(function (Response $response): RedirectResponse|Response {
+            if ($response->getStatusCode() === 419) {
+                Inertia::flash('toast', ['type' => 'error', 'message' => 'Page expired, please try again.']);
+
+                return back();
+            }
+
+            return $response;
+        });
     })->create();
