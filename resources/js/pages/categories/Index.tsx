@@ -232,42 +232,46 @@ export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
                         }
                     }}
                 >
-                    <Form
-                        {...deleteCategory.form(deleteId)}
-                        key={deleteId}
-                        onSuccess={() => setDeleteId(null)}
+                    <DialogContent
+                        showCloseButton={false}
+                        className="sm:max-w-sm"
                     >
-                        {({ processing }) => (
-                            <DialogContent
-                                showCloseButton={false}
-                                className="sm:max-w-sm"
-                            >
-                                <DialogHeader>
-                                    <DialogTitle>Delete Category</DialogTitle>
-                                    <DialogDescription>
-                                        Are you sure? Products in this category
-                                        will not be deleted, but they will
-                                        become uncategorized.
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <DialogFooter>
-                                    <Button
-                                        variant="outline"
-                                        onClick={() => setDeleteId(null)}
-                                    >
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        variant="destructive"
-                                        type="submit"
-                                        disabled={processing}
-                                    >
-                                        Delete
-                                    </Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        )}
-                    </Form>
+                        <Form
+                            {...deleteCategory.form(deleteId)}
+                            key={deleteId}
+                            onSuccess={() => setDeleteId(null)}
+                        >
+                            {({ processing }) => (
+                                <>
+                                    <DialogHeader>
+                                        <DialogTitle>
+                                            Delete Category
+                                        </DialogTitle>
+                                        <DialogDescription>
+                                            Are you sure? Products in this
+                                            category will not be deleted, but
+                                            they will become uncategorized.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => setDeleteId(null)}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            variant="destructive"
+                                            type="submit"
+                                            disabled={processing}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </DialogFooter>
+                                </>
+                            )}
+                        </Form>
+                    </DialogContent>
                 </Dialog>
             )}
         </>

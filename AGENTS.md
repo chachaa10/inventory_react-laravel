@@ -83,4 +83,8 @@
 
 - If a column is `NOT NULL` in migration (e.g., `category_id`), the factory MUST set it or all tests referencing `Product::factory()` fail with integrity constraint violations.
 
+### Radix Dialog + Inertia Form nesting
+
+- **`<Form>` must go inside `<DialogContent>`, not outside.** Radix DialogContent renders via Portal at `<body>` level. If Form wraps DialogContent, the submit button lives outside the `<form>` element — clicking it does nothing. Always: `Dialog > DialogContent > Form > ... > button[type=submit]`.
+
 </laravel-boost-guidelines>

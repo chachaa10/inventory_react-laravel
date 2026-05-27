@@ -528,41 +528,46 @@ export default function ProductsIndex({
                         }
                     }}
                 >
-                    <Form
-                        {...destroy.form(deleteId)}
-                        onSuccess={() => setDeleteId(null)}
+                    <DialogContent
+                        showCloseButton={false}
+                        className="sm:max-w-sm"
                     >
-                        {({ processing }) => (
-                            <DialogContent
-                                showCloseButton={false}
-                                className="sm:max-w-sm"
-                            >
-                                <DialogHeader>
-                                    <DialogTitle>Delete Product</DialogTitle>
-                                    <DialogDescription>
-                                        Are you sure? This product will be
-                                        archived. Stock movement history will be
-                                        preserved.
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <DialogFooter>
-                                    <Button
-                                        variant="outline"
-                                        onClick={() => setDeleteId(null)}
-                                    >
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        variant="destructive"
-                                        type="submit"
-                                        disabled={processing}
-                                    >
-                                        Delete
-                                    </Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        )}
-                    </Form>
+                        <Form
+                            {...destroy.form(deleteId)}
+                            key={deleteId}
+                            onSuccess={() => setDeleteId(null)}
+                        >
+                            {({ processing }) => (
+                                <>
+                                    <DialogHeader>
+                                        <DialogTitle>
+                                            Delete Product
+                                        </DialogTitle>
+                                        <DialogDescription>
+                                            Are you sure? This product will be
+                                            archived. Stock movement history
+                                            will be preserved.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => setDeleteId(null)}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            variant="destructive"
+                                            type="submit"
+                                            disabled={processing}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </DialogFooter>
+                                </>
+                            )}
+                        </Form>
+                    </DialogContent>
                 </Dialog>
             )}
         </>
