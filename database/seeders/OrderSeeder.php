@@ -6,53 +6,61 @@ namespace Database\Seeders;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use App\Models\StockMovement;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class OrderSeeder extends Seeder
 {
     public function run(): void
     {
+        $admin = User::query()->where('email', 'admin@example.com')->firstOrFail();
+
+        $hdmiCable = Product::query()->where('sku', 'SKU-ELEC-003')->firstOrFail();
+        $mouse = Product::query()->where('sku', 'SKU-ELEC-001')->firstOrFail();
+
         $order = Order::factory()->create([
             'customer_name' => 'Alice Johnson',
             'customer_email' => 'alice@example.com',
             'order_number' => 'ORD-20260527-0001',
             'status' => 'completed',
-            'total' => 74.97,
+            'total' => 55.97,
             'notes' => 'First customer order',
-            'user_id' => 1,
+            'user_id' => $admin->id,
         ]);
 
-        OrderItem::factory()->createMany([
-            ['order_id' => $order->id, 'product_id' => 3, 'qty' => 2, 'unit_price' => 12.99, 'subtotal' => 25.98],
-            ['order_id' => $order->id, 'product_id' => 1, 'qty' => 1, 'unit_price' => 29.99, 'subtotal' => 29.99],
-            ['order_id' => $order->id, 'product_id' => 8, 'qty' => 2, 'unit_price' => 9.50, 'subtotal' => 19.00],
-        ]);
+        $lineItems = [
+            [$hdmiCable, 2, 100],
+            [$mouse, 1, 45],
+        ];
 
-        StockMovement::factory()->create([
-            'product_id' => 3,
-            'type' => 'out',
-            'qty' => 2,
-            'before_qty' => 102,
-            'after_qty' => 100,
-            'reference' => 'ORD-20260527-0001',
-            'notes' => 'Order fulfillment',
-            'user_id' => 1,
-            'movementable_id' => $order->id,
-            'movementable_type' => Order::class,
-        ]);
+        $orderItemData = [];
+        foreach ($lineItems as [$product, $qty, $beforeQty]) {
+            $afterQty = $beforeQty - $qty;
 
-        StockMovement::factory()->create([
-            'product_id' => 1,
-            'type' => 'out',
-            'qty' => 1,
-            'before_qty' => 46,
-            'after_qty' => 45,
-            'reference' => 'ORD-20260527-0001',
-            'notes' => 'Order fulfillment',
-            'user_id' => 1,
-            'movementable_id' => $order->id,
-            'movementable_type' => Order::class,
-        ]);
+            $orderItemData[] = [
+                'order_id' => $order->id,
+                'product_id' => $product->id,
+                'qty' => $qty,
+                'unit_price' => $product->price,
+                'subtotal' => $qty * $product->price,
+            ];
+
+            StockMovement::factory()->create([
+                'product_id' => $product->id,
+                'type' => 'out',
+                'qty' => $qty,
+                'before_qty' => $beforeQty,
+                'after_qty' => $afterQty,
+                'reference' => $order->order_number,
+                'notes' => 'Order fulfillment',
+                'user_id' => $admin->id,
+                'movementable_id' => $order->id,
+                'movementable_type' => Order::class,
+            ]);
+        }
+
+        OrderItem::factory()->createMany($orderItemData);
     }
 }
