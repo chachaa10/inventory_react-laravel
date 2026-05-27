@@ -1,11 +1,17 @@
 <laravel-boost-guidelines>
-    
+
 ## Core Activation & Architecture
+
 - Skills: MUST activate relevant `**/skills/**` domain skills immediately.
 - Conventions: Strictly follow existing code structure/naming. Use descriptive names (e.g., `isRegisteredForDiscounts`). Reuse existing components.
 - Structure: Stick to existing dirs; no new base folders/dependencies without approval.
 - Docs: Only create docs if explicitly requested.
 - Frontend: If UI changes aren't visible, ask user to run `pnpm run build/dev` or `composer run dev`.
+
+## Package Management
+
+- Frontend: Use `pnpm add <package>` (not npm).
+- Backend: Use `composer require <package>`.
 
 ## Tools & Verification
 

@@ -254,6 +254,35 @@ Settings (existing — profile, password, 2FA)
 - **API endpoints** — Inertia-only; no REST API tier
 - **Dark mode toggle** — already supported by existing shadcn/sidebar theme setup
 
+## Changes from Original Spec
+
+The following decisions were made during schema review and deviate from the initial spec. These reflect critical thinking about referential integrity, audit trail quality, and practical inventory management defaults.
+
+### Schema Changes
+
+| Change                                     | Original                  | Revised                                 | Rationale                                                                                            |
+| ------------------------------------------ | ------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `products.category_id`                     | nullable, cascadeOnDelete | **required**, nullOnDelete              | Products must belong to a category. Soft-deleting a category shouldn't cascade-delete products.      |
+| `products.unit`                            | (not present)             | **added** — string, default `'pcs'`     | Without unit, stock_qty is ambiguous (pieces vs kg vs liters). Default 'pcs' covers the common case. |
+| `customers.address`                        | (not present)             | **added** — text, nullable              | Customers have physical locations. Needed for realistic order flows.                                 |
+| `stock_movements.before_qty` / `after_qty` | (not present)             | **added** — integer                     | Self-verifying audit trail. Enables rebuilding stock_qty from scratch and detecting drift.           |
+| `stock_movements.product_id` FK            | cascadeOnDelete           | **restrictOnDelete**                    | Force-deleting a product must not wipe its stock movement history.                                   |
+| `stock_movements.user_id` FK               | cascadeOnDelete           | **restrictOnDelete**                    | Deleting a user must not wipe their audit trail.                                                     |
+| `orders.customer_id` FK                    | cascadeOnDelete           | **nullOnDelete**                        | Deleting a customer must not wipe order history. Order survives with null customer reference.        |
+| `orders.user_id` FK                        | cascadeOnDelete           | **restrictOnDelete**                    | Same rationale as stock_movements — retain user attribution in transactions.                         |
+| `order_items.product_id` FK                | cascadeOnDelete           | **restrictOnDelete**                    | Force-deleting a product must not wipe order line items.                                             |
+| `date:orders.status` string                | plain string (comment)    | **PHP backed enum** `OrderStatus`       | Type safety, autocomplete, validation. Column stays string in DB.                                    |
+| `stock_movements.type` string              | plain string (comment)    | **PHP backed enum** `StockMovementType` | Same rationale.                                                                                      |
+| `order_number` format                      | unspecified               | **`ORD-{YYYYMMDD}-{XXXX}`**             | Date-based with daily-reset sequence. Self-documenting, sortable, human-readable.                    |
+
+### Behavioral Changes
+
+| Behavior             | Original                 | Revised                                         | Rationale                                                                                                         |
+| -------------------- | ------------------------ | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| SKU uniqueness       | unique (deleted ignored) | **permanently unique** (including soft-deleted) | Reusing a SKU from a discontinued product confuses old orders and movements.                                      |
+| Product->category FK | cascadeOnDelete          | **nullOnDelete**                                | Category deletion archived → products lose category reference but survive.                                        |
+| Order tax/discount   | unspecified              | **skipped for MVP**                             | 80/20 — line item subtotals + total cover the MVP. Tax logic adds complexity without proportional learning value. |
+
 ## Further Notes
 
 - This PRD expects `spatie/laravel-medialibrary`, `@tanstack/react-table`, and `recharts` to be installed.
