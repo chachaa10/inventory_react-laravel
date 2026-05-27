@@ -240,8 +240,8 @@ export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
                                     <DialogTitle>Delete Category</DialogTitle>
                                     <DialogDescription>
                                         Are you sure? Products in this category
-                                        will not be deleted, but they will become
-                                        uncategorized.
+                                        will not be deleted, but they will
+                                        become uncategorized.
                                     </DialogDescription>
                                 </DialogHeader>
                                 <DialogFooter>
@@ -261,8 +261,8 @@ export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
                                 </DialogFooter>
                             </DialogContent>
                         )}
-                </Form>
-            </Dialog>
+                    </Form>
+                </Dialog>
             )}
         </>
     );
