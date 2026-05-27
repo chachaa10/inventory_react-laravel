@@ -2,10 +2,37 @@ export type Product = {
     id: number;
     name: string;
     sku: string;
-    category: string;
+    description: string | null;
+    price: number;
+    cost: number | null;
+    unit: string;
     stock_qty: number;
     reorder_level: number;
-    price: number;
+    is_active: boolean;
+    category_id: number;
+    supplier_id: number | null;
+    category: { id: number; name: string } | null;
+    supplier: { id: number; name: string } | null;
+};
+
+export type Paginated<T> = {
+    data: T[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number;
+    to: number;
+    first_page_url: string;
+    last_page_url: string;
+    next_page_url: string | null;
+    prev_page_url: string | null;
+};
+
+export type ProductFilters = {
+    search: string;
+    category_id: string;
+    stock_status: string;
 };
 
 export type Category = {

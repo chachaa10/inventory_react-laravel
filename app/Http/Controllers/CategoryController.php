@@ -21,7 +21,7 @@ class CategoryController extends Controller
         $categories = Category::query()
             ->withCount('products')
             ->latest()
-            ->paginate(10);
+            ->get();
 
         return Inertia::render('categories/Index', [
             'categories' => $categories,

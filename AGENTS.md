@@ -72,4 +72,29 @@
 - Execution: `php artisan test --compact` (filter with `--filter=name`).
 - Factories: Always use model factories/states in tests. Use `fake()` or `$this->faker` per convention.
 
+## Learnings
+
+### Server vs Client Pagination
+- **Small datasets** (categories, suppliers): Load all records with `->get()`, let DataGrid client-side pagination handle it.
+- **Large datasets** (products): Use `->paginate()` server-side, pass `hidePagination` to DataGrid, add server paginator below with Inertia `router.visit()` + `preserveState`.
+
+### PRD Permission Matrix
+- Staff can create and update products/orders/stock movements; only delete is admin-only. Always verify against PRD before coding policies.
+
+### Factory Gotchas
+- If a column is `NOT NULL` in migration (e.g., `category_id`), the factory MUST set it or all tests referencing `Product::factory()` fail with integrity constraint violations.
+
+### Stock Movements Schema
+- Table has both `product_id` (required FK) AND polymorphic `movementable`. When creating directly, set both.
+
+### PHPStan
+- `$request->string('key')->toString()` as `if` condition triggers `if.condNotBoolean` — assign to variable first, then compare against `''`.
+- `$request->safe()->except('image')` returns `array`, not `array<string, mixed>` — use `@phpstan-ignore-next-line argument.type`.
+- Dynamic calls on Builder (`whereColumn`, `select`, `orderBy` via `::query()`) need `@phpstan-ignore-next-line staticMethod.dynamicCall`.
+
+### Controller `paginate()` → `get()` ripple
+- Frontend type changes from `{ data: T[] }` to `T[]`.
+- Page component references from `categories.data` → `categories`.
+- Test assertions from `categories.data.0.x` → `categories.0.x`.
+
 </laravel-boost-guidelines>

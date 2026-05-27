@@ -31,12 +31,8 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import type { Category } from '@/types';
 
-type CategoryPage = {
-    data: Category[];
-};
-
 type CategoriesIndexProps = {
-    categories: CategoryPage;
+    categories: Category[];
 };
 
 function createActionsColumn(
@@ -196,8 +192,8 @@ export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
                 </SheetContent>
             </Sheet>
 
-            {categories.data.length > 0 ? (
-                <DataGrid columns={columns} data={categories.data} />
+            {categories.length > 0 ? (
+                <DataGrid columns={columns} data={categories} />
             ) : (
                 <EmptyState
                     title="No categories yet"

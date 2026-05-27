@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 #[Fillable([
     'name',
@@ -25,12 +27,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'category_id',
     'supplier_id',
 ])]
-class Product extends Model
+class Product extends Model implements HasMedia
 {
     /** @use HasFactory<ProductFactory> */
     use HasFactory;
 
+    use InteractsWithMedia;
     use SoftDeletes;
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('image')
+            ->singleFile();
+    }
 
     /** @return BelongsTo<Category, $this> */
     public function category(): BelongsTo

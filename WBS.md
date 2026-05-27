@@ -61,19 +61,19 @@
 - [x] 2.1.7 Build `Categories/Index.tsx` (DataGrid + Sheet-based create/edit)
 - [x] 2.1.8 Write Pest feature tests for Category CRUD + policy
 
-### 2.2 Products (Dedicated Pages)
+### 2.2 Products (Sheet-based CRUD)
 
-- [ ] 2.2.1 Create `ProductController` + routes
-- [ ] 2.2.2 Create `StoreProductRequest` / `UpdateProductRequest`
-- [ ] 2.2.3 Create `Actions/Catalog/CreateProductAction`
-- [ ] 2.2.4 Create `Actions/Catalog/UpdateProductAction`
-- [ ] 2.2.5 Create `Actions/Catalog/DeleteProductAction`
-- [ ] 2.2.6 Create `ProductPolicy` (admin: all, staff: no delete)
-- [ ] 2.2.7 Build `Products/Index.tsx` (DataGrid with search, filter by category & stock status)
-- [ ] 2.2.8 Build `Products/Create.tsx` (form with image upload via Spatie media)
-- [ ] 2.2.9 Build `Products/Edit.tsx` (form with image replacement)
-- [ ] 2.2.10 Create `useProductFilters` hook (URL-synced filter state)
-- [ ] 2.2.11 Write Pest feature tests for Product CRUD + search/filter + policy
+- [x] 2.2.1 Create `ProductController` + routes
+- [x] 2.2.2 Create `StoreProductRequest` / `UpdateProductRequest`
+- [x] 2.2.3 Create `Actions/Catalog/CreateProductAction`
+- [x] 2.2.4 Create `Actions/Catalog/UpdateProductAction`
+- [x] 2.2.5 Create `Actions/Catalog/DeleteProductAction`
+- [x] 2.2.6 Create `ProductPolicy` (admin: all, staff: no delete)
+- [x] 2.2.7 Build `Products/Index.tsx` (DataGrid with search, filter by category & stock status)
+- [x] 2.2.8 Build product form with image upload via Spatie media (Sheet-based)
+- [x] 2.2.9 Build product form with image replacement (Sheet-based edit)
+- [x] 2.2.10 Create URL-synced filter state for search, category, stock status
+- [x] 2.2.11 Write Pest feature tests for Product CRUD + search/filter + policy
 
 ## 3. Parties Domain
 
