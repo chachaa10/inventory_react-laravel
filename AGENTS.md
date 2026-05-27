@@ -30,16 +30,14 @@
 - Tinker: Use single quotes (`'Code'`) to prevent shell expansion. Prefer factories/tests over creating models in tinker.
 - Eloquent/API: Use API Resources & versioning for APIs (unless convention differs). Use `route()` for links.
 
-## Inertia v3 Specifics
+## Frontend (Inertia + React)
 
-- Setup: Components in `resources/js/pages`. Use `Inertia::render()`.
-- v3 Features: `useHttp` hook, optimistic updates, `useLayoutProps`, simplified SSR (`@inertiajs/vite`).
-- Changes:
-- `Inertia::lazy()` removed → Use `Inertia::optional()`.
-- Axios removed → Use built-in XHR or install Axios.
-- Events: `invalid` → `httpException`, `exception` → `networkError`.
-- `router.cancel()` → `router.cancelAll()`.
-- Deferred props need skeleton loading states.
+### Inertia v3
+
+- Components in `resources/js/pages`. Use `Inertia::render()`.
+- `useHttp` hook, optimistic updates, `useLayoutProps`, simplified SSR (`@inertiajs/vite`).
+- `Inertia::lazy()` removed → Use `Inertia::optional()`. Axios removed. Events: `invalid` → `httpException`, `exception` → `networkError`.
+- `router.cancel()` → `router.cancelAll()`. Deferred props need skeleton loading states.
 
 ### Form Conventions
 
@@ -56,7 +54,7 @@
 - Hide create buttons and EmptyState CTAs when user lacks permission (pass `action={undefined}`).
 - Route-level `auth` middleware guarantees user is non-null on protected pages.
 
-## Oxlint & TypeScript Strict Rules
+### Oxlint & TypeScript Strict Rules
 
 - **`noUncheckedIndexedAccess`**: All index-signature props require bracket notation — `errors['field']`, `user['role']`, `user['name']`. Never `errors.field` or `user.role`.
 - **`react/no-unstable-nested-components`**: Extract tanstack/react-table `cell` renderers to module-level functions, passing callbacks as parameters. Do NOT use eslint-disable comments.
