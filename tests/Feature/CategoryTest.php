@@ -139,9 +139,9 @@ test('admin can list categories with products count', function (): void {
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('categories/Index')
-            ->has('categories', 1)
-            ->where('categories.0.id', $category->id)
-            ->where('categories.0.name', $category->name)
-            ->where('categories.0.products_count', 1)
+            ->has('categories.data', 1)
+            ->where('categories.data.0.id', $category->id)
+            ->where('categories.data.0.name', $category->name)
+            ->where('categories.data.0.products_count', 1)
         );
 });

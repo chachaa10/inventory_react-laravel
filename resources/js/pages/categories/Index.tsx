@@ -10,6 +10,7 @@ import {
 } from '@/actions/App/Http/Controllers/CategoryController';
 import { DataGrid } from '@/common/DataGrid';
 import { EmptyState } from '@/common/EmptyState';
+import { Paginator } from '@/common/Paginator';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -29,10 +30,10 @@ import {
     SheetTitle,
 } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
-import type { Category } from '@/types';
+import type { Category, Paginated } from '@/types';
 
 type CategoriesIndexProps = {
-    categories: Category[];
+    categories: Paginated<Category>;
 };
 
 function createActionsColumn(
@@ -192,8 +193,17 @@ export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
                 </SheetContent>
             </Sheet>
 
-            {categories.length > 0 ? (
-                <DataGrid columns={columns} data={categories} />
+            {categories.data.length > 0 ? (
+                <>
+                    <DataGrid columns={columns} data={categories.data} />
+                    <Paginator
+                        currentPage={categories.current_page}
+                        lastPage={categories.last_page}
+                        total={categories.total}
+                        from={categories.from}
+                        to={categories.to}
+                    />
+                </>
             ) : (
                 <EmptyState
                     title="No categories yet"

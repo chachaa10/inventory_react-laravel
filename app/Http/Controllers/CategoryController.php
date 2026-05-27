@@ -21,7 +21,7 @@ class CategoryController extends Controller
         $categories = Category::query()
             ->withCount('products')
             ->latest()
-            ->get();
+            ->paginate(100);
 
         return Inertia::render('categories/Index', [
             'categories' => $categories,
@@ -57,8 +57,7 @@ class CategoryController extends Controller
     {
         $this->authorize('delete', $category);
 
-        // @phpstan-ignore-next-line staticMethod.dynamicCall
-        if ($category->products()->count() > 0) {
+        if ($category->loadCount('products')->products_count > 0) {
             return to_route('categories.index');
         }
 

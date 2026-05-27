@@ -43,23 +43,19 @@ class ProductController extends Controller
 
         if ($stockStatus !== '') {
             if ($stockStatus === 'low') {
-                // @phpstan-ignore-next-line staticMethod.dynamicCall
-                $query->whereColumn('stock_qty', '<=', 'reorder_level')
-                    ->where('stock_qty', '>', 0);
+                $query->getQuery()->whereRaw('stock_qty <= reorder_level');
+                $query->where('stock_qty', '>', 0);
             } elseif ($stockStatus === 'out') {
                 $query->where('stock_qty', '=', 0);
             } elseif ($stockStatus === 'in') {
-                // @phpstan-ignore-next-line staticMethod.dynamicCall
-                $query->whereColumn('stock_qty', '>', 'reorder_level');
+                $query->getQuery()->whereRaw('stock_qty > reorder_level');
             }
         }
 
         $products = $query->latest()->paginate(10);
 
-        // @phpstan-ignore-next-line staticMethod.dynamicCall
-        $categories = Category::query()->select('id', 'name')->orderBy('name')->get();
-        // @phpstan-ignore-next-line staticMethod.dynamicCall
-        $suppliers = Supplier::query()->select('id', 'name')->orderBy('name')->get();
+        $categories = Category::all(['id', 'name'])->sortBy('name')->values();
+        $suppliers = Supplier::all(['id', 'name'])->sortBy('name')->values();
 
         return Inertia::render('products/Index', [
             'products' => $products,
@@ -73,9 +69,11 @@ class ProductController extends Controller
     {
         $this->authorize('create', Product::class);
 
+        /** @var array<string, mixed> $data */
+        $data = $request->safe()->except('image');
+
         $action->execute(
-            // @phpstan-ignore-next-line argument.type
-            $request->safe()->except('image'),
+            $data,
             $request->file('image'),
         );
 
@@ -86,10 +84,12 @@ class ProductController extends Controller
     {
         $this->authorize('update', $product);
 
+        /** @var array<string, mixed> $data */
+        $data = $request->safe()->except('image');
+
         $action->execute(
             $product,
-            // @phpstan-ignore-next-line argument.type
-            $request->safe()->except('image'),
+            $data,
             $request->file('image'),
         );
 
@@ -100,8 +100,7 @@ class ProductController extends Controller
     {
         $this->authorize('delete', $product);
 
-        // @phpstan-ignore-next-line staticMethod.dynamicCall
-        if ($product->stockMovements()->count() > 0) {
+        if ($product->loadCount('stockMovements')->stock_movements_count > 0) {
             return to_route('products.index');
         }
 

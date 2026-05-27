@@ -1,6 +1,6 @@
 import { Form, Head, router, usePage } from '@inertiajs/react';
 import type { ColumnDef, Row } from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight, Download, Pencil, Plus, Trash2 } from 'lucide-react';
+import { Download, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import {
@@ -10,6 +10,7 @@ import {
 } from '@/actions/App/Http/Controllers/ProductController';
 import { DataGrid } from '@/common/DataGrid';
 import { EmptyState } from '@/common/EmptyState';
+import { Paginator } from '@/common/Paginator';
 import { SearchBar } from '@/common/SearchBar';
 import { StatusBadge } from '@/common/StatusBadge';
 import { Button } from '@/components/ui/button';
@@ -144,12 +145,6 @@ export default function ProductsIndex({
         });
 
         visit(`/products?${params.toString()}`);
-    }
-
-    function goToPage(url: string | null) {
-        if (url) {
-            visit(url);
-        }
     }
 
     const columns: ColumnDef<Product>[] = [
@@ -496,57 +491,14 @@ export default function ProductsIndex({
 
             {products.data.length > 0 ? (
                 <>
-                    <DataGrid columns={columns} data={products.data} hidePagination />
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">
-                            Page {products.current_page} of {products.last_page}
-                            ({products.total} items)
-                        </span>
-                        <div className="flex items-center gap-1">
-                            <Button
-                                variant="ghost"
-                                size="xs"
-                                disabled={!products.prev_page_url}
-                                onClick={() => goToPage(products.prev_page_url)}
-                            >
-                                <ChevronLeft className="h-4 w-4" />
-                            </Button>
-                            {Array.from(
-                                { length: products.last_page },
-                                (_, i) => i + 1,
-                            ).map((page) => (
-                                <Button
-                                    key={page}
-                                    variant={
-                                        products.current_page === page
-                                            ? 'default'
-                                            : 'ghost'
-                                    }
-                                    size="xs"
-                                    onClick={() =>
-                                        goToPage(
-                                            products.first_page_url.replace(
-                                                /page=\d+/,
-                                                `page=${page}`,
-                                            ),
-                                        )
-                                    }
-                                >
-                                    {page}
-                                </Button>
-                            ))}
-                            <Button
-                                variant="ghost"
-                                size="xs"
-                                disabled={!products.next_page_url}
-                                onClick={() =>
-                                    goToPage(products.next_page_url)
-                                }
-                            >
-                                <ChevronRight className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    </div>
+                    <DataGrid columns={columns} data={products.data} />
+                    <Paginator
+                        currentPage={products.current_page}
+                        lastPage={products.last_page}
+                        total={products.total}
+                        from={products.from}
+                        to={products.to}
+                    />
                 </>
             ) : (
                 <EmptyState

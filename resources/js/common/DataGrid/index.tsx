@@ -2,28 +2,18 @@ import type { ColumnDef, SortingState } from '@tanstack/react-table';
 import {
     flexRender,
     getCoreRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table';
-import { ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowUpDown } from 'lucide-react';
 import { useState } from 'react';
-
-import { Button } from '@/components/ui/button';
 
 type DataGridProps<TData> = {
     columns: ColumnDef<TData>[];
     data: TData[];
-    pageSize?: number;
-    hidePagination?: boolean;
 };
 
-export function DataGrid<TData>({
-    columns,
-    data,
-    pageSize = 10,
-    hidePagination = false,
-}: DataGridProps<TData>) {
+export function DataGrid<TData>({ columns, data }: DataGridProps<TData>) {
     const [sorting, setSorting] = useState<SortingState>([]);
 
     const table = useReactTable({
@@ -33,8 +23,6 @@ export function DataGrid<TData>({
         onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        initialState: { pagination: { pageSize } },
     });
 
     return (
@@ -86,51 +74,6 @@ export function DataGrid<TData>({
                     </tbody>
                 </table>
             </div>
-
-            {!hidePagination && (
-                <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">
-                        Page {table.getState().pagination.pageIndex + 1} of{' '}
-                        {table.getPageCount()}
-                    </span>
-                    <div className="flex items-center gap-1">
-                        <Button
-                            variant="ghost"
-                            size="xs"
-                            onClick={() => table.previousPage()}
-                            disabled={!table.getCanPreviousPage()}
-                        >
-                            <ChevronLeft className="h-4 w-4" />
-                        </Button>
-                        {Array.from(
-                            { length: table.getPageCount() },
-                            (_, i) => i + 1,
-                        ).map((page) => (
-                            <Button
-                                key={page}
-                                variant={
-                                    table.getState().pagination.pageIndex + 1 ===
-                                    page
-                                        ? 'default'
-                                        : 'ghost'
-                                }
-                                size="xs"
-                                onClick={() => table.setPageIndex(page - 1)}
-                            >
-                                {page}
-                            </Button>
-                        ))}
-                        <Button
-                            variant="ghost"
-                            size="xs"
-                            onClick={() => table.nextPage()}
-                            disabled={!table.getCanNextPage()}
-                        >
-                            <ChevronRight className="h-4 w-4" />
-                        </Button>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }
