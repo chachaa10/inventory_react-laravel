@@ -1,45 +1,31 @@
-import { Head, Link } from '@inertiajs/react';
+import { Form, Head, Link } from '@inertiajs/react';
 import { ArrowLeft, ShoppingCart } from 'lucide-react';
 import { useState } from 'react';
 
-import { ConfirmDialog } from '@/common/ConfirmDialog';
+import { update } from '@/actions/App/Http/Controllers/OrderController';
 import { Button } from '@/components/ui/button';
-import type { OrderStatus } from '@/types';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import type { Order } from '@/types';
 
-const order: {
-    id: number;
-    order_number: string;
-    customer: string;
-    status: OrderStatus;
-    total: number;
-    notes: string;
-    date: string;
-    items: Array<{
-        product: string;
-        qty: number;
-        unit_price: number;
-        subtotal: number;
-    }>;
-} = {
-    id: 1,
-    order_number: 'ORD-1001',
-    customer: 'Acme Corp',
-    status: 'pending',
-    total: 149.95,
-    notes: 'Handle with care.',
-    date: '2026-05-18',
-    items: [
-        {
-            product: 'Wireless Mouse',
-            qty: 3,
-            unit_price: 29.99,
-            subtotal: 89.97,
-        },
-        { product: 'USB-C Cable', qty: 5, unit_price: 12.99, subtotal: 64.95 },
-    ],
+type OrdersEditProps = {
+    order: Order;
 };
 
-export default function OrdersEdit() {
+const statusColors: Record<string, string> = {
+    completed:
+        'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-950/30 dark:text-green-400 dark:ring-green-400/20',
+    cancelled:
+        'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20 dark:bg-red-950/30 dark:text-red-400 dark:ring-red-400/20',
+};
+
+export default function OrdersEdit({ order }: OrdersEditProps) {
     const [showCancel, setShowCancel] = useState(false);
 
     return (
@@ -58,17 +44,12 @@ export default function OrdersEdit() {
                         Order {order.order_number}
                     </h1>
                     <p className="mt-1 text-sm text-muted-foreground">
-                        {order.customer} · {order.date}
+                        {order.customer_name} ·{' '}
+                        {new Date(order.created_at).toLocaleDateString()}
                     </p>
                 </div>
                 <span
-                    className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${
-                        order.status === 'pending'
-                            ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400'
-                            : order.status === 'completed'
-                              ? 'bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400'
-                              : 'bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400'
-                    }`}
+                    className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${statusColors[order.status]}`}
                 >
                     <ShoppingCart className="h-3 w-3" />
                     {order.status.charAt(0).toUpperCase() +
@@ -98,13 +79,14 @@ export default function OrdersEdit() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {order.items.map((item) => (
+                                    {order.items?.map((item) => (
                                         <tr
-                                            key={item.product}
+                                            key={item.id}
                                             className="border-b border-border last:border-0 hover:bg-muted/50"
                                         >
                                             <td className="h-12 px-4 text-foreground">
-                                                {item.product}
+                                                {item.product?.name ??
+                                                    `Product #${item.product_id}`}
                                             </td>
                                             <td className="h-12 px-4 text-foreground">
                                                 {item.qty}
@@ -155,37 +137,51 @@ export default function OrdersEdit() {
                                     Customer
                                 </dt>
                                 <dd className="text-foreground">
-                                    {order.customer}
+                                    {order.customer_name}
                                 </dd>
                             </div>
+                            {order.customer_email && (
+                                <div className="flex justify-between">
+                                    <dt className="text-muted-foreground">
+                                        Email
+                                    </dt>
+                                    <dd className="text-foreground">
+                                        {order.customer_email}
+                                    </dd>
+                                </div>
+                            )}
                             <div className="flex justify-between">
                                 <dt className="text-muted-foreground">Date</dt>
                                 <dd className="text-foreground">
-                                    {order.date}
+                                    {new Date(
+                                        order.created_at,
+                                    ).toLocaleDateString()}
                                 </dd>
                             </div>
                             <div className="flex justify-between">
                                 <dt className="text-muted-foreground">Items</dt>
                                 <dd className="text-foreground">
-                                    {order.items.length}
+                                    {order.items?.length ?? order.items_count}
+                                </dd>
+                            </div>
+                            <div className="flex justify-between">
+                                <dt className="text-muted-foreground">
+                                    Created by
+                                </dt>
+                                <dd className="text-foreground">
+                                    {order.user.name}
                                 </dd>
                             </div>
                         </dl>
                     </div>
 
-                    {order.status !== 'cancelled' && (
+                    {order.status === 'completed' && (
                         <Button
-                            variant={
-                                order.status === 'pending'
-                                    ? 'destructive'
-                                    : 'outline'
-                            }
+                            variant="destructive"
                             className="w-full"
                             onClick={() => setShowCancel(true)}
                         >
-                            {order.status === 'pending'
-                                ? 'Cancel Order'
-                                : 'Restore Order'}
+                            Cancel Order
                         </Button>
                     )}
                 </div>
@@ -202,15 +198,52 @@ export default function OrdersEdit() {
                 </div>
             )}
 
-            <ConfirmDialog
+            <Dialog
                 open={showCancel}
-                onOpenChange={setShowCancel}
-                onConfirm={() => setShowCancel(false)}
-                title="Cancel Order"
-                description="Are you sure? Stock will be restored and the order will be marked as cancelled. This action cannot be undone."
-                confirmLabel="Cancel Order"
-                destructive
-            />
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setShowCancel(false);
+                    }
+                }}
+            >
+                <DialogContent showCloseButton={false} className="sm:max-w-sm">
+                    <Form
+                        {...update.form(order.id)}
+                        key={order.id}
+                        onSuccess={() => setShowCancel(false)}
+                    >
+                        {({ processing }) => (
+                            <>
+                                <DialogHeader>
+                                    <DialogTitle>Cancel Order</DialogTitle>
+                                    <DialogDescription>
+                                        Are you sure? Stock will be restored and
+                                        the order will be marked as cancelled.
+                                        This action cannot be undone.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter>
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => setShowCancel(false)}
+                                    >
+                                        Keep Order
+                                    </Button>
+                                    <Button
+                                        variant="destructive"
+                                        type="submit"
+                                        disabled={processing}
+                                    >
+                                        {processing
+                                            ? 'Cancelling...'
+                                            : 'Cancel Order'}
+                                    </Button>
+                                </DialogFooter>
+                            </>
+                        )}
+                    </Form>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }

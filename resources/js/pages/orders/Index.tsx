@@ -1,120 +1,130 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Plus, ShoppingCart } from 'lucide-react';
-import { useState } from 'react';
 
 import { DataGrid } from '@/common/DataGrid';
+import { EmptyState } from '@/common/EmptyState';
+import { Paginator } from '@/common/Paginator';
 import { SearchBar } from '@/common/SearchBar';
 import { Button } from '@/components/ui/button';
-import type { Order } from '@/types';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import type { Order, OrderFilters, Paginated } from '@/types';
 
-const sampleData: Order[] = [
-    {
-        id: 1,
-        order_number: 'ORD-1001',
-        customer: 'Acme Corp',
-        status: 'completed',
-        total: 149.95,
-        items: 3,
-        date: 'Today',
-    },
-    {
-        id: 2,
-        order_number: 'ORD-1002',
-        customer: 'Beta Industries',
-        status: 'pending',
-        total: 89.99,
-        items: 1,
-        date: 'Today',
-    },
-    {
-        id: 3,
-        order_number: 'ORD-1003',
-        customer: 'Gamma Ltd',
-        status: 'pending',
-        total: 234.5,
-        items: 5,
-        date: 'Yesterday',
-    },
-    {
-        id: 4,
-        order_number: 'ORD-1004',
-        customer: 'Acme Corp',
-        status: 'cancelled',
-        total: 45.0,
-        items: 2,
-        date: '2 days ago',
-    },
-    {
-        id: 5,
-        order_number: 'ORD-1005',
-        customer: 'Beta Industries',
-        status: 'completed',
-        total: 678.0,
-        items: 8,
-        date: '3 days ago',
-    },
-];
+type OrdersIndexProps = {
+    orders: Paginated<Order>;
+    filters: OrderFilters;
+};
 
-const statusColors = {
-    pending:
-        'bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-950/30 dark:text-amber-400 dark:ring-amber-400/20',
+function visit(url: string) {
+    router.visit(url, { preserveState: true, preserveScroll: true });
+}
+
+function formatCurrency(value: number): string {
+    return `$${value.toFixed(2)}`;
+}
+
+const statusColors: Record<string, string> = {
     completed:
         'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-950/30 dark:text-green-400 dark:ring-green-400/20',
     cancelled:
         'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20 dark:bg-red-950/30 dark:text-red-400 dark:ring-red-400/20',
 };
 
-const columns: ColumnDef<Order>[] = [
-    { accessorKey: 'order_number', header: 'Order', enableSorting: true },
-    { accessorKey: 'customer', header: 'Customer', enableSorting: true },
-    {
-        accessorKey: 'status',
-        header: 'Status',
-        cell: ({ row }) => (
-            <span
-                className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[row.original.status]}`}
-            >
-                <ShoppingCart className="mr-1 h-3 w-3" />
-                {row.original.status.charAt(0).toUpperCase() +
-                    row.original.status.slice(1)}
-            </span>
-        ),
-    },
-    {
-        accessorKey: 'items',
-        header: 'Items',
-        cell: ({ row }) => `${row.original.items} items`,
-    },
-    {
-        accessorKey: 'total',
-        header: 'Total',
-        enableSorting: true,
-        cell: ({ row }) => `$${row.original.total.toFixed(2)}`,
-    },
-    { accessorKey: 'date', header: 'Date', enableSorting: true },
-    {
-        id: 'actions',
-        header: '',
-        cell: ({ row }) => (
-            <Link
-                href={`/orders/${row.original.id}`}
-                className="text-sm text-muted-foreground hover:text-foreground"
-            >
-                View
-            </Link>
-        ),
-    },
-];
-
-export default function OrdersIndex() {
-    const [search, setSearch] = useState('');
-
-    const filtered = sampleData.filter(
-        (o) =>
-            o.order_number.toLowerCase().includes(search.toLowerCase()) ||
-            o.customer.toLowerCase().includes(search.toLowerCase()),
+function StatusCell({ row }: { row: { original: Order } }) {
+    return (
+        <span
+            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[row.original.status]}`}
+        >
+            <ShoppingCart className="mr-1 h-3 w-3" />
+            {row.original.status.charAt(0).toUpperCase() +
+                row.original.status.slice(1)}
+        </span>
     );
+}
+
+function TotalCell({ row }: { row: { original: Order } }) {
+    return formatCurrency(row.original.total);
+}
+
+function ItemsCell({ row }: { row: { original: Order } }) {
+    return `${row.original.items_count} items`;
+}
+
+function DateCell({ row }: { row: { original: Order } }) {
+    return new Date(row.original.created_at).toLocaleDateString();
+}
+
+function ActionsCell({ row }: { row: { original: Order } }) {
+    return (
+        <Link
+            href={`/orders/${row.original.id}`}
+            className="text-sm text-muted-foreground hover:text-foreground"
+        >
+            View
+        </Link>
+    );
+}
+
+export default function OrdersIndex({ orders, filters }: OrdersIndexProps) {
+    function applyFilters(overrides: Partial<OrderFilters>) {
+        const params = new URLSearchParams();
+
+        const merged = { ...filters, ...overrides };
+
+        Object.entries(merged).forEach(([key, value]) => {
+            if (value) {
+                params.set(key, value);
+            }
+        });
+
+        visit(`/orders?${params.toString()}`);
+    }
+
+    const columns: ColumnDef<Order>[] = [
+        {
+            accessorKey: 'order_number',
+            header: 'Order',
+            enableSorting: true,
+        },
+        {
+            accessorKey: 'customer_name',
+            header: 'Customer',
+            enableSorting: true,
+        },
+        {
+            accessorKey: 'status',
+            header: 'Status',
+            cell: StatusCell,
+        },
+        {
+            id: 'items_count',
+            header: 'Items',
+            cell: ItemsCell,
+        },
+        {
+            accessorKey: 'total',
+            header: 'Total',
+            enableSorting: true,
+            cell: TotalCell,
+        },
+        {
+            accessorKey: 'created_at',
+            header: 'Date',
+            enableSorting: true,
+            cell: DateCell,
+        },
+        {
+            id: 'actions',
+            header: '',
+            cell: ActionsCell,
+        },
+    ];
 
     return (
         <>
@@ -137,15 +147,62 @@ export default function OrdersIndex() {
                 </Button>
             </div>
 
-            <div className="mb-4 max-w-sm">
-                <SearchBar
-                    value={search}
-                    onChange={setSearch}
-                    placeholder="Search by order number or customer..."
-                />
+            <div className="mb-4 flex flex-wrap items-center gap-3">
+                <div className="w-full max-w-sm sm:w-64">
+                    <SearchBar
+                        value={filters.search ?? ''}
+                        onChange={(v) => applyFilters({ search: v })}
+                        placeholder="Search by order number or customer..."
+                    />
+                </div>
+                <Select
+                    value={filters.status || 'all'}
+                    onValueChange={(v) =>
+                        applyFilters({ status: v === 'all' ? '' : v })
+                    }
+                >
+                    <SelectTrigger className="w-40">
+                        <SelectValue placeholder="All Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
 
-            <DataGrid columns={columns} data={filtered} />
+            {orders.data.length > 0 ? (
+                <>
+                    <DataGrid columns={columns} data={orders.data} />
+                    <Paginator
+                        currentPage={orders.current_page}
+                        lastPage={orders.last_page}
+                        total={orders.total}
+                        from={orders.from}
+                        to={orders.to}
+                    />
+                </>
+            ) : (
+                <EmptyState
+                    title="No orders found"
+                    description={
+                        filters.search || filters.status
+                            ? 'No orders match your filters. Try different search terms.'
+                            : 'Create your first order to get started.'
+                    }
+                    action={
+                        !filters.search && !filters.status ? (
+                            <Button size="sm" asChild>
+                                <Link href="/orders/create">
+                                    <Plus className="h-4 w-4" />
+                                    New Order
+                                </Link>
+                            </Button>
+                        ) : undefined
+                    }
+                />
+            )}
         </>
     );
 }
