@@ -310,3 +310,19 @@ test('index loads categories and suppliers for filters', function (): void {
             ->has('suppliers', 2)
         );
 });
+
+test('supplier list excludes deactivated suppliers', function (): void {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $this->actingAs($admin);
+
+    Supplier::factory()->create(['name' => 'Active Supplier', 'is_active' => true]);
+    Supplier::factory()->create(['name' => 'Inactive Supplier', 'is_active' => false]);
+
+    $this->get(route('products.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('products/Index')
+            ->has('suppliers', 1)
+            ->where('suppliers.0.name', 'Active Supplier')
+        );
+});

@@ -112,6 +112,31 @@ test('staff cannot deactivate a supplier', function (): void {
         ->assertForbidden();
 });
 
+test('staff cannot reactivate a supplier', function (): void {
+    $staff = User::factory()->create(['role' => 'staff']);
+    $this->actingAs($staff);
+
+    $supplier = Supplier::factory()->create(['is_active' => false]);
+
+    $this->put(route('suppliers.activate', $supplier))
+        ->assertForbidden();
+});
+
+test('admin can reactivate a supplier', function (): void {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $this->actingAs($admin);
+
+    $supplier = Supplier::factory()->create(['is_active' => false]);
+
+    $this->put(route('suppliers.activate', $supplier))
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('suppliers', [
+        'id' => $supplier->id,
+        'is_active' => 1,
+    ]);
+});
+
 test('admin can list suppliers with products count', function (): void {
     $admin = User::factory()->create(['role' => 'admin']);
     $this->actingAs($admin);

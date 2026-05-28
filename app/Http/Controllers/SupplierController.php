@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\Parties\ActivateSupplierAction;
 use App\Actions\Parties\CreateSupplierAction;
 use App\Actions\Parties\DeactivateSupplierAction;
 use App\Actions\Parties\UpdateSupplierAction;
@@ -56,6 +57,17 @@ class SupplierController extends Controller
         $deactivateSupplierAction->execute($supplier);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Supplier deactivated successfully.']);
+
+        return to_route('suppliers.index');
+    }
+
+    public function activate(ActivateSupplierAction $activateSupplierAction, Supplier $supplier): RedirectResponse
+    {
+        $this->authorize('update', $supplier);
+
+        $activateSupplierAction->execute($supplier);
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Supplier reactivated successfully.']);
 
         return to_route('suppliers.index');
     }

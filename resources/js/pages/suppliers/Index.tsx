@@ -1,9 +1,10 @@
 import { Form, Head, usePage } from '@inertiajs/react';
 import type { ColumnDef, Row } from '@tanstack/react-table';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, RotateCcw, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import {
+    activate as reactivateSupplier,
     store as createSupplier,
     update as updateSupplier,
     destroy as deactivateSupplier,
@@ -53,6 +54,7 @@ function StatusCell({ row }: { row: Row<Supplier> }): React.ReactElement {
 function createActionsColumn(
     onEdit: (s: Supplier) => void,
     onDeactivate: (id: number) => void,
+    onReactivate: (id: number) => void,
 ): ColumnDef<Supplier> {
     return {
         id: 'actions',
@@ -65,13 +67,21 @@ function createActionsColumn(
                 >
                     <Pencil className="h-3.5 w-3.5" />
                 </Button>
-                {row.original.is_active && (
+                {row.original.is_active ? (
                     <Button
                         variant="ghost"
                         size="xs"
                         onClick={() => onDeactivate(row.original.id)}
                     >
                         <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                    </Button>
+                ) : (
+                    <Button
+                        variant="ghost"
+                        size="xs"
+                        onClick={() => onReactivate(row.original.id)}
+                    >
+                        <RotateCcw className="h-3.5 w-3.5 text-primary" />
                     </Button>
                 )}
             </div>
@@ -83,6 +93,7 @@ export default function SuppliersIndex({ suppliers }: SuppliersIndexProps) {
     const [sheetOpen, setSheetOpen] = useState(false);
     const [editing, setEditing] = useState<Supplier | null>(null);
     const [deactivateId, setDeactivateId] = useState<number | null>(null);
+    const [reactivateId, setReactivateId] = useState<number | null>(null);
 
     function openCreate() {
         setEditing(null);
@@ -106,7 +117,9 @@ export default function SuppliersIndex({ suppliers }: SuppliersIndexProps) {
             cell: StatusCell,
         },
         { accessorKey: 'products_count', header: 'Products' },
-        ...(canManage ? [createActionsColumn(openEdit, setDeactivateId)] : []),
+        ...(canManage
+            ? [createActionsColumn(openEdit, setDeactivateId, setReactivateId)]
+            : []),
     ];
 
     return (
@@ -318,6 +331,59 @@ export default function SuppliersIndex({ suppliers }: SuppliersIndexProps) {
                                             disabled={processing}
                                         >
                                             Deactivate
+                                        </Button>
+                                    </DialogFooter>
+                                </>
+                            )}
+                        </Form>
+                    </DialogContent>
+                </Dialog>
+            )}
+
+            {reactivateId !== null && (
+                <Dialog
+                    open
+                    onOpenChange={(open) => {
+                        if (!open) {
+                            setReactivateId(null);
+                        }
+                    }}
+                >
+                    <DialogContent
+                        showCloseButton={false}
+                        className="sm:max-w-sm"
+                    >
+                        <Form
+                            {...reactivateSupplier.form(reactivateId)}
+                            key={reactivateId}
+                            onSuccess={() => setReactivateId(null)}
+                        >
+                            {({ processing }) => (
+                                <>
+                                    <DialogHeader>
+                                        <DialogTitle>
+                                            Reactivate Supplier
+                                        </DialogTitle>
+                                        <DialogDescription>
+                                            Are you sure? The supplier will be
+                                            reactivated and available for
+                                            selection in product forms.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() =>
+                                                setReactivateId(null)
+                                            }
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            type="submit"
+                                            disabled={processing}
+                                        >
+                                            Reactivate
                                         </Button>
                                     </DialogFooter>
                                 </>

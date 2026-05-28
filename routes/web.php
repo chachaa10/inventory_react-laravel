@@ -32,6 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::post('suppliers', [SupplierController::class, 'store'])->name('suppliers.store');
     Route::put('suppliers/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
     Route::delete('suppliers/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
+    Route::put('suppliers/{supplier}/activate', [SupplierController::class, 'activate'])->name('suppliers.activate');
 
     Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::post('customers', [CustomerController::class, 'store'])->name('customers.store');
