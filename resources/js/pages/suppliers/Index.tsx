@@ -1,10 +1,20 @@
-import { Form, Head, usePage } from '@inertiajs/react';
+import { Form, Head, router, usePage } from '@inertiajs/react';
 import type { ColumnDef, Row } from '@tanstack/react-table';
-import { Plus, Pencil, RotateCcw, Trash2 } from 'lucide-react';
+import {
+    Archive,
+    ArchiveRestore,
+    Plus,
+    Pencil,
+    RotateCcw,
+    Trash2,
+} from 'lucide-react';
 import { useState } from 'react';
 
 import {
     activate as reactivateSupplier,
+    archive as archiveSupplier,
+    index as suppliersIndex,
+    restore as restoreSupplier,
     store as createSupplier,
     update as updateSupplier,
     destroy as deactivateSupplier,
@@ -24,6 +34,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import {
     Sheet,
     SheetContent,
     SheetDescription,
@@ -31,13 +48,27 @@ import {
     SheetTitle,
 } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
-import type { Paginated, Supplier } from '@/types';
+import type {
+    Paginated,
+    Supplier,
+    SupplierFilters,
+    SupplierStatusFilter,
+} from '@/types';
 
 type SuppliersIndexProps = {
     suppliers: Paginated<Supplier>;
+    filters: SupplierFilters;
 };
 
 function StatusCell({ row }: { row: Row<Supplier> }): React.ReactElement {
+    if (row.original.archived_at !== null) {
+        return (
+            <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-950/30 dark:text-amber-400">
+                Archived
+            </span>
+        );
+    }
+
     return (
         <span
             className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
@@ -51,49 +82,142 @@ function StatusCell({ row }: { row: Row<Supplier> }): React.ReactElement {
     );
 }
 
+function StatusHeader({
+    currentStatus,
+    onFilterChange,
+}: {
+    currentStatus: SupplierStatusFilter;
+    onFilterChange: (status: SupplierStatusFilter) => void;
+}): React.ReactElement {
+    return (
+        <div onClick={(e) => e.stopPropagation()}>
+            <Select
+                value={currentStatus}
+                onValueChange={(value) =>
+                    onFilterChange(value as SupplierStatusFilter)
+                }
+            >
+                <SelectTrigger className="h-6 w-32 border-0 bg-transparent p-0 text-xs font-medium text-muted-foreground shadow-none hover:bg-transparent focus:ring-0 [&>svg]:h-3 [&>svg]:w-3">
+                    <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="archived">Archived</SelectItem>
+                    <SelectItem value="all">All</SelectItem>
+                </SelectContent>
+            </Select>
+        </div>
+    );
+}
+
+function lifecycleSortKey(row: Row<Supplier>): number {
+    if (row.original.archived_at !== null) {
+        return 2;
+    }
+
+    return row.original.is_active ? 0 : 1;
+}
+
+function createStatusColumn(
+    currentStatus: SupplierStatusFilter,
+    onFilterChange: (status: SupplierStatusFilter) => void,
+): ColumnDef<Supplier> {
+    return {
+        accessorKey: 'is_active',
+        sortingFn: (rowA, rowB) =>
+            lifecycleSortKey(rowA) - lifecycleSortKey(rowB),
+        header: function StatusColumnHeader() {
+            return (
+                <StatusHeader
+                    currentStatus={currentStatus}
+                    onFilterChange={onFilterChange}
+                />
+            );
+        },
+        cell: StatusCell,
+    };
+}
+
 function createActionsColumn(
     onEdit: (s: Supplier) => void,
     onDeactivate: (id: number) => void,
     onReactivate: (id: number) => void,
+    onArchive: (id: number) => void,
+    onRestore: (id: number) => void,
 ): ColumnDef<Supplier> {
     return {
         id: 'actions',
-        cell: ({ row }) => (
-            <div className="inline-flex items-center gap-1">
-                <Button
-                    variant="ghost"
-                    size="xs"
-                    onClick={() => onEdit(row.original)}
-                >
-                    <Pencil className="h-3.5 w-3.5" />
-                </Button>
-                {row.original.is_active ? (
+        cell: ({ row }) => {
+            if (row.original.archived_at !== null) {
+                return (
+                    <div className="inline-flex items-center gap-1">
+                        <Button
+                            variant="ghost"
+                            size="xs"
+                            onClick={() => onRestore(row.original.id)}
+                        >
+                            <ArchiveRestore className="h-3.5 w-3.5 text-primary" />
+                        </Button>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="inline-flex items-center gap-1">
                     <Button
                         variant="ghost"
                         size="xs"
-                        onClick={() => onDeactivate(row.original.id)}
+                        onClick={() => onEdit(row.original)}
                     >
-                        <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                        <Pencil className="h-3.5 w-3.5" />
                     </Button>
-                ) : (
-                    <Button
-                        variant="ghost"
-                        size="xs"
-                        onClick={() => onReactivate(row.original.id)}
-                    >
-                        <RotateCcw className="h-3.5 w-3.5 text-primary" />
-                    </Button>
-                )}
-            </div>
-        ),
+                    {row.original.is_active ? (
+                        <Button
+                            variant="ghost"
+                            size="xs"
+                            onClick={() => onDeactivate(row.original.id)}
+                        >
+                            <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                        </Button>
+                    ) : (
+                        <>
+                            <Button
+                                variant="ghost"
+                                size="xs"
+                                onClick={() => onReactivate(row.original.id)}
+                            >
+                                <RotateCcw className="h-3.5 w-3.5 text-primary" />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="xs"
+                                onClick={() => onArchive(row.original.id)}
+                            >
+                                <Archive className="h-3.5 w-3.5 text-amber-600" />
+                            </Button>
+                        </>
+                    )}
+                </div>
+            );
+        },
     };
 }
 
-export default function SuppliersIndex({ suppliers }: SuppliersIndexProps) {
+function visit(url: string) {
+    router.visit(url, { preserveState: true, preserveScroll: true });
+}
+
+export default function SuppliersIndex({
+    suppliers,
+    filters,
+}: SuppliersIndexProps) {
     const [sheetOpen, setSheetOpen] = useState(false);
     const [editing, setEditing] = useState<Supplier | null>(null);
     const [deactivateId, setDeactivateId] = useState<number | null>(null);
     const [reactivateId, setReactivateId] = useState<number | null>(null);
+    const [archiveId, setArchiveId] = useState<number | null>(null);
+    const [restoreId, setRestoreId] = useState<number | null>(null);
 
     function openCreate() {
         setEditing(null);
@@ -107,18 +231,30 @@ export default function SuppliersIndex({ suppliers }: SuppliersIndexProps) {
 
     const canManage = usePage().props.auth.user['role'] === 'admin';
 
+    function applyStatusFilter(status: SupplierStatusFilter) {
+        visit(
+            suppliersIndex.url({
+                query: status === 'active' ? {} : { status },
+            }),
+        );
+    }
+
     const columns: ColumnDef<Supplier>[] = [
         { accessorKey: 'name', header: 'Name' },
         { accessorKey: 'email', header: 'Email' },
         { accessorKey: 'phone', header: 'Phone' },
-        {
-            accessorKey: 'is_active',
-            header: 'Status',
-            cell: StatusCell,
-        },
+        createStatusColumn(filters.status, applyStatusFilter),
         { accessorKey: 'products_count', header: 'Products' },
         ...(canManage
-            ? [createActionsColumn(openEdit, setDeactivateId, setReactivateId)]
+            ? [
+                  createActionsColumn(
+                      openEdit,
+                      setDeactivateId,
+                      setReactivateId,
+                      setArchiveId,
+                      setRestoreId,
+                  ),
+              ]
             : []),
     ];
 
@@ -266,6 +402,30 @@ export default function SuppliersIndex({ suppliers }: SuppliersIndexProps) {
                         to={suppliers.to}
                     />
                 </>
+            ) : filters.status !== 'active' ? (
+                <>
+                    <DataGrid columns={columns} data={suppliers.data} />
+                    <div className="flex flex-col items-center gap-4 py-12">
+                        <p className="text-sm text-muted-foreground">
+                            No suppliers match the selected filter.
+                        </p>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => applyStatusFilter('active')}
+                        >
+                            <RotateCcw className="h-3.5 w-3.5" />
+                            Reset to Active
+                        </Button>
+                    </div>
+                    <Paginator
+                        currentPage={suppliers.current_page}
+                        lastPage={suppliers.last_page}
+                        total={suppliers.total}
+                        from={suppliers.from}
+                        to={suppliers.to}
+                    />
+                </>
             ) : (
                 <EmptyState
                     title="No suppliers yet"
@@ -384,6 +544,111 @@ export default function SuppliersIndex({ suppliers }: SuppliersIndexProps) {
                                             disabled={processing}
                                         >
                                             Reactivate
+                                        </Button>
+                                    </DialogFooter>
+                                </>
+                            )}
+                        </Form>
+                    </DialogContent>
+                </Dialog>
+            )}
+
+            {archiveId !== null && (
+                <Dialog
+                    open
+                    onOpenChange={(open) => {
+                        if (!open) {
+                            setArchiveId(null);
+                        }
+                    }}
+                >
+                    <DialogContent
+                        showCloseButton={false}
+                        className="sm:max-w-sm"
+                    >
+                        <Form
+                            {...archiveSupplier.form(archiveId)}
+                            key={archiveId}
+                            onSuccess={() => setArchiveId(null)}
+                        >
+                            {({ processing }) => (
+                                <>
+                                    <DialogHeader>
+                                        <DialogTitle>
+                                            Archive Supplier
+                                        </DialogTitle>
+                                        <DialogDescription>
+                                            Are you sure? The supplier will move
+                                            out of the current supplier list,
+                                            but linked products and history will
+                                            be preserved.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => setArchiveId(null)}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            variant="destructive"
+                                            type="submit"
+                                            disabled={processing}
+                                        >
+                                            Archive
+                                        </Button>
+                                    </DialogFooter>
+                                </>
+                            )}
+                        </Form>
+                    </DialogContent>
+                </Dialog>
+            )}
+
+            {restoreId !== null && (
+                <Dialog
+                    open
+                    onOpenChange={(open) => {
+                        if (!open) {
+                            setRestoreId(null);
+                        }
+                    }}
+                >
+                    <DialogContent
+                        showCloseButton={false}
+                        className="sm:max-w-sm"
+                    >
+                        <Form
+                            {...restoreSupplier.form(restoreId)}
+                            key={restoreId}
+                            onSuccess={() => setRestoreId(null)}
+                        >
+                            {({ processing }) => (
+                                <>
+                                    <DialogHeader>
+                                        <DialogTitle>
+                                            Restore Supplier
+                                        </DialogTitle>
+                                        <DialogDescription>
+                                            Are you sure? The supplier will be
+                                            restored as inactive. Reactivate it
+                                            when it should be available in
+                                            product forms.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => setRestoreId(null)}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            type="submit"
+                                            disabled={processing}
+                                        >
+                                            Restore
                                         </Button>
                                     </DialogFooter>
                                 </>
