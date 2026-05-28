@@ -47,6 +47,10 @@ minimumReleaseAgeExclude:
     - '@oxlint/binding-win32-x64-msvc@1.67.0'
     - oxfmt@0.52.0
     - oxlint@1.67.0
+    - '@inertiajs/core@3.3.0'
+    - '@inertiajs/react@3.3.0'
+    - '@inertiajs/vite@3.3.0'
+    - shadcn@4.8.2
 
 publicHoistPattern:
     - '@inertiajs/core'
