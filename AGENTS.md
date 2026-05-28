@@ -10,8 +10,8 @@
 
 ## Package Management
 
-- Frontend: Use `pnpm add <package>` (not npm).
-- Backend: Use `composer require <package>`.
+- Frontend: pnpm (not npm/yarn/bun)
+- Backend: composer
 
 ## Tools & Verification
 
