@@ -24,6 +24,7 @@
 Every change must pass ALL before pushing:
 
 ```
+composer format   # format all files (rector/php/ts)
 composer lint     # phpstan + tsc + oxlint
 php artisan test --compact
 pnpm run build    # (only if UI files changed)
@@ -35,12 +36,14 @@ Known quirk: `tsc --noEmit` errors on `.form()` are pre-existing across the proj
 ## PHP & Laravel
 
 ### Conventions
+
 - Syntax: PHP 8+ constructor property promotion. Explicit return types/type hints. Curly braces for all control structures. PHPDoc > inline comments. TitleCase Enums.
 - Artisan: `php artisan make:` with `--no-interaction`. Use `route:list`, `config:show`, `.env` for inspection.
 - Tinker: Single quotes (`'Code'`) to prevent shell expansion. Prefer factories/tests over creating models in tinker.
 - Eloquent/API: Use API Resources & versioning for APIs (unless convention differs). Use `route()` for links.
 
 ### PHPStan Max Level Gotchas
+
 - **Never use `@phpstan-ignore`** — find a real fix.
 - **`findOrFail`/`find` returns `Model|Collection`** → Use `$query->where('id', $id)->firstOrFail()` or `->first()` for narrow `TModel` type.
 - **"Dynamic call to static method" false positive** on `orderBy`, `reorder`, `lockForUpdate`, `select`, `addSelect`, `leftJoin`, `lockForUpdate`. Fix: `$builder->getQuery()->methodName()`.
@@ -48,18 +51,21 @@ Known quirk: `tsc --noEmit` errors on `.form()` are pre-existing across the proj
 - **`intval(mixed)` also rejected** → use `is_int()` guard with `throw` instead.
 
 ### Eloquent Gotchas
+
 - **`lockForUpdate()` + stale reference**: Locking a row but discarding the result leaves stale data. Read the column directly from the locked query in one round-trip.
 - **`SoftDeletes` + eager loading**: `->with('relation')` implicitly adds `WHERE deleted_at IS NULL` on the related model. Use `LEFT JOIN` with aliased columns instead of eager loading when trashed rows should still appear.
 
 ## Frontend: Inertia + React
 
 ### Inertia v3
+
 - Components in `resources/js/pages`. Use `Inertia::render()`.
 - `useHttp` hook, optimistic updates, `useLayoutProps`, simplified SSR (`@inertiajs/vite`).
 - `Inertia::lazy()` → `Inertia::optional()`. Axios removed. Events: `invalid` → `httpException`, `exception` → `networkError`.
 - `router.cancel()` → `router.cancelAll()`. Deferred props need skeleton loading states.
 
 ### Form Conventions
+
 - **Use `<Form>` component** (not `useForm`). Every form uses `<Form>` with Wayfinder `.form()` spread.
 - **Create/Edit toggle**: `key={editing?.id ?? 'create'}` on `<Form>` to remount.
 - **Delete operations**: `<Form {...destroy.form(id)}>` inside `<Dialog>` with `<button type="submit">`, not `router.delete()`.
@@ -67,27 +73,32 @@ Known quirk: `tsc --noEmit` errors on `.form()` are pre-existing across the proj
 - **Validation**: Laravel redirects back with errors on failure; `<Form>` render props provide `errors` automatically.
 
 ### `<Form>` Render Props (v3.3.0)
+
 - **Only exposes**: `errors`, `processing`, `submit`, `getData`, `getFormData` — **NO `data`/`setData`**.
 - **Text inputs**: Use `name` + `defaultValue` (uncontrolled). The Form reads DOM values on submit.
 - **Controlled components** (shadcn `<Select>`, button groups): Use local `useState` + `<input type="hidden" name="field" value={state}>`.
 
 ### Sheet/Dialog + Form Nesting
+
 - **`<Form>` goes inside `<SheetContent>`/`<DialogContent>`**, not outside. Radix renders via Portal at `<body>` level.
 - Always: `Dialog > DialogContent > Form > button[type=submit]`.
 - Use `onSuccess` callback to close the Sheet/Dialog. Use `resetOnSuccess`.
 
 ### DataGrid & @tanstack/react-table
+
 - **`accessorKey` does NOT resolve nested dot notation** (`'product.name'` → `undefined`). Use `accessorFn: (row) => row.product?.name`.
 - **Cell renderers**: Extract to module-level functions taking `{ row }: { row: Row<T> }`. Never define inline (oxlint blocks it).
 - **Pagination**: Always `->paginate()` on server. DataGrid renders rows only — use `<Paginator>` below it.
 
 ### Authorization-based UI Hiding
+
 - Access role via `usePage().props.auth.user['role']`.
 - Conditionally include DataGrid columns: `...(canManage ? [createActionsColumn(...)] : [])`.
 - Hide create buttons and EmptyState CTAs when user lacks permission (pass `action={undefined}`).
 - Route-level `auth` middleware guarantees user is non-null on protected pages.
 
 ### Oxlint & TypeScript Strict Rules
+
 - **`noUncheckedIndexedAccess`**: Always bracket notation — `errors['field']`, `user['role']`, `user['name']`. Never `errors.field`.
 - **`react/no-unstable-nested-components`**: No eslint-disable. Extract inline components to module-level.
 - **`@stylistic(padding-line-between-statements)`**: Blank lines between assignments and control-flow inside blocks.

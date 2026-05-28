@@ -140,14 +140,16 @@ export default function StockMovementsIndex({
                 </Button>
             </div>
 
-            <Sheet open={sheetOpen} onOpenChange={(open) => {
-                setSheetOpen(open);
+            <Sheet
+                open={sheetOpen}
+                onOpenChange={(open) => {
+                    setSheetOpen(open);
 
-                if (!open) {
-                    setProductId('');
-                    setType('in');
-                }
-            }}
+                    if (!open) {
+                        setProductId('');
+                        setType('in');
+                    }
+                }}
             >
                 <SheetContent>
                     <Form
@@ -193,9 +195,7 @@ export default function StockMovementsIndex({
                                                             product.id,
                                                         )}
                                                     >
-                                                        {product.name}
-                                                        {' '}
-                                                        (Stock:{' '}
+                                                        {product.name} (Stock:{' '}
                                                         {product.stock_qty})
                                                     </SelectItem>
                                                 ))}
@@ -216,27 +216,31 @@ export default function StockMovementsIndex({
                                             value={type}
                                         />
                                         <div className="flex gap-2">
-                                            {(['in', 'out', 'adjustment'] as const).map(
-                                                (mtype) => (
-                                                    <button
-                                                        key={mtype}
-                                                        type="button"
-                                                        onClick={() =>
-                                                            setType(mtype)
-                                                        }
-                                                        className={`flex-1 cursor-pointer rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
-                                                            type === mtype
-                                                                ? 'border-primary bg-primary/10 text-primary'
-                                                                : 'border-input text-muted-foreground hover:bg-muted'
-                                                        }`}
-                                                    >
-                                                        {mtype
-                                                            .charAt(0)
-                                                            .toUpperCase() +
-                                                            mtype.slice(1)}
-                                                    </button>
-                                                ),
-                                            )}
+                                            {(
+                                                [
+                                                    'in',
+                                                    'out',
+                                                    'adjustment',
+                                                ] as const
+                                            ).map((mtype) => (
+                                                <button
+                                                    key={mtype}
+                                                    type="button"
+                                                    onClick={() =>
+                                                        setType(mtype)
+                                                    }
+                                                    className={`flex-1 cursor-pointer rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+                                                        type === mtype
+                                                            ? 'border-primary bg-primary/10 text-primary'
+                                                            : 'border-input text-muted-foreground hover:bg-muted'
+                                                    }`}
+                                                >
+                                                    {mtype
+                                                        .charAt(0)
+                                                        .toUpperCase() +
+                                                        mtype.slice(1)}
+                                                </button>
+                                            ))}
                                         </div>
                                         {errors['type'] && (
                                             <p className="text-sm text-destructive">
