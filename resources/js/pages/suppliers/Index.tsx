@@ -1,48 +1,113 @@
-import { Head } from '@inertiajs/react';
+import { Form, Head, usePage } from '@inertiajs/react';
+import type { ColumnDef, Row } from '@tanstack/react-table';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-import { ConfirmDialog } from '@/common/ConfirmDialog';
+import {
+    store as createSupplier,
+    update as updateSupplier,
+    destroy as deactivateSupplier,
+} from '@/actions/App/Http/Controllers/SupplierController';
+import { DataGrid } from '@/common/DataGrid';
 import { EmptyState } from '@/common/EmptyState';
+import { Paginator } from '@/common/Paginator';
 import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
     Sheet,
     SheetContent,
     SheetDescription,
     SheetHeader,
     SheetTitle,
-    SheetTrigger,
 } from '@/components/ui/sheet';
-import type { Supplier } from '@/types';
+import { Textarea } from '@/components/ui/textarea';
+import type { Paginated, Supplier } from '@/types';
 
-const sampleData: Supplier[] = [
-    {
-        id: 1,
-        name: 'TechSupply Co.',
-        email: 'orders@techsupply.com',
-        phone: '+1-555-0100',
-        is_active: true,
-    },
-    {
-        id: 2,
-        name: 'OfficeWorld',
-        email: 'sales@officeworld.com',
-        phone: '+1-555-0101',
-        is_active: true,
-    },
-    {
-        id: 3,
-        name: 'Global Distributors',
-        email: null,
-        phone: '+1-555-0102',
-        is_active: false,
-    },
-];
+type SuppliersIndexProps = {
+    suppliers: Paginated<Supplier>;
+};
 
-export default function SuppliersIndex() {
-    const [editing, setEditing] = useState<Supplier | null>(null);
+function StatusCell({ row }: { row: Row<Supplier> }): React.ReactElement {
+    return (
+        <span
+            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                row.original.is_active
+                    ? 'bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400'
+                    : 'bg-muted text-muted-foreground'
+            }`}
+        >
+            {row.original.is_active ? 'Active' : 'Inactive'}
+        </span>
+    );
+}
+
+function createActionsColumn(
+    onEdit: (s: Supplier) => void,
+    onDeactivate: (id: number) => void,
+): ColumnDef<Supplier> {
+    return {
+        id: 'actions',
+        cell: ({ row }) => (
+            <div className="inline-flex items-center gap-1">
+                <Button
+                    variant="ghost"
+                    size="xs"
+                    onClick={() => onEdit(row.original)}
+                >
+                    <Pencil className="h-3.5 w-3.5" />
+                </Button>
+                {row.original.is_active && (
+                    <Button
+                        variant="ghost"
+                        size="xs"
+                        onClick={() => onDeactivate(row.original.id)}
+                    >
+                        <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                    </Button>
+                )}
+            </div>
+        ),
+    };
+}
+
+export default function SuppliersIndex({ suppliers }: SuppliersIndexProps) {
     const [sheetOpen, setSheetOpen] = useState(false);
-    const [deleteId, setDeleteId] = useState<number | null>(null);
+    const [editing, setEditing] = useState<Supplier | null>(null);
+    const [deactivateId, setDeactivateId] = useState<number | null>(null);
+
+    function openCreate() {
+        setEditing(null);
+        setSheetOpen(true);
+    }
+
+    function openEdit(supplier: Supplier) {
+        setEditing(supplier);
+        setSheetOpen(true);
+    }
+
+    const canManage = usePage().props.auth.user['role'] === 'admin';
+
+    const columns: ColumnDef<Supplier>[] = [
+        { accessorKey: 'name', header: 'Name' },
+        { accessorKey: 'email', header: 'Email' },
+        { accessorKey: 'phone', header: 'Phone' },
+        {
+            accessorKey: 'is_active',
+            header: 'Status',
+            cell: StatusCell,
+        },
+        { accessorKey: 'products_count', header: 'Products' },
+        ...(canManage ? [createActionsColumn(openEdit, setDeactivateId)] : []),
+    ];
 
     return (
         <>
@@ -57,169 +122,210 @@ export default function SuppliersIndex() {
                         Manage your product suppliers.
                     </p>
                 </div>
-                <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-                    <SheetTrigger asChild>
-                        <Button size="sm" onClick={() => setEditing(null)}>
-                            <Plus className="h-4 w-4" />
-                            Add Supplier
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent>
-                        <SheetHeader>
-                            <SheetTitle>
-                                {editing ? 'Edit Supplier' : 'Create Supplier'}
-                            </SheetTitle>
-                            <SheetDescription>
-                                {editing
-                                    ? 'Update supplier details.'
-                                    : 'Add a new supplier.'}
-                            </SheetDescription>
-                        </SheetHeader>
-                        <div className="mt-6 space-y-4">
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-medium text-foreground">
-                                    Name
-                                </label>
-                                <input
-                                    type="text"
-                                    defaultValue={editing?.name ?? ''}
-                                    className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground focus:ring-2 focus:ring-ring focus:outline-none"
-                                />
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-medium text-foreground">
-                                    Email
-                                </label>
-                                <input
-                                    type="email"
-                                    defaultValue={editing?.email ?? ''}
-                                    className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground focus:ring-2 focus:ring-ring focus:outline-none"
-                                />
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-medium text-foreground">
-                                    Phone
-                                </label>
-                                <input
-                                    type="text"
-                                    defaultValue={editing?.phone ?? ''}
-                                    className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground focus:ring-2 focus:ring-ring focus:outline-none"
-                                />
-                            </div>
-                            <div className="pt-4">
-                                <Button className="w-full">
-                                    {editing ? 'Update' : 'Create'}
-                                </Button>
-                            </div>
-                        </div>
-                    </SheetContent>
-                </Sheet>
+                {canManage && (
+                    <Button size="sm" onClick={openCreate}>
+                        <Plus className="h-4 w-4" />
+                        Add Supplier
+                    </Button>
+                )}
             </div>
 
-            {sampleData.length > 0 ? (
-                <div className="overflow-hidden rounded-xl border border-border">
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b border-border">
-                                <th className="h-10 px-4 text-left text-xs font-medium text-muted-foreground">
-                                    Name
-                                </th>
-                                <th className="h-10 px-4 text-left text-xs font-medium text-muted-foreground">
-                                    Email
-                                </th>
-                                <th className="h-10 px-4 text-left text-xs font-medium text-muted-foreground">
-                                    Phone
-                                </th>
-                                <th className="h-10 px-4 text-left text-xs font-medium text-muted-foreground">
-                                    Status
-                                </th>
-                                <th className="h-10 px-4 text-right text-xs font-medium text-muted-foreground">
-                                    Actions
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {sampleData.map((s) => (
-                                <tr
-                                    key={s.id}
-                                    className="border-b border-border last:border-0 hover:bg-muted/50"
-                                >
-                                    <td className="h-12 px-4 font-medium text-foreground">
-                                        {s.name}
-                                    </td>
-                                    <td className="h-12 px-4 text-muted-foreground">
-                                        {s.email ?? '-'}
-                                    </td>
-                                    <td className="h-12 px-4 text-muted-foreground">
-                                        {s.phone ?? '-'}
-                                    </td>
-                                    <td className="h-12 px-4">
-                                        <span
-                                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                                                s.is_active
-                                                    ? 'bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400'
-                                                    : 'bg-muted text-muted-foreground'
-                                            }`}
+            <Sheet
+                open={sheetOpen}
+                onOpenChange={(open) => {
+                    setSheetOpen(open);
+
+                    if (!open) {
+                        setEditing(null);
+                    }
+                }}
+            >
+                <SheetContent>
+                    <Form
+                        {...(editing
+                            ? updateSupplier.form(editing.id)
+                            : createSupplier.form())}
+                        key={editing?.id ?? 'create'}
+                        onSuccess={() => {
+                            setSheetOpen(false);
+                            setEditing(null);
+                        }}
+                        resetOnSuccess
+                    >
+                        {({ processing, errors }) => (
+                            <>
+                                <SheetHeader>
+                                    <SheetTitle>
+                                        {editing
+                                            ? 'Edit Supplier'
+                                            : 'Create Supplier'}
+                                    </SheetTitle>
+                                    <SheetDescription>
+                                        {editing
+                                            ? 'Update the supplier details.'
+                                            : 'Add a new supplier to your catalog.'}
+                                    </SheetDescription>
+                                </SheetHeader>
+                                <div className="mt-6 space-y-4">
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="name">Name</Label>
+                                        <Input
+                                            id="name"
+                                            name="name"
+                                            defaultValue={editing?.name ?? ''}
+                                            placeholder="e.g. TechSupply Co."
+                                        />
+                                        {errors['name'] && (
+                                            <p className="text-sm text-destructive">
+                                                {errors['name']}
+                                            </p>
+                                        )}
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="email">Email</Label>
+                                        <Input
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            defaultValue={editing?.email ?? ''}
+                                            placeholder="orders@supplier.com"
+                                        />
+                                        {errors['email'] && (
+                                            <p className="text-sm text-destructive">
+                                                {errors['email']}
+                                            </p>
+                                        )}
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="phone">Phone</Label>
+                                        <Input
+                                            id="phone"
+                                            name="phone"
+                                            defaultValue={editing?.phone ?? ''}
+                                            placeholder="+1-555-0100"
+                                        />
+                                        {errors['phone'] && (
+                                            <p className="text-sm text-destructive">
+                                                {errors['phone']}
+                                            </p>
+                                        )}
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="address">Address</Label>
+                                        <Textarea
+                                            id="address"
+                                            name="address"
+                                            defaultValue={
+                                                editing?.address ?? ''
+                                            }
+                                            rows={3}
+                                            placeholder="Optional address"
+                                        />
+                                    </div>
+                                    <div className="pt-4">
+                                        <Button
+                                            className="w-full"
+                                            type="submit"
+                                            disabled={processing}
                                         >
-                                            {s.is_active
-                                                ? 'Active'
-                                                : 'Inactive'}
-                                        </span>
-                                    </td>
-                                    <td className="h-12 px-4 text-right">
-                                        <div className="inline-flex items-center gap-1">
-                                            <Button
-                                                variant="ghost"
-                                                size="xs"
-                                                onClick={() => {
-                                                    setEditing(s);
-                                                    setSheetOpen(true);
-                                                }}
-                                            >
-                                                <Pencil className="h-3.5 w-3.5" />
-                                            </Button>
-                                            <Button
-                                                variant="ghost"
-                                                size="xs"
-                                                onClick={() =>
-                                                    setDeleteId(s.id)
-                                                }
-                                            >
-                                                <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                                            </Button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                                            {processing
+                                                ? 'Saving...'
+                                                : editing
+                                                  ? 'Update'
+                                                  : 'Create'}
+                                        </Button>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                    </Form>
+                </SheetContent>
+            </Sheet>
+
+            {suppliers.data.length > 0 ? (
+                <>
+                    <DataGrid columns={columns} data={suppliers.data} />
+                    <Paginator
+                        currentPage={suppliers.current_page}
+                        lastPage={suppliers.last_page}
+                        total={suppliers.total}
+                        from={suppliers.from}
+                        to={suppliers.to}
+                    />
+                </>
             ) : (
                 <EmptyState
                     title="No suppliers yet"
-                    description="Add suppliers to track who you purchase products from."
+                    description={
+                        canManage
+                            ? 'Add your first supplier to track who you purchase products from.'
+                            : 'No suppliers have been added yet.'
+                    }
                     action={
-                        <Button size="sm" onClick={() => setSheetOpen(true)}>
-                            <Plus className="h-4 w-4" />
-                            Add Supplier
-                        </Button>
+                        canManage ? (
+                            <Button size="sm" onClick={openCreate}>
+                                <Plus className="h-4 w-4" />
+                                Add Supplier
+                            </Button>
+                        ) : undefined
                     }
                 />
             )}
 
-            <ConfirmDialog
-                open={deleteId !== null}
-                onOpenChange={(open) => {
-                    if (!open) {
-                        setDeleteId(null);
-                    }
-                }}
-                onConfirm={() => setDeleteId(null)}
-                title="Delete Supplier"
-                description="Are you sure? This action cannot be undone."
-                confirmLabel="Delete"
-                destructive
-            />
+            {deactivateId !== null && (
+                <Dialog
+                    open
+                    onOpenChange={(open) => {
+                        if (!open) {
+                            setDeactivateId(null);
+                        }
+                    }}
+                >
+                    <DialogContent
+                        showCloseButton={false}
+                        className="sm:max-w-sm"
+                    >
+                        <Form
+                            {...deactivateSupplier.form(deactivateId)}
+                            key={deactivateId}
+                            onSuccess={() => setDeactivateId(null)}
+                        >
+                            {({ processing }) => (
+                                <>
+                                    <DialogHeader>
+                                        <DialogTitle>
+                                            Deactivate Supplier
+                                        </DialogTitle>
+                                        <DialogDescription>
+                                            Are you sure? The supplier will be
+                                            deactivated and hidden from active
+                                            lists, but historical records will
+                                            be preserved.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() =>
+                                                setDeactivateId(null)
+                                            }
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            variant="destructive"
+                                            type="submit"
+                                            disabled={processing}
+                                        >
+                                            Deactivate
+                                        </Button>
+                                    </DialogFooter>
+                                </>
+                            )}
+                        </Form>
+                    </DialogContent>
+                </Dialog>
+            )}
         </>
     );
 }

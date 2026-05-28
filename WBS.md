@@ -79,14 +79,14 @@
 
 ### 3.1 Suppliers (Sheet-based CRUD)
 
-- [ ] 3.1.1 Create `SupplierController` + routes
-- [ ] 3.1.2 Create `StoreSupplierRequest` / `UpdateSupplierRequest`
-- [ ] 3.1.3 Create `Actions/Parties/CreateSupplierAction`
-- [ ] 3.1.4 Create `Actions/Parties/UpdateSupplierAction`
-- [ ] 3.1.5 Create `Actions/Parties/DeactivateSupplierAction`
-- [ ] 3.1.6 Create `SupplierPolicy` (admin: all, staff: view only)
-- [ ] 3.1.7 Build `Suppliers/Index.tsx` (DataGrid + Sheet-based CRUD)
-- [ ] 3.1.8 Write Pest feature tests for Supplier CRUD + policy
+- [x] 3.1.1 Create `SupplierController` + routes
+- [x] 3.1.2 Create `StoreSupplierRequest` / `UpdateSupplierRequest`
+- [x] 3.1.3 Create `Actions/Parties/CreateSupplierAction`
+- [x] 3.1.4 Create `Actions/Parties/UpdateSupplierAction`
+- [x] 3.1.5 Create `Actions/Parties/DeactivateSupplierAction`
+- [x] 3.1.6 Create `SupplierPolicy` (admin: all, staff: view only)
+- [x] 3.1.7 Build `Suppliers/Index.tsx` (DataGrid + Sheet-based CRUD)
+- [x] 3.1.8 Write Pest feature tests for Supplier CRUD + policy
 
 ## 4. Inventory Domain
 
