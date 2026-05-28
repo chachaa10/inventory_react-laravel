@@ -58,4 +58,6 @@ jobs:
         run: pnpm run build
 
       - name: CI Check (Static Analysis, Lint, Tests)
+        env:
+          LARAVEL_BYPASS_ENV_CHECK: 1
         run: composer ci:check
