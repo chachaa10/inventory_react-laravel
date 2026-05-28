@@ -81,7 +81,7 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test",
-            "pnpm run test"
+            "pnpm run test:run"
         ],
         "check": [
             "@format",
