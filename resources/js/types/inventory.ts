@@ -65,7 +65,8 @@ export type StockMovementType = 'in' | 'out' | 'adjustment';
 
 export type StockMovement = {
     id: number;
-    product: { id: number; name: string };
+    product_name: string | null;
+    product: { id: number; name: string } | null;
     type: StockMovementType;
     qty: number;
     before_qty: number;

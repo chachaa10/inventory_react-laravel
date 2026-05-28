@@ -16,9 +16,15 @@ class StockMovementController extends Controller
 {
     public function index(): Response
     {
-        $lengthAwarePaginator = StockMovement::query()
-            ->with('product:id,name', 'user:id,name')
-            ->latest()
+        $builder = StockMovement::query();
+
+        $builder->getQuery()->select('stock_movements.*');
+        $builder->getQuery()->addSelect('products.name as product_name');
+        $builder->getQuery()->leftJoin('products', 'stock_movements.product_id', '=', 'products.id');
+
+        $lengthAwarePaginator = $builder
+            ->with('user:id,name')
+            ->latest('stock_movements.created_at')
             ->paginate(50);
 
         return Inertia::render('stock-movements/Index', [

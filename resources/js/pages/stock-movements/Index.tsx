@@ -34,7 +34,7 @@ function TypeCell({ row }: { row: Row<StockMovement> }): React.ReactElement {
 
 const columns: ColumnDef<StockMovement>[] = [
     {
-        accessorFn: (row) => row.product?.name,
+        accessorFn: (row) => row.product_name ?? row.product?.name,
         id: 'product',
         header: 'Product',
     },
