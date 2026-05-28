@@ -35,6 +35,8 @@ export type ProductFilters = {
     stock_status: string;
 };
 
+export type SupplierStatusFilter = 'active' | 'inactive' | 'archived' | 'all';
+
 export type Category = {
     id: number;
     name: string;
@@ -50,7 +52,13 @@ export type Supplier = {
     phone: string | null;
     address: string | null;
     is_active: boolean;
+    deactivated_at: string | null;
+    archived_at: string | null;
     products_count: number;
+};
+
+export type SupplierFilters = {
+    status: SupplierStatusFilter;
 };
 
 export type Customer = {

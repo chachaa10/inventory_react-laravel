@@ -6,13 +6,14 @@ namespace App\Actions\Parties;
 
 use App\Models\Supplier;
 
-class DeactivateSupplierAction
+class ArchiveSupplierAction
 {
     public function execute(Supplier $supplier): void
     {
         $supplier->update([
             'is_active' => false,
-            'deactivated_at' => now(),
+            'deactivated_at' => $supplier->deactivated_at ?? now(),
+            'archived_at' => now(),
         ]);
     }
 }

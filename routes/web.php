@@ -33,6 +33,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::put('suppliers/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
     Route::delete('suppliers/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
     Route::put('suppliers/{supplier}/activate', [SupplierController::class, 'activate'])->name('suppliers.activate');
+    Route::put('suppliers/{supplier}/archive', [SupplierController::class, 'archive'])->name('suppliers.archive');
+    Route::put('suppliers/{supplier}/restore', [SupplierController::class, 'restore'])->name('suppliers.restore');
 
     Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::post('customers', [CustomerController::class, 'store'])->name('customers.store');

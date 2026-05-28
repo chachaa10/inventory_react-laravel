@@ -10,6 +10,10 @@ class ActivateSupplierAction
 {
     public function execute(Supplier $supplier): void
     {
-        $supplier->update(['is_active' => true]);
+        $supplier->update([
+            'is_active' => true,
+            'deactivated_at' => null,
+            'archived_at' => null,
+        ]);
     }
 }
