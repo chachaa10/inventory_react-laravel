@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\Inventory\RecordMovementAction;
-use App\Http\Requests\StoreStockMovementRequest;
+use App\Http\Requests\StockMovement\StoreStockMovementRequest;
 use App\Models\Product;
 use App\Models\StockMovement;
 use Illuminate\Http\RedirectResponse;

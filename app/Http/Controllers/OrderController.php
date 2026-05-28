@@ -6,8 +6,8 @@ namespace App\Http\Controllers;
 
 use App\Actions\Sales\CancelOrderAction;
 use App\Actions\Sales\CreateOrderAction;
-use App\Http\Requests\StoreOrderRequest;
-use App\Http\Requests\UpdateOrderRequest;
+use App\Http\Requests\Order\StoreOrderRequest;
+use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
