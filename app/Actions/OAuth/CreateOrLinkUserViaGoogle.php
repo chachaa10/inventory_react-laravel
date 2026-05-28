@@ -27,6 +27,6 @@ class CreateOrLinkUserViaGoogle
             'name' => $googleUser->getName(),
             'email' => $googleUser->getEmail(),
             'google_id' => $googleUser->getId(),
-        ]), fn ($user) => $user->forceFill(['email_verified_at' => now()])->save());
+        ]), fn (User $user) => $user->forceFill(['email_verified_at' => now()])->save());
     }
 }

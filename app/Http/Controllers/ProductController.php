@@ -13,6 +13,7 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Supplier;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -28,7 +29,7 @@ class ProductController extends Controller
         $search = $request->string('search')->toString();
 
         if ($search !== '') {
-            $query->where(function ($q) use ($search): void {
+            $query->where(function (Builder $q) use ($search): void {
                 $q->where('name', 'like', sprintf('%%%s%%', $search))
                     ->orWhere('sku', 'like', sprintf('%%%s%%', $search));
             });
