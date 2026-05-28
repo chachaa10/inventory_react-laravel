@@ -43,6 +43,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
     Route::post('orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('orders/create', [OrderController::class, 'create'])->name('orders.create');
     Route::get('orders/{order}', [OrderController::class, 'edit'])->name('orders.edit');
     Route::put('orders/{order}', [OrderController::class, 'update'])->name('orders.update');
 });

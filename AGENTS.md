@@ -49,6 +49,9 @@ Known quirk: `tsc --noEmit` errors on `.form()` are pre-existing across the proj
 - **"Dynamic call to static method" false positive** on `orderBy`, `reorder`, `lockForUpdate`, `select`, `addSelect`, `leftJoin`, `lockForUpdate`. Fix: `$builder->getQuery()->methodName()`.
 - **`fake()->randomElement(Enum::cases())->value`** → `randomElement` returns `mixed`. Fix: `array_map(fn($t) => $t->value, Enum::cases())` to produce typed `list<string>` before `randomElement`.
 - **`intval(mixed)` also rejected** → use `is_int()` guard with `throw` instead.
+- **`throw_if` inside closures corrupts PHPStan cache**: fresh analysis passes, cached run fails with `Unreachable statement` / `Property never read`. Fix: extract guard logic into private methods where `throw_if` is the **last statement** so nothing follows that could be flagged unreachable.
+- **`always-read-written-properties` blind to reads inside closures**: property reads inside `DB::transaction` closures aren't tracked. Extract a private method that reads the property at the class level to make it visible.
+- **Tracked-file revert warning**: `git checkout` on a tracked file only reverts that file — but untracked files (`??`) survive. If a tracked controller or route file was modified alongside new untracked files, a revert silently kills the controller logic while the actions/exceptions still exist. Always `git status` after a reset to check what actually changed.
 
 ### Eloquent Gotchas
 
