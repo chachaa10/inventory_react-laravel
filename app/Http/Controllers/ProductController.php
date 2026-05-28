@@ -57,8 +57,9 @@ class ProductController extends Controller
         $lengthAwarePaginator = $builder->latest()->paginate(10);
 
         $categories = Category::all(['id', 'name'])->sortBy('name')->values();
-        $suppliers = Supplier::query()
-            ->where('is_active', true)->get(['id', 'name'])->sortBy('name')->values();
+        $supplierBuilder = Supplier::query()->where('is_active', true);
+        $supplierBuilder->getQuery()->whereNull('archived_at');
+        $suppliers = $supplierBuilder->get(['id', 'name'])->sortBy('name')->values();
 
         return Inertia::render('products/Index', [
             'products' => $lengthAwarePaginator,

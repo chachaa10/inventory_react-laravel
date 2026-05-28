@@ -132,6 +132,25 @@ export default function ProductsIndex({
     const [deleteId, setDeleteId] = useState<number | null>(null);
 
     const canManage = auth.user['role'] === 'admin';
+    const activeSupplierOptions = suppliers.map((supplier) => ({
+        id: supplier.id,
+        name: supplier.name,
+        isCurrent: false,
+    }));
+    const currentSupplier = editing?.supplier ?? null;
+    const currentSupplierMissing =
+        currentSupplier !== null &&
+        !suppliers.some((supplier) => supplier.id === currentSupplier.id);
+    const supplierOptions = currentSupplierMissing
+        ? [
+              {
+                  id: currentSupplier.id,
+                  name: currentSupplier.name,
+                  isCurrent: true,
+              },
+              ...activeSupplierOptions,
+          ]
+        : activeSupplierOptions;
 
     function applyFilters(overrides: Partial<ProductFilters>) {
         const params = new URLSearchParams();
@@ -433,12 +452,15 @@ export default function ProductsIndex({
                                             <option value="">
                                                 Select supplier
                                             </option>
-                                            {suppliers.map((sup) => (
+                                            {supplierOptions.map((sup) => (
                                                 <option
                                                     key={sup.id}
                                                     value={sup.id}
                                                 >
                                                     {sup.name}
+                                                    {sup.isCurrent
+                                                        ? ' (current)'
+                                                        : ''}
                                                 </option>
                                             ))}
                                         </select>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Product;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -21,7 +22,13 @@ class StoreProductRequest extends FormRequest
             'unit' => ['required', 'string', 'max:20'],
             'reorder_level' => ['required', 'integer', 'min:0'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
-            'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
+            'supplier_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('suppliers', 'id')->where(function (Builder $builder): void {
+                    $builder->where('is_active', true)->whereNull('archived_at');
+                }),
+            ],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ];
     }

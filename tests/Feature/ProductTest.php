@@ -59,6 +59,27 @@ test('admin can create a product', function (): void {
     ]);
 });
 
+test('product cannot be created with an archived supplier', function (): void {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $this->actingAs($admin);
+
+    $category = Category::factory()->create();
+    $supplier = Supplier::factory()->create([
+        'is_active' => false,
+        'archived_at' => now(),
+    ]);
+
+    $this->post(route('products.store'), [
+        'name' => 'Test Product',
+        'sku' => 'SKU-TEST-ARCHIVED',
+        'price' => 29.99,
+        'unit' => 'pcs',
+        'reorder_level' => 10,
+        'category_id' => $category->id,
+        'supplier_id' => $supplier->id,
+    ])->assertSessionHasErrors('supplier_id');
+});
+
 test('admin can create a product with image', function (): void {
     $admin = User::factory()->create(['role' => 'admin']);
     $this->actingAs($admin);
@@ -103,6 +124,57 @@ test('admin can update a product', function (): void {
     $product->refresh();
     expect($product->name)->toBe('New Name');
     expect($product->price)->toBe(49.99);
+});
+
+test('product cannot be updated to an archived supplier', function (): void {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $this->actingAs($admin);
+
+    $category = Category::factory()->create();
+    $product = Product::factory()->create(['category_id' => $category->id]);
+    $supplier = Supplier::factory()->create([
+        'is_active' => false,
+        'archived_at' => now(),
+    ]);
+
+    $this->put(route('products.update', $product), [
+        'name' => $product->name,
+        'sku' => $product->sku,
+        'price' => $product->price,
+        'unit' => $product->unit,
+        'reorder_level' => $product->reorder_level,
+        'category_id' => $category->id,
+        'supplier_id' => $supplier->id,
+    ])->assertSessionHasErrors('supplier_id');
+});
+
+test('product can keep its current archived supplier when updated', function (): void {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $this->actingAs($admin);
+
+    $category = Category::factory()->create();
+    $supplier = Supplier::factory()->create([
+        'is_active' => false,
+        'archived_at' => now(),
+    ]);
+    $product = Product::factory()->create([
+        'category_id' => $category->id,
+        'supplier_id' => $supplier->id,
+    ]);
+
+    $this->put(route('products.update', $product), [
+        'name' => 'Updated Product',
+        'sku' => $product->sku,
+        'price' => $product->price,
+        'unit' => $product->unit,
+        'reorder_level' => $product->reorder_level,
+        'category_id' => $category->id,
+        'supplier_id' => $supplier->id,
+    ])->assertRedirect();
+
+    $product->refresh();
+    expect($product->name)->toBe('Updated Product');
+    expect($product->supplier_id)->toBe($supplier->id);
 });
 
 test('admin can update a product with image replacement', function (): void {
