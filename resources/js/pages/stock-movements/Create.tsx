@@ -1,26 +1,33 @@
-import { Head, Link } from '@inertiajs/react';
+import { Form, Head } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 
+import {
+    index,
+    store,
+} from '@/actions/App/Http/Controllers/StockMovementController';
 import { Button } from '@/components/ui/button';
-import type { StockMovementType } from '@/types';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import type { ProductOption } from '@/types';
 
-export default function StockMovementsCreate() {
-    const [form, setForm] = useState({
-        product_id: '',
-        type: 'in' as StockMovementType,
-        qty: '',
-        reference: '',
-        notes: '',
-    });
+type StockMovementsCreateProps = {
+    products: ProductOption[];
+};
 
-    const handleChange = (
-        e: React.ChangeEvent<
-            HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-        >,
-    ) => {
-        setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    };
+export default function StockMovementsCreate({
+    products,
+}: StockMovementsCreateProps) {
+    const [productId, setProductId] = useState('');
+    const [type, setType] = useState('in');
 
     return (
         <>
@@ -28,10 +35,10 @@ export default function StockMovementsCreate() {
 
             <div className="mb-6 flex items-center gap-4">
                 <Button variant="ghost" size="sm" asChild>
-                    <Link href="/stock-movements">
+                    <a href={index().url}>
                         <ArrowLeft className="h-4 w-4" />
                         Back
-                    </Link>
+                    </a>
                 </Button>
                 <div>
                     <h1 className="text-xl font-semibold text-foreground">
@@ -44,104 +51,135 @@ export default function StockMovementsCreate() {
             </div>
 
             <div className="max-w-xl rounded-xl border border-border p-6">
-                <div className="space-y-5">
-                    <div className="space-y-1.5">
-                        <label className="text-sm font-medium text-foreground">
-                            Product
-                        </label>
-                        <select
-                            name="product_id"
-                            value={form.product_id}
-                            onChange={handleChange}
-                            className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground focus:ring-2 focus:ring-ring focus:outline-none"
-                        >
-                            <option value="">Select product</option>
-                            <option value="1">Wireless Mouse</option>
-                            <option value="2">Mechanical Keyboard</option>
-                            <option value="3">USB-C Cable</option>
-                        </select>
-                    </div>
+                <Form {...store.form()}>
+                    {({ processing, errors }) => (
+                        <div className="space-y-5">
+                            <div className="space-y-1.5">
+                                <Label htmlFor="product_id">Product</Label>
+                                <input
+                                    type="hidden"
+                                    name="product_id"
+                                    value={productId}
+                                />
+                                <Select
+                                    value={productId}
+                                    onValueChange={(value) =>
+                                        setProductId(value)
+                                    }
+                                >
+                                    <SelectTrigger id="product_id">
+                                        <SelectValue placeholder="Select product" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {products.map((product) => (
+                                            <SelectItem
+                                                key={product.id}
+                                                value={String(product.id)}
+                                            >
+                                                {product.name} (Stock:{' '}
+                                                {product.stock_qty})
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {errors['product_id'] && (
+                                    <p className="text-sm text-destructive">
+                                        {errors['product_id']}
+                                    </p>
+                                )}
+                            </div>
 
-                    <div className="space-y-1.5">
-                        <label className="text-sm font-medium text-foreground">
-                            Movement Type
-                        </label>
-                        <div className="flex gap-2">
-                            {(['in', 'out', 'adjustment'] as const).map(
-                                (type) => (
-                                    <button
-                                        key={type}
-                                        type="button"
-                                        onClick={() =>
-                                            setForm((prev) => ({
-                                                ...prev,
-                                                type,
-                                            }))
-                                        }
-                                        className={`flex-1 rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
-                                            form.type === type
-                                                ? 'border-primary bg-primary/10 text-primary'
-                                                : 'border-input text-muted-foreground hover:bg-muted'
-                                        }`}
-                                    >
-                                        {type.charAt(0).toUpperCase() +
-                                            type.slice(1)}
-                                    </button>
-                                ),
-                            )}
+                            <div className="space-y-1.5">
+                                <Label>Movement Type</Label>
+                                <input type="hidden" name="type" value={type} />
+                                <div className="flex gap-2">
+                                    {(['in', 'out', 'adjustment'] as const).map(
+                                        (mtype) => (
+                                            <button
+                                                key={mtype}
+                                                type="button"
+                                                onClick={() => setType(mtype)}
+                                                className={`flex-1 cursor-pointer rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+                                                    type === mtype
+                                                        ? 'border-primary bg-primary/10 text-primary'
+                                                        : 'border-input text-muted-foreground hover:bg-muted'
+                                                }`}
+                                            >
+                                                {mtype.charAt(0).toUpperCase() +
+                                                    mtype.slice(1)}
+                                            </button>
+                                        ),
+                                    )}
+                                </div>
+                                {errors['type'] && (
+                                    <p className="text-sm text-destructive">
+                                        {errors['type']}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <Label htmlFor="qty">Quantity</Label>
+                                <Input
+                                    id="qty"
+                                    name="qty"
+                                    type="number"
+                                    min="1"
+                                    placeholder="e.g. 10"
+                                    defaultValue=""
+                                />
+                                {errors['qty'] && (
+                                    <p className="text-sm text-destructive">
+                                        {errors['qty']}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <Label htmlFor="reference">Reference</Label>
+                                <Input
+                                    id="reference"
+                                    name="reference"
+                                    placeholder="e.g. PO-001 or Order #1001"
+                                    defaultValue=""
+                                />
+                                {errors['reference'] && (
+                                    <p className="text-sm text-destructive">
+                                        {errors['reference']}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <Label htmlFor="notes">Notes</Label>
+                                <Textarea
+                                    id="notes"
+                                    name="notes"
+                                    rows={3}
+                                    placeholder="Optional notes about this movement"
+                                    defaultValue=""
+                                />
+                                {errors['notes'] && (
+                                    <p className="text-sm text-destructive">
+                                        {errors['notes']}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="pt-2">
+                                <Button
+                                    className="w-full"
+                                    type="submit"
+                                    disabled={processing}
+                                >
+                                    {processing
+                                        ? 'Recording...'
+                                        : 'Record Movement'}
+                                </Button>
+                            </div>
                         </div>
-                    </div>
-
-                    <div className="space-y-1.5">
-                        <label className="text-sm font-medium text-foreground">
-                            Quantity
-                        </label>
-                        <input
-                            type="number"
-                            name="qty"
-                            value={form.qty}
-                            onChange={handleChange}
-                            min="1"
-                            className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground focus:ring-2 focus:ring-ring focus:outline-none"
-                            placeholder="0"
-                        />
-                    </div>
-
-                    <div className="space-y-1.5">
-                        <label className="text-sm font-medium text-foreground">
-                            Reference (optional)
-                        </label>
-                        <input
-                            type="text"
-                            name="reference"
-                            value={form.reference}
-                            onChange={handleChange}
-                            className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground focus:ring-2 focus:ring-ring focus:outline-none"
-                            placeholder="e.g. PO-001 or Order #123"
-                        />
-                    </div>
-
-                    <div className="space-y-1.5">
-                        <label className="text-sm font-medium text-foreground">
-                            Notes (optional)
-                        </label>
-                        <textarea
-                            name="notes"
-                            value={form.notes}
-                            onChange={handleChange}
-                            rows={3}
-                            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus:ring-2 focus:ring-ring focus:outline-none"
-                            placeholder="Any additional notes..."
-                        />
-                    </div>
-                </div>
-
-                <div className="mt-6 flex items-center justify-end gap-2 border-t border-border pt-4">
-                    <Button variant="outline" asChild>
-                        <Link href="/stock-movements">Cancel</Link>
-                    </Button>
-                    <Button>Record Movement</Button>
-                </div>
+                    )}
+                </Form>
             </div>
         </>
     );

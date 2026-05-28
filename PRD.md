@@ -57,7 +57,7 @@ Build a dual-role (admin + staff) inventory management system with 6 database en
 ### Architecture
 
 - **Actions Pattern**: All business logic lives in single-action classes under `app/Actions/{Domain}/`. Each Action has a single public `__invoke()` method and may use constructor injection for dependencies. Controllers are thin — they validate via FormRequest, call an Action, and return an Inertia response or redirect.
-- **Service Class**: `StockMovementService` is the exception — a service class (not Action) that orchestrates stock adjustments within a DB transaction, dispatches events, and handles both manual movements and order-linked movements. This is justified because stock movement is a multi-step operation with conditional branching (order vs manual, in vs out vs adjustment).
+- **Actions Pattern (enforced)**: All business logic uses single-action classes. No service classes. Stock movement orchestration uses `RecordMovementAction` with DB transactions and `lockForUpdate()` for race-condition safety. Order-linked movements call the action directly.
 - **Wayfinder**: All route-to-controller calls from frontend use Wayfinder-generated typed functions. No hardcoded URLs or raw `router.post()` calls.
 - **Role Model**: A `role` enum column on the `users` table (`admin`, `staff`). No separate roles/pivot table — 80/20. Admin has full access. Staff is restricted to operational tasks via Policies.
 - **Policies**: `ProductPolicy`, `OrderPolicy`, `StockMovementPolicy`, `CategoryPolicy`, `SupplierPolicy` control authorization. Permission matrix:

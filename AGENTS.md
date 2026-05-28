@@ -97,4 +97,30 @@
 
 - **`<Form>` must go inside `<DialogContent>`, not outside.** Radix DialogContent renders via Portal at `<body>` level. If Form wraps DialogContent, submit button lives outside `<form>` — clicking does nothing. Always: `Dialog > DialogContent > Form > ... > button[type=submit]`.
 
+### Inertia v3 `<Form>` render props have NO `data`/`setData`
+
+- The `<Form>` component in v3.3.0 exposes only `errors`, `processing`, `submit`, `getData`, `getFormData` — not `data`/`setData`.
+- For controlled components (shadcn `<Select>`, button groups), use local `useState` + `<input type="hidden" name="field" value={state}>`.
+- For text inputs, use `name` + `defaultValue` (uncontrolled). The Form reads values from DOM elements on submit.
+
+### `@tanstack/react-table` `accessorKey` does NOT resolve nested dot notation
+
+- `accessorKey: 'product.name'` silently returns `undefined`. Use `accessorFn: (row) => row.product?.name` for nested object access.
+
+### PHPStan: `findOrFail`/`find` returns `Model|Collection` at max level
+
+- Root cause of cascading property/method errors on the result. Use `$query->where('id', $id)->firstOrFail()` or `->first()` instead — these return the narrow `TModel` type.
+
+### PHPStan: `lockForUpdate()` on Eloquent Builder
+
+- Also triggers the "Dynamic call to static method" false positive. Use `$query->getQuery()->lockForUpdate()` to bypass.
+
+### Stale `$product` after `lockForUpdate()`
+
+- If you lock the row with `lockForUpdate()` but discard the result, you still have stale data from the pre-lock fetch. Read the needed column directly from the locked query: `Product::query()->where('id', $id)->getQuery()->lockForUpdate()->value('column')`.
+
+### `fake()->randomElement(Enum::cases())->value` fails PHPStan
+
+- `randomElement` returns `mixed`. Use `array_map(fn ($t) => $t->value, Enum::cases())` before `randomElement` to produce a typed `list<string>`.
+
 </laravel-boost-guidelines>

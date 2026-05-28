@@ -39,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::delete('customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
 
     Route::get('stock-movements', [StockMovementController::class, 'index'])->name('stock-movements.index');
+    Route::get('stock-movements/create', [StockMovementController::class, 'create'])->name('stock-movements.create');
     Route::post('stock-movements', [StockMovementController::class, 'store'])->name('stock-movements.store');
 
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');

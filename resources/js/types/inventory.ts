@@ -65,12 +65,22 @@ export type StockMovementType = 'in' | 'out' | 'adjustment';
 
 export type StockMovement = {
     id: number;
-    product: string;
+    product: { id: number; name: string };
     type: StockMovementType;
     qty: number;
+    before_qty: number;
+    after_qty: number;
     reference: string | null;
-    user: string;
-    date: string;
+    notes: string | null;
+    user: { id: number; name: string };
+    created_at: string;
+};
+
+export type ProductOption = {
+    id: number;
+    name: string;
+    stock_qty: number;
+    reorder_level: number;
 };
 
 export type OrderStatus = 'pending' | 'completed' | 'cancelled';

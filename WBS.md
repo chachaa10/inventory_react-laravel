@@ -92,18 +92,18 @@
 
 ### 4.1 Stock Movements
 
-- [ ] 4.1.1 Create `StockMovementController` + routes
-- [ ] 4.1.2 Create `StoreStockMovementRequest`
-- [ ] 4.1.3 Create `Actions/Inventory/RecordMovementAction`
-- [ ] 4.1.4 Create `StockMovementService` (transactional orchestration)
-- [ ] 4.1.5 Create `StockMovementPolicy` (admin/staff: create & view)
-- [ ] 4.1.6 Create `Events/StockMoved` event
-- [ ] 4.1.7 Create `Events/LowStockDetected` event
-- [ ] 4.1.8 Create `Listeners/HandleLowStock` (creates database notification)
-- [ ] 4.1.9 Add `stock_qty` auto-update logic on movement creation
-- [ ] 4.1.10 Build `StockMovements/Index.tsx` (paginated history DataGrid)
-- [ ] 4.1.11 Build `StockMovements/Create.tsx` (product select, type, qty, reference, notes)
-- [ ] 4.1.12 Write Pest feature tests for stock movement CRUD, insufficient stock, notification
+- [x] 4.1.1 Create `StockMovementController` + routes (routes already existed)
+- [x] 4.1.2 Create `StoreStockMovementRequest`
+- [x] 4.1.3 Create `Actions/Inventory/RecordMovementAction`
+- [x] 4.1.4 Removed — Action used instead of Service (PRD updated)
+- [x] 4.1.5 Create `StockMovementPolicy` (admin/staff: create & view)
+- [x] 4.1.6 Create `Events/StockMoved` event
+- [x] 4.1.7 Create `Events/LowStockDetected` event
+- [x] 4.1.8 Create `Listeners/HandleLowStock` (creates database notification)
+- [x] 4.1.9 Add `stock_qty` auto-update logic on movement creation
+- [x] 4.1.10 Build `StockMovements/Index.tsx` (paginated history DataGrid)
+- [x] 4.1.11 Build `StockMovements/Create.tsx` (product select, type, qty, reference, notes)
+- [x] 4.1.12 Write Pest feature tests for stock movement CRUD, insufficient stock, notification
 
 ## 5. Sales Domain
 

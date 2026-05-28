@@ -1,105 +1,90 @@
-import { Head, Link } from '@inertiajs/react';
-import type { ColumnDef } from '@tanstack/react-table';
+import { Head, router } from '@inertiajs/react';
+import type { ColumnDef, Row } from '@tanstack/react-table';
 import { ArrowLeftRight, Plus } from 'lucide-react';
-import { useState } from 'react';
 
+import { create } from '@/actions/App/Http/Controllers/StockMovementController';
 import { DataGrid } from '@/common/DataGrid';
-import { SearchBar } from '@/common/SearchBar';
+import { EmptyState } from '@/common/EmptyState';
+import { Paginator } from '@/common/Paginator';
 import { Button } from '@/components/ui/button';
-import type { StockMovement } from '@/types';
+import type { Paginated, StockMovement } from '@/types';
 
-const sampleData: StockMovement[] = [
-    {
-        id: 1,
-        product: 'Wireless Mouse',
-        type: 'out',
-        qty: 5,
-        reference: 'Order #1001',
-        user: 'John Doe',
-        date: '2 hours ago',
-    },
-    {
-        id: 2,
-        product: 'USB-C Cable',
-        type: 'in',
-        qty: 50,
-        reference: 'PO-001',
-        user: 'John Doe',
-        date: '4 hours ago',
-    },
-    {
-        id: 3,
-        product: 'Desk Lamp',
-        type: 'adjustment',
-        qty: -2,
-        reference: null,
-        user: 'Jane Smith',
-        date: '1 day ago',
-    },
-    {
-        id: 4,
-        product: 'Notebook A5',
-        type: 'out',
-        qty: 20,
-        reference: 'Order #1002',
-        user: 'John Doe',
-        date: '1 day ago',
-    },
-    {
-        id: 5,
-        product: 'Mechanical Keyboard',
-        type: 'in',
-        qty: 15,
-        reference: 'PO-002',
-        user: 'Jane Smith',
-        date: '2 days ago',
-    },
-];
+type StockMovementsIndexProps = {
+    movements: Paginated<StockMovement>;
+};
+
+function TypeCell({ row }: { row: Row<StockMovement> }): React.ReactElement {
+    const t = row.original.type;
+    const colors = {
+        in: 'bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400',
+        out: 'bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400',
+        adjustment:
+            'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400',
+    };
+
+    return (
+        <span
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${colors[t]}`}
+        >
+            <ArrowLeftRight className="h-3 w-3" />
+            {t}
+        </span>
+    );
+}
 
 const columns: ColumnDef<StockMovement>[] = [
-    { accessorKey: 'product', header: 'Product', enableSorting: true },
+    {
+        accessorFn: (row) => row.product?.name,
+        id: 'product',
+        header: 'Product',
+    },
     {
         accessorKey: 'type',
         header: 'Type',
-        cell: ({ row }) => {
-            const t = row.original.type;
-            const colors = {
-                in: 'bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400',
-                out: 'bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400',
-                adjustment:
-                    'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400',
-            };
-
-            return (
-                <span
-                    className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${colors[t]}`}
-                >
-                    <ArrowLeftRight className="h-3 w-3" />
-                    {t}
-                </span>
-            );
-        },
+        cell: TypeCell,
     },
-    { accessorKey: 'qty', header: 'Qty', enableSorting: true },
+    {
+        accessorKey: 'qty',
+        header: 'Qty',
+    },
+    {
+        accessorKey: 'before_qty',
+        header: 'Before',
+    },
+    {
+        accessorKey: 'after_qty',
+        header: 'After',
+    },
     {
         accessorKey: 'reference',
         header: 'Reference',
         cell: ({ row }) => row.original.reference ?? '-',
     },
-    { accessorKey: 'user', header: 'Recorded By' },
-    { accessorKey: 'date', header: 'Date', enableSorting: true },
+    {
+        accessorFn: (row) => row.user?.name,
+        id: 'user',
+        header: 'By',
+    },
+    {
+        accessorKey: 'created_at',
+        header: 'Date',
+        cell: ({ row }) => {
+            const date = new Date(row.original.created_at);
+
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+            });
+        },
+    },
 ];
 
-export default function StockMovementsIndex() {
-    const [search, setSearch] = useState('');
-
-    const filtered = sampleData.filter(
-        (m) =>
-            m.product.toLowerCase().includes(search.toLowerCase()) ||
-            (m.reference &&
-                m.reference.toLowerCase().includes(search.toLowerCase())),
-    );
-
+export default function StockMovementsIndex({
+    movements,
+}: StockMovementsIndexProps) {
     return (
         <>
             <Head title="Stock Movements" />
@@ -113,23 +98,38 @@ export default function StockMovementsIndex() {
                         Track all inventory changes.
                     </p>
                 </div>
-                <Button size="sm" asChild>
-                    <Link href="/stock-movements/create">
-                        <Plus className="h-4 w-4" />
-                        Record Movement
-                    </Link>
+                <Button size="sm" onClick={() => router.visit(create().url)}>
+                    <Plus className="h-4 w-4" />
+                    Record Movement
                 </Button>
             </div>
 
-            <div className="mb-4 max-w-sm">
-                <SearchBar
-                    value={search}
-                    onChange={setSearch}
-                    placeholder="Search by product or reference..."
+            {movements.data.length > 0 ? (
+                <>
+                    <DataGrid columns={columns} data={movements.data} />
+                    <Paginator
+                        currentPage={movements.current_page}
+                        lastPage={movements.last_page}
+                        total={movements.total}
+                        from={movements.from}
+                        to={movements.to}
+                    />
+                </>
+            ) : (
+                <EmptyState
+                    title="No movements yet"
+                    description="Record your first stock movement to start tracking inventory changes."
+                    action={
+                        <Button
+                            size="sm"
+                            onClick={() => router.visit(create().url)}
+                        >
+                            <Plus className="h-4 w-4" />
+                            Record Movement
+                        </Button>
+                    }
                 />
-            </div>
-
-            <DataGrid columns={columns} data={filtered} />
+            )}
         </>
     );
 }
