@@ -12,13 +12,13 @@ class UpdateProductAction
     /**
      * @param  array<string, mixed>  $data
      */
-    public function execute(Product $product, array $data, ?UploadedFile $image = null): Product
+    public function execute(Product $product, array $data, ?UploadedFile $uploadedFile = null): Product
     {
         $product->update($data);
 
-        if ($image instanceof UploadedFile) {
+        if ($uploadedFile instanceof UploadedFile) {
             $product->clearMediaCollection('image');
-            $product->addMedia($image)->toMediaCollection('image');
+            $product->addMedia($uploadedFile)->toMediaCollection('image');
         }
 
         return $product;

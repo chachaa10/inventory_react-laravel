@@ -8,18 +8,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('stock_movements', function (Blueprint $table): void {
-            $table->id();
-            $table->foreignId('product_id')->constrained()->restrictOnDelete();
-            $table->string('type'); // in, out, adjustment
-            $table->integer('qty');
-            $table->integer('before_qty');
-            $table->integer('after_qty');
-            $table->string('reference')->nullable();
-            $table->text('notes')->nullable();
-            $table->foreignId('user_id')->constrained()->restrictOnDelete();
-            $table->nullableMorphs('movementable');
-            $table->timestamps();
+        Schema::create('stock_movements', function (Blueprint $blueprint): void {
+            $blueprint->id();
+            $blueprint->foreignId('product_id')->constrained()->restrictOnDelete();
+            $blueprint->string('type'); // in, out, adjustment
+            $blueprint->integer('qty');
+            $blueprint->integer('before_qty');
+            $blueprint->integer('after_qty');
+            $blueprint->string('reference')->nullable();
+            $blueprint->text('notes')->nullable();
+            $blueprint->foreignId('user_id')->constrained()->restrictOnDelete();
+            $blueprint->nullableMorphs('movementable');
+            $blueprint->timestamps();
         });
     }
 

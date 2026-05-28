@@ -117,7 +117,7 @@ test('admin can update a product with image replacement', function (): void {
 
     expect($product->getFirstMedia('image'))->not->toBeNull();
 
-    $newImage = UploadedFile::fake()->image('new.jpg', 200, 200);
+    $file = UploadedFile::fake()->image('new.jpg', 200, 200);
 
     $this->put(route('products.update', $product), [
         'name' => $product->name,
@@ -126,7 +126,7 @@ test('admin can update a product with image replacement', function (): void {
         'unit' => $product->unit,
         'reorder_level' => $product->reorder_level,
         'category_id' => $product->category_id,
-        'image' => $newImage,
+        'image' => $file,
     ])->assertRedirect();
 });
 

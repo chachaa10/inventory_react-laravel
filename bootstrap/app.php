@@ -32,15 +32,15 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (Throwable $e, Request $request) {
-            if ($e instanceof HttpException
-                || $e instanceof ValidationException
-                || $e instanceof AuthenticationException
+        $exceptions->render(function (Throwable $throwable, Request $request) {
+            if ($throwable instanceof HttpException
+                || $throwable instanceof ValidationException
+                || $throwable instanceof AuthenticationException
             ) {
                 return;
             }
 
-            report($e);
+            report($throwable);
 
             Inertia::flash('toast', ['type' => 'error', 'message' => 'Something went wrong.']);
 

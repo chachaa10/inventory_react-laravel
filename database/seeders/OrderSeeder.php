@@ -15,7 +15,7 @@ class OrderSeeder extends Seeder
 {
     public function run(): void
     {
-        $admin = User::query()->where('email', 'admin@example.com')->firstOrFail();
+        $user = User::query()->where('email', 'admin@example.com')->firstOrFail();
 
         $hdmiCable = Product::query()->where('sku', 'SKU-ELEC-003')->firstOrFail();
         $mouse = Product::query()->where('sku', 'SKU-ELEC-001')->firstOrFail();
@@ -27,7 +27,7 @@ class OrderSeeder extends Seeder
             'status' => 'completed',
             'total' => 55.97,
             'notes' => 'First customer order',
-            'user_id' => $admin->id,
+            'user_id' => $user->id,
         ]);
 
         $lineItems = [
@@ -55,7 +55,7 @@ class OrderSeeder extends Seeder
                 'after_qty' => $afterQty,
                 'reference' => $order->order_number,
                 'notes' => 'Order fulfillment',
-                'user_id' => $admin->id,
+                'user_id' => $user->id,
                 'movementable_id' => $order->id,
                 'movementable_type' => Order::class,
             ]);

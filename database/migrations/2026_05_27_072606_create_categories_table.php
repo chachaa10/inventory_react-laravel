@@ -8,13 +8,13 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table): void {
-            $table->id();
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->text('description')->nullable();
-            $table->softDeletes();
-            $table->timestamps();
+        Schema::create('categories', function (Blueprint $blueprint): void {
+            $blueprint->id();
+            $blueprint->string('name');
+            $blueprint->string('slug')->unique();
+            $blueprint->text('description')->nullable();
+            $blueprint->softDeletes();
+            $blueprint->timestamps();
         });
     }
 

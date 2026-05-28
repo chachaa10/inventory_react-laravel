@@ -12,12 +12,12 @@ class CreateProductAction
     /**
      * @param  array<string, mixed>  $data
      */
-    public function execute(array $data, ?UploadedFile $image = null): Product
+    public function execute(array $data, ?UploadedFile $uploadedFile = null): Product
     {
         $product = Product::query()->create($data);
 
-        if ($image instanceof UploadedFile) {
-            $product->addMedia($image)->toMediaCollection('image');
+        if ($uploadedFile instanceof UploadedFile) {
+            $product->addMedia($uploadedFile)->toMediaCollection('image');
         }
 
         return $product;

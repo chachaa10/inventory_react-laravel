@@ -23,14 +23,14 @@ class ProductController extends Controller
 {
     public function index(Request $request): Response
     {
-        $query = Product::query()
+        $builder = Product::query()
             ->with('category:id,name', 'supplier:id,name');
 
         $search = $request->string('search')->toString();
 
         if ($search !== '') {
-            $query->where(function (Builder $q) use ($search): void {
-                $q->where('name', 'like', sprintf('%%%s%%', $search))
+            $builder->where(function (Builder $builder) use ($search): void {
+                $builder->where('name', 'like', sprintf('%%%s%%', $search))
                     ->orWhere('sku', 'like', sprintf('%%%s%%', $search));
             });
         }
@@ -38,45 +38,45 @@ class ProductController extends Controller
         $categoryId = $request->integer('category_id');
 
         if ($categoryId !== 0) {
-            $query->where('category_id', $categoryId);
+            $builder->where('category_id', $categoryId);
         }
 
         $stockStatus = $request->string('stock_status')->toString();
 
         if ($stockStatus !== '') {
             if ($stockStatus === 'low') {
-                $query->getQuery()->whereRaw('stock_qty <= reorder_level');
-                $query->where('stock_qty', '>', 0);
+                $builder->getQuery()->whereRaw('stock_qty <= reorder_level');
+                $builder->where('stock_qty', '>', 0);
             } elseif ($stockStatus === 'out') {
-                $query->where('stock_qty', '=', 0);
+                $builder->where('stock_qty', '=', 0);
             } elseif ($stockStatus === 'in') {
-                $query->getQuery()->whereRaw('stock_qty > reorder_level');
+                $builder->getQuery()->whereRaw('stock_qty > reorder_level');
             }
         }
 
-        $products = $query->latest()->paginate(10);
+        $lengthAwarePaginator = $builder->latest()->paginate(10);
 
         $categories = Category::all(['id', 'name'])->sortBy('name')->values();
         $suppliers = Supplier::all(['id', 'name'])->sortBy('name')->values();
 
         return Inertia::render('products/Index', [
-            'products' => $products,
+            'products' => $lengthAwarePaginator,
             'categories' => $categories,
             'suppliers' => $suppliers,
             'filters' => $request->only(['search', 'category_id', 'stock_status']),
         ]);
     }
 
-    public function store(StoreProductRequest $request, CreateProductAction $action): RedirectResponse
+    public function store(StoreProductRequest $storeProductRequest, CreateProductAction $createProductAction): RedirectResponse
     {
         $this->authorize('create', Product::class);
 
         /** @var array<string, mixed> $data */
-        $data = $request->safe()->except('image');
+        $data = $storeProductRequest->safe()->except('image');
 
-        $action->execute(
+        $createProductAction->execute(
             $data,
-            $request->file('image'),
+            $storeProductRequest->file('image'),
         );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Product created successfully.']);
@@ -84,17 +84,17 @@ class ProductController extends Controller
         return to_route('products.index');
     }
 
-    public function update(UpdateProductRequest $request, UpdateProductAction $action, Product $product): RedirectResponse
+    public function update(UpdateProductRequest $updateProductRequest, UpdateProductAction $updateProductAction, Product $product): RedirectResponse
     {
         $this->authorize('update', $product);
 
         /** @var array<string, mixed> $data */
-        $data = $request->safe()->except('image');
+        $data = $updateProductRequest->safe()->except('image');
 
-        $action->execute(
+        $updateProductAction->execute(
             $product,
             $data,
-            $request->file('image'),
+            $updateProductRequest->file('image'),
         );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Product updated successfully.']);
@@ -102,7 +102,7 @@ class ProductController extends Controller
         return to_route('products.index');
     }
 
-    public function destroy(DeleteProductAction $action, Product $product): RedirectResponse
+    public function destroy(DeleteProductAction $deleteProductAction, Product $product): RedirectResponse
     {
         $this->authorize('delete', $product);
 
@@ -111,7 +111,7 @@ class ProductController extends Controller
             CannotDeleteProductWithStockMovementsException::class,
         );
 
-        $action->execute($product);
+        $deleteProductAction->execute($product);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Product deleted successfully.']);
 

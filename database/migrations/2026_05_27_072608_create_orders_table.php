@@ -8,16 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table): void {
-            $table->id();
-            $table->string('customer_name');
-            $table->string('customer_email')->nullable();
-            $table->string('order_number')->unique();
-            $table->string('status');
-            $table->decimal('total', 12, 2);
-            $table->text('notes')->nullable();
-            $table->foreignId('user_id')->constrained()->restrictOnDelete();
-            $table->timestamps();
+        Schema::create('orders', function (Blueprint $blueprint): void {
+            $blueprint->id();
+            $blueprint->string('customer_name');
+            $blueprint->string('customer_email')->nullable();
+            $blueprint->string('order_number')->unique();
+            $blueprint->string('status');
+            $blueprint->decimal('total', 12, 2);
+            $blueprint->text('notes')->nullable();
+            $blueprint->foreignId('user_id')->constrained()->restrictOnDelete();
+            $blueprint->timestamps();
         });
     }
 

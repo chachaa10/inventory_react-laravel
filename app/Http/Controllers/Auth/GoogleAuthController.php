@@ -19,10 +19,10 @@ class GoogleAuthController
         return Socialite::driver('google')->redirect();
     }
 
-    public function callback(Request $request, CreateOrLinkUserViaGoogle $action): RedirectResponse
+    public function callback(Request $request, CreateOrLinkUserViaGoogle $createOrLinkUserViaGoogle): RedirectResponse
     {
         try {
-            $user = $action->handle();
+            $user = $createOrLinkUserViaGoogle->handle();
 
             Auth::guard()->login($user, remember: true);
 

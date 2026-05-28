@@ -19,23 +19,23 @@ class CategoryController extends Controller
 {
     public function index(): Response
     {
-        $categories = Category::query()
+        $lengthAwarePaginator = Category::query()
             ->withCount('products')
             ->latest()
             ->paginate(100);
 
         return Inertia::render('categories/Index', [
-            'categories' => $categories,
+            'categories' => $lengthAwarePaginator,
         ]);
     }
 
-    public function store(StoreCategoryRequest $request, CreateCategoryAction $action): RedirectResponse
+    public function store(StoreCategoryRequest $storeCategoryRequest, CreateCategoryAction $createCategoryAction): RedirectResponse
     {
         $this->authorize('create', Category::class);
 
-        $action->execute(
-            $request->string('name')->toString(),
-            $request->string('description')->toString(),
+        $createCategoryAction->execute(
+            $storeCategoryRequest->string('name')->toString(),
+            $storeCategoryRequest->string('description')->toString(),
         );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Category created successfully.']);
@@ -43,14 +43,14 @@ class CategoryController extends Controller
         return to_route('categories.index');
     }
 
-    public function update(UpdateCategoryRequest $request, UpdateCategoryAction $action, Category $category): RedirectResponse
+    public function update(UpdateCategoryRequest $updateCategoryRequest, UpdateCategoryAction $updateCategoryAction, Category $category): RedirectResponse
     {
         $this->authorize('update', $category);
 
-        $action->execute(
+        $updateCategoryAction->execute(
             $category,
-            $request->string('name')->toString(),
-            $request->string('description')->toString(),
+            $updateCategoryRequest->string('name')->toString(),
+            $updateCategoryRequest->string('description')->toString(),
         );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Category updated successfully.']);
@@ -58,7 +58,7 @@ class CategoryController extends Controller
         return to_route('categories.index');
     }
 
-    public function destroy(DeleteCategoryAction $action, Category $category): RedirectResponse
+    public function destroy(DeleteCategoryAction $deleteCategoryAction, Category $category): RedirectResponse
     {
         $this->authorize('delete', $category);
 
@@ -67,7 +67,7 @@ class CategoryController extends Controller
             CannotDeleteCategoryWithProductsException::class,
         );
 
-        $action->execute($category);
+        $deleteCategoryAction->execute($category);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Category deleted successfully.']);
 

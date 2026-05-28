@@ -18,7 +18,7 @@ test('security page is displayed', function (): void {
     $this->actingAs($user)
         ->withSession(['auth.password_confirmed_at' => time()])
         ->get(route('security.edit'))
-        ->assertInertia(fn (Assert $page): Assert => $page
+        ->assertInertia(fn (Assert $assert): Assert => $assert
             ->component('settings/security')
             ->where('canManageTwoFactor', true)
             ->where('twoFactorEnabled', false),
@@ -54,7 +54,7 @@ test('security page does not require password confirmation when disabled', funct
     $this->actingAs($user)
         ->get(route('security.edit'))
         ->assertOk()
-        ->assertInertia(fn (Assert $page): Assert => $page
+        ->assertInertia(fn (Assert $assert): Assert => $assert
             ->component('settings/security'),
         );
 });
@@ -69,7 +69,7 @@ test('security page renders without two factor when feature is disabled', functi
     $this->actingAs($user)
         ->get(route('security.edit'))
         ->assertOk()
-        ->assertInertia(fn (Assert $page): Assert => $page
+        ->assertInertia(fn (Assert $assert): Assert => $assert
             ->component('settings/security')
             ->where('canManageTwoFactor', false)
             ->missing('twoFactorEnabled')
@@ -125,7 +125,7 @@ test('security page shows hasPassword false for users without password', functio
 
     $this->actingAs($user)
         ->get(route('security.edit'))
-        ->assertInertia(fn (Assert $page): Assert => $page
+        ->assertInertia(fn (Assert $assert): Assert => $assert
             ->component('settings/security')
             ->where('hasPassword', false),
         );
@@ -143,7 +143,7 @@ test('security page shows hasPassword true for users with password', function ()
 
     $this->actingAs($user)
         ->get(route('security.edit'))
-        ->assertInertia(fn (Assert $page): Assert => $page
+        ->assertInertia(fn (Assert $assert): Assert => $assert
             ->component('settings/security')
             ->where('hasPassword', true),
         );
@@ -194,7 +194,7 @@ test('user without password can access security page without password confirmati
     $this->actingAs($user)
         ->get(route('security.edit'))
         ->assertOk()
-        ->assertInertia(fn (Assert $page): Assert => $page
+        ->assertInertia(fn (Assert $assert): Assert => $assert
             ->component('settings/security')
             ->where('hasPassword', false),
         );
