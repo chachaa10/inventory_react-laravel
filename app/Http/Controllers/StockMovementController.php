@@ -27,20 +27,14 @@ class StockMovementController extends Controller
             ->latest('stock_movements.created_at')
             ->paginate(50);
 
+        $productBuilder = Product::query()->where('is_active', true);
+
+        $productBuilder->getQuery()->orderBy('name');
+
+        $products = $productBuilder->get(['id', 'name', 'stock_qty', 'reorder_level']);
+
         return Inertia::render('stock-movements/Index', [
             'movements' => $lengthAwarePaginator,
-        ]);
-    }
-
-    public function create(): Response
-    {
-        $builder = Product::query()->where('is_active', true);
-
-        $builder->getQuery()->orderBy('name');
-
-        $products = $builder->get(['id', 'name', 'stock_qty', 'reorder_level']);
-
-        return Inertia::render('stock-movements/Create', [
             'products' => $products,
         ]);
     }
