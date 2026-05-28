@@ -43,9 +43,18 @@ export function DataGrid<TData>({ columns, data }: DataGridProps<TData>) {
                                                 header.column.columnDef.header,
                                                 header.getContext(),
                                             )}
-                                            {header.column.getCanSort() && (
-                                                <ArrowUpDown className="h-3 w-3" />
-                                            )}
+                                            {header.column.getCanSort() &&
+                                                !(
+                                                    header.column.columnDef
+                                                        .meta as
+                                                        | Record<
+                                                              string,
+                                                              boolean
+                                                          >
+                                                        | undefined
+                                                )?.['sortIconHidden'] && (
+                                                    <ArrowUpDown className="h-3 w-3" />
+                                                )}
                                         </div>
                                     </th>
                                 ))}

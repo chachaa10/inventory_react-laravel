@@ -1,8 +1,9 @@
 import { Form, Head, router, usePage } from '@inertiajs/react';
-import type { ColumnDef, Row } from '@tanstack/react-table';
+import type { Column, ColumnDef, Row } from '@tanstack/react-table';
 import {
     Archive,
     ArchiveRestore,
+    ArrowUpDown,
     Plus,
     Pencil,
     RotateCcw,
@@ -85,19 +86,45 @@ function StatusCell({ row }: { row: Row<Supplier> }): React.ReactElement {
 function StatusHeader({
     currentStatus,
     onFilterChange,
+    column,
 }: {
     currentStatus: SupplierStatusFilter;
     onFilterChange: (status: SupplierStatusFilter) => void;
+    column?: Column<Supplier>;
 }): React.ReactElement {
+    const isSorted = column?.getIsSorted();
+
     return (
-        <div onClick={(e) => e.stopPropagation()}>
+        <div
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-0.5"
+        >
+            {currentStatus === 'all' && column?.getCanSort() && (
+                <button
+                    type="button"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        column.toggleSorting();
+                    }}
+                    className="inline-flex items-center justify-center rounded p-0.5 hover:bg-muted"
+                    aria-label={isSorted ? 'Remove sort' : 'Sort by status'}
+                >
+                    <ArrowUpDown
+                        className={`h-3 w-3 ${
+                            isSorted
+                                ? 'text-foreground'
+                                : 'text-muted-foreground'
+                        }`}
+                    />
+                </button>
+            )}
             <Select
                 value={currentStatus}
                 onValueChange={(value) =>
                     onFilterChange(value as SupplierStatusFilter)
                 }
             >
-                <SelectTrigger className="h-6 w-32 border-0 bg-transparent p-0 text-xs font-medium text-muted-foreground shadow-none hover:bg-transparent focus:ring-0 [&>svg]:h-3 [&>svg]:w-3">
+                <SelectTrigger className="h-6 w-28 border-0 bg-transparent p-0 text-xs font-medium text-muted-foreground shadow-none hover:bg-transparent focus:ring-0 [&>svg]:h-3 [&>svg]:w-3">
                     <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -125,13 +152,16 @@ function createStatusColumn(
 ): ColumnDef<Supplier> {
     return {
         accessorKey: 'is_active',
+        enableSorting: true,
+        meta: { sortIconHidden: true } as Record<string, unknown>,
         sortingFn: (rowA, rowB) =>
             lifecycleSortKey(rowA) - lifecycleSortKey(rowB),
-        header: function StatusColumnHeader() {
+        header: function StatusColumnHeader({ column }) {
             return (
                 <StatusHeader
                     currentStatus={currentStatus}
                     onFilterChange={onFilterChange}
+                    column={column}
                 />
             );
         },
