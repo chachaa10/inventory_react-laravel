@@ -43,11 +43,14 @@ jobs:
           composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
           pnpm install
 
-      - name: Static Analysis (PHPStan)
-        run: php -d memory_limit=512M vendor/bin/phpstan
-
       - name: Lint PHP (Rector + Pint)
-        run: composer test:lint
+        run: composer format:check
+
+      - name: Static Analysis (PHPStan)
+        run: php -d memory_limit=-1 vendor/bin/phpstan
+
+      - name: Typecript Type Check
+        run: pnpm run typecheck
 
       - name: Lint Frontend
         run: pnpm run lint

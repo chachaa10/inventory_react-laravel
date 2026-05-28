@@ -62,44 +62,44 @@
             "Composer\\Config::disableProcessTimeout",
             "pnpx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1 --timeout=0\" \"php artisan pail --timeout=0\" \"pnpm run dev\" --names=server,queue,logs,vite --kill-others"
         ],
-        "lint": [
+        "format": [
             "rector",
             "pint --parallel",
-            "@test:types",
-            "pnpm run check"
+            "pnpm run format"
         ],
-        "lint:check": [
-            "pint --parallel --test"
-        ],
-        "test:type-coverage": "pest --type-coverage --min=100",
-        "test:types": [
-            "php -d memory_limit=512M vendor/bin/phpstan",
-            "pnpm run typecheck"
-        ],
-        "test:lint": [
+        "format:check": [
             "rector --dry-run",
             "pint --parallel --test",
-            "pnpm run lint:check",
             "pnpm run format:check"
+        ],
+        "lint": [
+            "php -d memory_limit=-1 vendor/bin/phpstan",
+            "pnpm run typecheck",
+            "pnpm run lint"
+        ],
+        "test": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test",
+            "pnpm run test"
+        ],
+        "check": [
+            "@format",
+            "@lint"
+        ],
+        "coverage": "pest --type-coverage --min=100",
+        "ci:check": [
+            "Composer\\Config::disableProcessTimeout",
+            "@format",
+            "@lint",
+            "@test"
         ],
         "clean": [
             "@php artisan optimize:clear",
             "rm -rf public/build",
             "rm -rf resources/js/actions resources/js/routes resources/js/wayfinder"
         ],
-        "db:refresh": "@php artisan migrate:fresh --seed --force",
+        "db:seed": "@php artisan migrate:fresh --seed --force",
         "db:reset": "@php scripts/db-reset.php",
-        "ci:check": [
-            "Composer\\Config::disableProcessTimeout",
-            "@test:types",
-            "@test:lint",
-            "@php artisan test"
-        ],
-        "test": [
-            "@php artisan config:clear --ansi",
-            "@lint:check",
-            "@php artisan test"
-        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
