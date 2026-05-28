@@ -80,20 +80,37 @@ export type StockMovement = {
 export type ProductOption = {
     id: number;
     name: string;
+    price: number;
     stock_qty: number;
     reorder_level: number;
 };
 
-export type OrderStatus = 'pending' | 'completed' | 'cancelled';
+export type OrderStatus = 'completed' | 'cancelled';
 
 export type Order = {
     id: number;
     order_number: string;
-    customer: string;
+    customer_name: string;
+    customer_email: string | null;
     status: OrderStatus;
     total: number;
-    items: number;
-    date: string;
+    notes: string | null;
+    created_at: string;
+    user: { id: number; name: string };
+    items_count: number;
+    items?: Array<{
+        id: number;
+        product_id: number;
+        qty: number;
+        unit_price: number;
+        subtotal: number;
+        product: { id: number; name: string } | null;
+    }>;
+};
+
+export type OrderFilters = {
+    search: string;
+    status: string;
 };
 
 export type LineItem = {
