@@ -61,14 +61,6 @@ export type SupplierFilters = {
     status: SupplierStatusFilter;
 };
 
-export type Customer = {
-    id: number;
-    name: string;
-    email: string | null;
-    phone: string | null;
-    is_active: boolean;
-};
-
 export type StockMovementType = 'in' | 'out' | 'adjustment';
 
 export type StockMovement = {

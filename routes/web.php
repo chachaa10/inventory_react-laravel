@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
@@ -35,11 +34,6 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::put('suppliers/{supplier}/activate', [SupplierController::class, 'activate'])->name('suppliers.activate');
     Route::put('suppliers/{supplier}/archive', [SupplierController::class, 'archive'])->name('suppliers.archive');
     Route::put('suppliers/{supplier}/restore', [SupplierController::class, 'restore'])->name('suppliers.restore');
-
-    Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
-    Route::post('customers', [CustomerController::class, 'store'])->name('customers.store');
-    Route::put('customers/{customer}', [CustomerController::class, 'update'])->name('customers.update');
-    Route::delete('customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
 
     Route::get('stock-movements', [StockMovementController::class, 'index'])->name('stock-movements.index');
     Route::post('stock-movements', [StockMovementController::class, 'store'])->name('stock-movements.store');

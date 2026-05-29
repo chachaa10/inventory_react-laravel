@@ -5,7 +5,6 @@ import {
     Tags,
     ArrowLeftRight,
     Truck,
-    Users,
     ShoppingCart,
 } from 'lucide-react';
 
@@ -52,10 +51,7 @@ const purchasingGroup: NavGroup = {
 
 const salesGroup: NavGroup = {
     label: 'Sales',
-    items: [
-        { title: 'Customers', href: '/customers', icon: Users },
-        { title: 'Orders', href: '/orders', icon: ShoppingCart },
-    ],
+    items: [{ title: 'Orders', href: '/orders', icon: ShoppingCart }],
 };
 
 export function AppSidebar() {
