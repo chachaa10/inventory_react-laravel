@@ -4,14 +4,20 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Actions\Dashboard\GetDashboardDataAction;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    public function __invoke(Request $request): Response
+    public function __construct(
+        private readonly GetDashboardDataAction $getDashboardDataAction,
+    ) {}
+
+    public function __invoke(): Response
     {
-        return Inertia::render('dashboard/Index');
+        $data = $this->getDashboardDataAction->execute();
+
+        return Inertia::render('dashboard/Index', $data);
     }
 }
