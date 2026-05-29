@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Dashboard;
 
+use App\Exceptions\UnexpectedDataException;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\StockMovement;
@@ -17,9 +18,9 @@ class GetDashboardDataAction
     {
         $totalProducts = Product::query()->getQuery()->count();
 
-        $lowStockQuery = Product::query();
-        $lowStockQuery->getQuery()->whereColumn('stock_qty', '<=', 'reorder_level');
-        $lowStockCount = $lowStockQuery->getQuery()->count();
+        $builder = Product::query();
+        $builder->getQuery()->whereColumn('stock_qty', '<=', 'reorder_level');
+        $lowStockCount = $builder->getQuery()->count();
 
         $recentOrdersQuery = Order::query();
         $recentOrdersQuery->getQuery()->where('created_at', '>=', now()->subDays(30));
@@ -38,14 +39,10 @@ class GetDashboardDataAction
             ->get()
             ->map(function (object $row): array {
                 $category = $row->category;
-                if (! is_string($category)) {
-                    throw new \RuntimeException('Category must be a string');
-                }
+                throw_unless(is_string($category), UnexpectedDataException::class, 'Category must be a string');
 
                 $count = $row->count;
-                if (! is_int($count)) {
-                    throw new \RuntimeException('Count must be an int');
-                }
+                throw_unless(is_int($count), UnexpectedDataException::class, 'Count must be an int');
 
                 return [
                     'category' => $category,
@@ -59,7 +56,7 @@ class GetDashboardDataAction
             ->with('product:id,name')
             ->latest()
             ->get()
-            ->map(fn (StockMovement $movement): array => $this->extractMovement($movement));
+            ->map(fn (StockMovement $stockMovement): array => $this->extractMovement($stockMovement));
 
         $lowStockAlertsQuery = Product::query();
         $lowStockAlertsQuery->getQuery()->whereColumn('stock_qty', '<=', 'reorder_level');
@@ -89,14 +86,14 @@ class GetDashboardDataAction
     }
 
     /** @return array{id: int, product: string, type: string, qty: int, date: string} */
-    private function extractMovement(StockMovement $movement): array
+    private function extractMovement(StockMovement $stockMovement): array
     {
         return [
-            'id' => $movement->id,
-            'product' => isset($movement->product) ? $movement->product->name : 'Deleted Product',
-            'type' => is_string($movement->type) ? $movement->type : $movement->type->value,
-            'qty' => $movement->qty,
-            'date' => $movement->created_at?->toISOString() ?? '',
+            'id' => $stockMovement->id,
+            'product' => isset($stockMovement->product) ? $stockMovement->product->name : 'Deleted Product',
+            'type' => is_string($stockMovement->type) ? $stockMovement->type : $stockMovement->type->value,
+            'qty' => $stockMovement->qty,
+            'date' => $stockMovement->created_at?->toISOString() ?? '',
         ];
     }
 }
