@@ -29,6 +29,7 @@ composer lint     # phpstan + tsc + oxlint
 php artisan test --compact
 pnpm run build    # (only if UI files changed)
 vendor/bin/pint --dirty --format agent  # (only if PHP files changed)
+composer ci:check # check ci errors
 ```
 
 Known quirk: `tsc --noEmit` errors on `.form()` are pre-existing across the project — the Vite plugin provides it at build time, typechecker can't resolve virtual modules. Ignore.
