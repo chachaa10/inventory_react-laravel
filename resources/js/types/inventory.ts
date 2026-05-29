@@ -121,6 +121,27 @@ export type OrderFilters = {
     status: string;
 };
 
+export type DashboardData = {
+    totalProducts: number;
+    lowStockCount: number;
+    recentOrdersCount: number;
+    totalRevenue: string;
+    stockByCategory: Array<{ category: string; count: number }>;
+    recentMovements: Array<{
+        id: number;
+        product: string;
+        type: string;
+        qty: number;
+        date: string;
+    }>;
+    lowStockAlerts: Array<{
+        id: number;
+        name: string;
+        stock: number;
+        reorder: number;
+    }>;
+};
+
 export type LineItem = {
     id: string;
     product_id: string;
