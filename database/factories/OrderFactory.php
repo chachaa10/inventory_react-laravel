@@ -15,10 +15,13 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
+            'customer_name' => fake()->name(),
+            'customer_email' => fake()->email(),
             'order_number' => 'ORD-'.now()->format('Ymd').'-'.str_pad((string) fake()->unique()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT),
-            'status' => 'pending',
+            'status' => fake()->randomElement(array_map(fn (\App\Enums\OrderStatus $s): string => $s->value, \App\Enums\OrderStatus::cases())),
             'total' => fake()->randomFloat(2, 50, 5000),
             'notes' => fake()->optional()->sentence(),
+            'user_id' => \App\Models\User::factory(),
         ];
     }
 }
