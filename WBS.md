@@ -124,13 +124,13 @@
 
 ### 6.1 Dashboard Page
 
-- [ ] 6.1.1 Create `DashboardController` + route
-- [ ] 6.1.2 Create `Actions/Dashboard/GetDashboardDataAction`
-- [ ] 6.1.3 Build `Dashboard/Index.tsx` with KPI cards (total products, low stock, recent orders, revenue)
-- [ ] 6.1.4 Add recharts chart (stock distribution by category)
-- [ ] 6.1.5 Add recent stock movements list
-- [ ] 6.1.6 Add low stock alerts section
-- [ ] 6.1.7 Replace placeholder dashboard file with directory-based page
+- [x] 6.1.1 Create `DashboardController` + route
+- [x] 6.1.2 Create `Actions/Dashboard/GetDashboardDataAction`
+- [x] 6.1.3 Build `Dashboard/Index.tsx` with KPI cards (total products, low stock, recent orders, revenue)
+- [x] 6.1.4 Add recharts chart (stock distribution by category)
+- [x] 6.1.5 Add recent stock movements list
+- [x] 6.1.6 Add low stock alerts section
+- [x] 6.1.7 Replace placeholder dashboard file with directory-based page
 
 ## 7. Notifications & Exports
 
