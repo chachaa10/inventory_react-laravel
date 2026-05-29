@@ -39,6 +39,7 @@ export default function DeleteUser() {
                     <DialogTrigger asChild>
                         <Button
                             variant="destructive"
+                            type="button"
                             data-test="delete-user-button"
                         >
                             Delete account
@@ -91,6 +92,7 @@ export default function DeleteUser() {
                                         <DialogClose asChild>
                                             <Button
                                                 variant="secondary"
+                                                type="button"
                                                 onClick={() =>
                                                     resetAndClearErrors()
                                                 }
@@ -101,6 +103,7 @@ export default function DeleteUser() {
 
                                         <Button
                                             variant="destructive"
+                                            type="button"
                                             disabled={processing}
                                             asChild
                                         >

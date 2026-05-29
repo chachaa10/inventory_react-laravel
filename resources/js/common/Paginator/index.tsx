@@ -42,6 +42,7 @@ export function Paginator({
                 <Button
                     variant="ghost"
                     size="xs"
+                    type="button"
                     disabled={currentPage <= 1}
                     onClick={() => goToPage(currentPage - 1)}
                 >
@@ -53,6 +54,7 @@ export function Paginator({
                             key={page}
                             variant={currentPage === page ? 'default' : 'ghost'}
                             size="xs"
+                            type="button"
                             onClick={() => goToPage(page)}
                         >
                             {page}
@@ -62,6 +64,7 @@ export function Paginator({
                 <Button
                     variant="ghost"
                     size="xs"
+                    type="button"
                     disabled={currentPage >= lastPage}
                     onClick={() => goToPage(currentPage + 1)}
                 >

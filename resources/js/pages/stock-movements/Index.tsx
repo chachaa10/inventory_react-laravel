@@ -134,7 +134,7 @@ export default function StockMovementsIndex({
                         Track all inventory changes.
                     </p>
                 </div>
-                <Button size="sm" onClick={openCreate}>
+                <Button size="sm" type="button" onClick={openCreate}>
                     <Plus className="h-4 w-4" />
                     Record Movement
                 </Button>
@@ -333,7 +333,7 @@ export default function StockMovementsIndex({
                     title="No movements yet"
                     description="Record your first stock movement to start tracking inventory changes."
                     action={
-                        <Button size="sm" onClick={openCreate}>
+                        <Button size="sm" type="button" onClick={openCreate}>
                             <Plus className="h-4 w-4" />
                             Record Movement
                         </Button>

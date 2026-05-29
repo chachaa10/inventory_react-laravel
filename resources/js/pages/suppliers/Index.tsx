@@ -185,6 +185,7 @@ function createActionsColumn(
                         <Button
                             variant="ghost"
                             size="xs"
+                            type="button"
                             onClick={() => onRestore(row.original.id)}
                         >
                             <ArchiveRestore className="h-3.5 w-3.5 text-primary" />
@@ -198,6 +199,7 @@ function createActionsColumn(
                     <Button
                         variant="ghost"
                         size="xs"
+                        type="button"
                         onClick={() => onEdit(row.original)}
                     >
                         <Pencil className="h-3.5 w-3.5" />
@@ -206,6 +208,7 @@ function createActionsColumn(
                         <Button
                             variant="ghost"
                             size="xs"
+                            type="button"
                             onClick={() => onDeactivate(row.original.id)}
                         >
                             <Trash2 className="h-3.5 w-3.5 text-destructive" />
@@ -215,6 +218,7 @@ function createActionsColumn(
                             <Button
                                 variant="ghost"
                                 size="xs"
+                                type="button"
                                 onClick={() => onReactivate(row.original.id)}
                             >
                                 <RotateCcw className="h-3.5 w-3.5 text-primary" />
@@ -222,6 +226,7 @@ function createActionsColumn(
                             <Button
                                 variant="ghost"
                                 size="xs"
+                                type="button"
                                 onClick={() => onArchive(row.original.id)}
                             >
                                 <Archive className="h-3.5 w-3.5 text-amber-600" />
@@ -302,7 +307,7 @@ export default function SuppliersIndex({
                     </p>
                 </div>
                 {canManage && (
-                    <Button size="sm" onClick={openCreate}>
+                    <Button size="sm" type="button" onClick={openCreate}>
                         <Plus className="h-4 w-4" />
                         Add Supplier
                     </Button>
@@ -442,6 +447,7 @@ export default function SuppliersIndex({
                         <Button
                             size="sm"
                             variant="outline"
+                            type="button"
                             onClick={() => applyStatusFilter('active')}
                         >
                             <RotateCcw className="h-3.5 w-3.5" />
@@ -466,7 +472,11 @@ export default function SuppliersIndex({
                     }
                     action={
                         canManage ? (
-                            <Button size="sm" onClick={openCreate}>
+                            <Button
+                                size="sm"
+                                type="button"
+                                onClick={openCreate}
+                            >
                                 <Plus className="h-4 w-4" />
                                 Add Supplier
                             </Button>
@@ -509,6 +519,7 @@ export default function SuppliersIndex({
                                     <DialogFooter>
                                         <Button
                                             variant="outline"
+                                            type="button"
                                             onClick={() =>
                                                 setDeactivateId(null)
                                             }
@@ -563,6 +574,7 @@ export default function SuppliersIndex({
                                     <DialogFooter>
                                         <Button
                                             variant="outline"
+                                            type="button"
                                             onClick={() =>
                                                 setReactivateId(null)
                                             }
@@ -617,6 +629,7 @@ export default function SuppliersIndex({
                                     <DialogFooter>
                                         <Button
                                             variant="outline"
+                                            type="button"
                                             onClick={() => setArchiveId(null)}
                                         >
                                             Cancel
@@ -670,6 +683,7 @@ export default function SuppliersIndex({
                                     <DialogFooter>
                                         <Button
                                             variant="outline"
+                                            type="button"
                                             onClick={() => setRestoreId(null)}
                                         >
                                             Cancel

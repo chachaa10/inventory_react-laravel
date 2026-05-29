@@ -33,7 +33,7 @@ export default function OrdersEdit({ order }: OrdersEditProps) {
             <Head title={`Order ${order.order_number}`} />
 
             <div className="mb-6 flex items-center gap-4">
-                <Button variant="ghost" size="sm" asChild>
+                <Button variant="ghost" size="sm" type="button" asChild>
                     <Link href="/orders">
                         <ArrowLeft className="h-4 w-4" />
                         Back
@@ -178,6 +178,7 @@ export default function OrdersEdit({ order }: OrdersEditProps) {
                     {order.status === 'completed' && (
                         <Button
                             variant="destructive"
+                            type="button"
                             className="w-full"
                             onClick={() => setShowCancel(true)}
                         >
@@ -225,6 +226,7 @@ export default function OrdersEdit({ order }: OrdersEditProps) {
                                 <DialogFooter>
                                     <Button
                                         variant="outline"
+                                        type="button"
                                         onClick={() => setShowCancel(false)}
                                     >
                                         Keep Order

@@ -45,8 +45,9 @@ function Button({
   size = "default",
   asChild = false,
   ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
+}: Omit<React.ComponentProps<"button">, 'type'> & {
+  type: 'button' | 'submit'
+} & VariantProps<typeof buttonVariants> & {
     asChild?: boolean
   }) {
   const Comp = asChild ? Slot.Root : "button"

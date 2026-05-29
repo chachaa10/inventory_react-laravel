@@ -47,6 +47,7 @@ function createActionsColumn(
                 <Button
                     variant="ghost"
                     size="xs"
+                    type="button"
                     onClick={() => onEdit(row.original)}
                 >
                     <Pencil className="h-3.5 w-3.5" />
@@ -54,6 +55,7 @@ function createActionsColumn(
                 <Button
                     variant="ghost"
                     size="xs"
+                    type="button"
                     onClick={() => onDelete(row.original.id)}
                 >
                     <Trash2 className="h-3.5 w-3.5 text-destructive" />
@@ -101,7 +103,7 @@ export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
                     </p>
                 </div>
                 {canManage && (
-                    <Button size="sm" onClick={openCreate}>
+                    <Button size="sm" type="button" onClick={openCreate}>
                         <Plus className="h-4 w-4" />
                         Add Category
                     </Button>
@@ -214,7 +216,11 @@ export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
                     }
                     action={
                         canManage ? (
-                            <Button size="sm" onClick={openCreate}>
+                            <Button
+                                size="sm"
+                                type="button"
+                                onClick={openCreate}
+                            >
                                 <Plus className="h-4 w-4" />
                                 Add Category
                             </Button>
@@ -256,6 +262,7 @@ export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
                                     <DialogFooter>
                                         <Button
                                             variant="outline"
+                                            type="button"
                                             onClick={() => setDeleteId(null)}
                                         >
                                             Cancel

@@ -30,7 +30,7 @@ export default function OrdersCreate({ products }: OrdersCreateProps) {
             <Head title="Create Order" />
 
             <div className="mb-6 flex items-center gap-4">
-                <Button variant="ghost" size="sm" asChild>
+                <Button variant="ghost" size="sm" type="button" asChild>
                     <Link href="/orders">
                         <ArrowLeft className="h-4 w-4" />
                         Back
@@ -277,7 +277,7 @@ export default function OrdersCreate({ products }: OrdersCreateProps) {
                             </div>
 
                             <div className="flex items-center justify-end gap-2 border-t border-border pt-4">
-                                <Button variant="outline" asChild>
+                                <Button variant="outline" type="button" asChild>
                                     <Link href="/orders">Cancel</Link>
                                 </Button>
                                 <Button

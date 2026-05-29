@@ -22,10 +22,10 @@ export default function AuthSplitLayout({
                     </span>
                 </Link>
                 <nav className="flex items-center gap-3">
-                    <Button variant="ghost" size="sm" asChild>
+                    <Button variant="ghost" size="sm" type="button" asChild>
                         <Link href={login()}>Log in</Link>
                     </Button>
-                    <Button size="sm" asChild>
+                    <Button size="sm" type="button" asChild>
                         <Link href={register()}>Get started</Link>
                     </Button>
                 </nav>

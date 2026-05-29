@@ -109,16 +109,16 @@
 
 ### 5.1 Orders
 
-- [ ] 5.1.1 Create `OrderController` + routes
-- [ ] 5.1.2 Create `StoreOrderRequest` / `UpdateOrderRequest`
-- [ ] 5.1.3 Create `Actions/Sales/CreateOrderAction` (transaction: order + items + stock deduction)
-- [ ] 5.1.4 Create `Actions/Sales/CancelOrderAction` (transaction: cancel + stock restoration)
-- [ ] 5.1.5 Create `OrderPolicy` (admin/staff: create & view; admin: cancel)
-- [ ] 5.1.6 Build `Orders/Index.tsx` (DataGrid with status filter)
-- [ ] 5.1.7 Build `Orders/Create.tsx` (customer name input + dynamic line items via `useOrderForm`)
-- [ ] 5.1.8 Build `Orders/Edit.tsx` (cancel action with ConfirmDialog)
-- [ ] 5.1.9 Create `useOrderForm` hook (line items array, subtotals, total computation)
-- [ ] 5.1.10 Write Pest feature tests for order lifecycle (create, cancel, stock sync)
+- [x] 5.1.1 Create `OrderController` + routes
+- [x] 5.1.2 Create `StoreOrderRequest` / `UpdateOrderRequest`
+- [x] 5.1.3 Create `Actions/Sales/CreateOrderAction` (transaction: order + items + stock deduction)
+- [x] 5.1.4 Create `Actions/Sales/CancelOrderAction` (transaction: cancel + stock restoration)
+- [x] 5.1.5 Create `OrderPolicy` (admin/staff: create & view; admin: cancel)
+- [x] 5.1.6 Build `Orders/Index.tsx` (DataGrid with status filter)
+- [x] 5.1.7 Build `Orders/Create.tsx` (customer name input + dynamic line items via `useOrderForm`)
+- [x] 5.1.8 Build `Orders/Edit.tsx` (cancel action with ConfirmDialog)
+- [x] 5.1.9 Create `useOrderForm` hook (line items array, subtotals, total computation)
+- [x] 5.1.10 Write Pest feature tests for order lifecycle (create, cancel, stock sync)
 
 ## 6. Dashboard
 

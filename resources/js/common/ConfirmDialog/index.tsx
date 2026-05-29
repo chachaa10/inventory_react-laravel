@@ -37,12 +37,14 @@ export function ConfirmDialog({
                 <DialogFooter>
                     <Button
                         variant="outline"
+                        type="button"
                         onClick={() => onOpenChange(false)}
                     >
                         Cancel
                     </Button>
                     <Button
                         variant={destructive ? 'destructive' : 'default'}
+                        type="button"
                         onClick={onConfirm}
                     >
                         {confirmLabel}

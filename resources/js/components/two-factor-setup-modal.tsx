@@ -95,7 +95,7 @@ function TwoFactorSetupStep({
             </div>
 
             <div className="flex w-full space-x-5">
-                <Button className="w-full" onClick={onNextStep}>
+                <Button type="button" className="w-full" onClick={onNextStep}>
                     {buttonText}
                 </Button>
             </div>

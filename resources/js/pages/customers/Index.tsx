@@ -59,7 +59,11 @@ export default function CustomersIndex() {
                 </div>
                 <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
                     <SheetTrigger asChild>
-                        <Button size="sm" onClick={() => setEditing(null)}>
+                        <Button
+                            size="sm"
+                            type="button"
+                            onClick={() => setEditing(null)}
+                        >
                             <Plus className="h-4 w-4" />
                             Add Customer
                         </Button>
@@ -107,7 +111,7 @@ export default function CustomersIndex() {
                                 />
                             </div>
                             <div className="pt-4">
-                                <Button className="w-full">
+                                <Button type="button" className="w-full">
                                     {editing ? 'Update' : 'Create'}
                                 </Button>
                             </div>
@@ -155,6 +159,7 @@ export default function CustomersIndex() {
                                             <Button
                                                 variant="ghost"
                                                 size="xs"
+                                                type="button"
                                                 onClick={() => {
                                                     setEditing(c);
                                                     setSheetOpen(true);
@@ -165,6 +170,7 @@ export default function CustomersIndex() {
                                             <Button
                                                 variant="ghost"
                                                 size="xs"
+                                                type="button"
                                                 onClick={() =>
                                                     setDeleteId(c.id)
                                                 }
@@ -183,7 +189,11 @@ export default function CustomersIndex() {
                     title="No customers yet"
                     description="Add customers to track sales and orders."
                     action={
-                        <Button size="sm" onClick={() => setSheetOpen(true)}>
+                        <Button
+                            size="sm"
+                            type="button"
+                            onClick={() => setSheetOpen(true)}
+                        >
                             <Plus className="h-4 w-4" /> Add Customer
                         </Button>
                     }

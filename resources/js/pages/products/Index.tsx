@@ -98,6 +98,7 @@ function createActionsColumn(
                 <Button
                     variant="ghost"
                     size="xs"
+                    type="button"
                     onClick={() => onEdit(row.original)}
                 >
                     <Pencil className="h-3.5 w-3.5" />
@@ -106,6 +107,7 @@ function createActionsColumn(
                     <Button
                         variant="ghost"
                         size="xs"
+                        type="button"
                         onClick={() => onDelete(row.original.id)}
                     >
                         <Trash2 className="h-3.5 w-3.5 text-destructive" />
@@ -219,11 +221,11 @@ export default function ProductsIndex({
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="sm" disabled>
+                    <Button variant="ghost" size="sm" type="button" disabled>
                         <Download className="h-4 w-4" />
                         Export
                     </Button>
-                    <Button size="sm" onClick={openCreate}>
+                    <Button size="sm" type="button" onClick={openCreate}>
                         <Plus className="h-4 w-4" />
                         Add Product
                     </Button>
@@ -532,7 +534,11 @@ export default function ProductsIndex({
                     }
                     action={
                         !filters.search && !filters.category_id ? (
-                            <Button size="sm" onClick={openCreate}>
+                            <Button
+                                size="sm"
+                                type="button"
+                                onClick={openCreate}
+                            >
                                 <Plus className="h-4 w-4" />
                                 Add Product
                             </Button>
@@ -574,6 +580,7 @@ export default function ProductsIndex({
                                     <DialogFooter>
                                         <Button
                                             variant="outline"
+                                            type="button"
                                             onClick={() => setDeleteId(null)}
                                         >
                                             Cancel

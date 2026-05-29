@@ -85,6 +85,7 @@ Known quirk: `tsc --noEmit` errors on `.form()` are pre-existing across the proj
 
 - **`<Form>` goes inside `<SheetContent>`/`<DialogContent>`**, not outside. Radix renders via Portal at `<body>` level.
 - Always: `Dialog > DialogContent > Form > button[type=submit]`.
+- The `<Button>` component requires `type` explicitly — always write `type="button"` or `type="submit"`; `<button>` defaults to `"submit"` inside a `<form>`, so omitting `type` is dangerous.
 - Use `onSuccess` callback to close the Sheet/Dialog. Use `resetOnSuccess`.
 
 ### DataGrid & @tanstack/react-table

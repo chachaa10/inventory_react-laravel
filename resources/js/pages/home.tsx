@@ -34,16 +34,21 @@ export default function Home({
                     </div>
                     <nav className="flex items-center gap-3">
                         {auth.user ? (
-                            <Button size="sm" asChild>
+                            <Button size="sm" type="button" asChild>
                                 <Link href={dashboard()}>Dashboard</Link>
                             </Button>
                         ) : (
                             <>
-                                <Button variant="ghost" size="sm" asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    type="button"
+                                    asChild
+                                >
                                     <Link href={login()}>Log in</Link>
                                 </Button>
                                 {canRegister && (
-                                    <Button size="sm" asChild>
+                                    <Button size="sm" type="button" asChild>
                                         <Link href={register()}>
                                             Get started
                                         </Link>
@@ -71,14 +76,14 @@ export default function Home({
                             </p>
                             <div className="flex items-center gap-3">
                                 {auth.user ? (
-                                    <Button size="lg" asChild>
+                                    <Button size="lg" type="button" asChild>
                                         <Link href={dashboard()}>
                                             Go to Dashboard
                                         </Link>
                                     </Button>
                                 ) : (
                                     <>
-                                        <Button size="lg" asChild>
+                                        <Button size="lg" type="button" asChild>
                                             <Link href={register()}>
                                                 Get started free
                                             </Link>
@@ -86,6 +91,7 @@ export default function Home({
                                         <Button
                                             variant="outline"
                                             size="lg"
+                                            type="button"
                                             asChild
                                         >
                                             <Link href={login()}>Log in</Link>

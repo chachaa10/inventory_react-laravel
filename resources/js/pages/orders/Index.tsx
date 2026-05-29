@@ -139,7 +139,7 @@ export default function OrdersIndex({ orders, filters }: OrdersIndexProps) {
                         Manage sales orders.
                     </p>
                 </div>
-                <Button size="sm" asChild>
+                <Button size="sm" type="button" asChild>
                     <Link href="/orders/create">
                         <Plus className="h-4 w-4" />
                         New Order
@@ -193,7 +193,7 @@ export default function OrdersIndex({ orders, filters }: OrdersIndexProps) {
                     }
                     action={
                         !filters.search && !filters.status ? (
-                            <Button size="sm" asChild>
+                            <Button size="sm" type="button" asChild>
                                 <Link href="/orders/create">
                                     <Plus className="h-4 w-4" />
                                     New Order
