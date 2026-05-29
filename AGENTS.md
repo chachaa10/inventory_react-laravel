@@ -41,6 +41,7 @@ Known quirk: `tsc --noEmit` errors on `.form()` are pre-existing across the proj
 - Artisan: `php artisan make:` with `--no-interaction`. Use `route:list`, `config:show`, `.env` for inspection.
 - Tinker: Single quotes (`'Code'`) to prevent shell expansion. Prefer factories/tests over creating models in tinker.
 - Eloquent/API: Use API Resources & versioning for APIs (unless convention differs). Use `route()` for links.
+- **Exceptions**: Never use bare `RuntimeException` or `\Exception` directly. Always create a dedicated class in `app/Exceptions/` extending `RuntimeException` with a `render()` method that flashes an Inertia toast and redirects.
 
 ### PHPStan Max Level Gotchas
 
@@ -124,4 +125,4 @@ Known quirk: `tsc --noEmit` errors on `.form()` are pre-existing across the proj
 - Execution: `php artisan test --compact` (filter with `--filter=name`).
 - Factories: Always use model factories/states in tests. Use `fake()` or `$this->faker`.
 - If column `NOT NULL` in migration (e.g., `category_id`), factory MUST set it or tests fail.
-</laravel-boost-guidelines>
+  </laravel-boost-guidelines>
