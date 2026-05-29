@@ -46,11 +46,15 @@ Known quirk: `tsc --noEmit` errors on `.form()` are pre-existing across the proj
 
 - **Never use `@phpstan-ignore`** — find a real fix.
 - **`findOrFail`/`find` returns `Model|Collection`** → Use `$query->where('id', $id)->firstOrFail()` or `->first()` for narrow `TModel` type.
-- **"Dynamic call to static method" false positive** on `orderBy`, `reorder`, `lockForUpdate`, `select`, `addSelect`, `leftJoin`, `lockForUpdate`. Fix: `$builder->getQuery()->methodName()`.
+- **"Dynamic call to static method" false positive** on `orderBy`, `reorder`, `lockForUpdate`, `select`, `addSelect`, `leftJoin`, `lockForUpdate`. Fix: `$builder->getQuery()->methodName()`. Expands to ALL fluent/terminal methods on Eloquent Builder — `count`, `sum`, `whereColumn`, `groupBy`, `join`, `orderByDesc`, `selectRaw`, `take`, `limit` also need it.
 - **`fake()->randomElement(Enum::cases())->value`** → `randomElement` returns `mixed`. Fix: `array_map(fn($t) => $t->value, Enum::cases())` to produce typed `list<string>` before `randomElement`.
 - **`intval(mixed)` also rejected** → use `is_int()` guard with `throw` instead.
 - **`throw_if` inside closures corrupts PHPStan cache**: fresh analysis passes, cached run fails with `Unreachable statement` / `Property never read`. Fix: extract guard logic into private methods where `throw_if` is the **last statement** so nothing follows that could be flagged unreachable.
 - **`always-read-written-properties` blind to reads inside closures**: property reads inside `DB::transaction` closures aren't tracked. Extract a private method that reads the property at the class level to make it visible.
+- **Enum-casted attributes read `string` inside closures**: `$movement->type->value` inside a `map()` closure is seen as `string->value` (error). Fix: `is_string($movement->type) ? $movement->type : $movement->type->value` — or extract to private method with `is_string` guard.
+- **`getQuery()->take(5)` mutates the Eloquent builder by reference**: calling `$q->getQuery()->take(5)` then `$q->with('...')->latest()->get()` returns Eloquent models (not stdClass). The constraint persists, only the terminal method swap is needed.
+- **`selectRaw` via `getQuery()` returns `Collection<stdClass>` with `mixed` properties**: every column needs `is_string`/`is_int` guard with `throw` — bare casts on `mixed` are rejected.
+- **`Number::currency()` returns `string|false`**: use long ternary (`$x !== false ? $x : '$0.00'`), not `?:` (banned by `ternary.shortNotAllowed`).
 - **Tracked-file revert warning**: `git checkout` on a tracked file only reverts that file — but untracked files (`??`) survive. If a tracked controller or route file was modified alongside new untracked files, a revert silently kills the controller logic while the actions/exceptions still exist. Always `git status` after a reset to check what actually changed.
 
 ### Eloquent Gotchas
@@ -120,5 +124,4 @@ Known quirk: `tsc --noEmit` errors on `.form()` are pre-existing across the proj
 - Execution: `php artisan test --compact` (filter with `--filter=name`).
 - Factories: Always use model factories/states in tests. Use `fake()` or `$this->faker`.
 - If column `NOT NULL` in migration (e.g., `category_id`), factory MUST set it or tests fail.
-
 </laravel-boost-guidelines>
