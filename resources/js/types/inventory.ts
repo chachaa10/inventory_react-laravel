@@ -141,3 +141,18 @@ export type LineItem = {
     qty: number;
     unit_price: number;
 };
+
+export type AppNotification = {
+    id: string;
+    type: string;
+    data: {
+        product_id?: number;
+        product_name?: string;
+        stock_qty?: number;
+        reorder_level?: number;
+        message: string;
+    };
+    read_at: string | null;
+    created_at: string;
+    updated_at: string;
+};
