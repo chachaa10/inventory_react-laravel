@@ -2,7 +2,9 @@ import { Form, Head, router, usePage } from '@inertiajs/react';
 import type { ColumnDef, Row } from '@tanstack/react-table';
 import { Download, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
+import { products as exportProducts } from '@/actions/App/Http/Controllers/ExportController';
 import {
     destroy,
     store,
@@ -240,10 +242,23 @@ export default function ProductsIndex({
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="sm" type="button" disabled>
-                        <Download className="h-4 w-4" />
-                        Export
-                    </Button>
+                    {canManage && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            type="button"
+                            onClick={() => {
+                                router.post(exportProducts.url(), {}, {
+                                    onSuccess: () => {
+                                        toast.success('Product export has been queued.');
+                                    },
+                                });
+                            }}
+                        >
+                            <Download className="h-4 w-4" />
+                            Export
+                        </Button>
+                    )}
                     <Button size="sm" type="button" onClick={openCreate}>
                         <Plus className="h-4 w-4" />
                         Add Product

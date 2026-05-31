@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class NotificationController extends Controller
 {
@@ -23,7 +24,7 @@ class NotificationController extends Controller
         ]);
     }
 
-    public function show(Request $request, DatabaseNotification $databaseNotification): RedirectResponse
+    public function show(Request $request, DatabaseNotification $databaseNotification): SymfonyResponse|RedirectResponse
     {
         $user = $request->user();
 
@@ -35,6 +36,16 @@ class NotificationController extends Controller
 
         if (isset($data['product_id'])) {
             return to_route('products.index');
+        }
+
+        if (isset($data['status']) && $data['status'] === 'processing') {
+            Inertia::flash('toast', ['type' => 'info', 'message' => 'Export is still being processed. Check again shortly.']);
+
+            return to_route('notifications.index');
+        }
+
+        if (isset($data['file']) && is_string($data['file'])) {
+            return Inertia::location(to_route('exports.download', ['file' => basename($data['file'])]));
         }
 
         return to_route('notifications.index');
