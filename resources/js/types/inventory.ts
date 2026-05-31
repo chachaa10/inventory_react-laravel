@@ -13,6 +13,7 @@ export type Product = {
     supplier_id: number | null;
     category: { id: number; name: string } | null;
     supplier: { id: number; name: string } | null;
+    updated_at: string;
 };
 
 export type Paginated<T> = {

@@ -12,6 +12,7 @@ import { DataGrid } from '@/common/DataGrid';
 import { EmptyState } from '@/common/EmptyState';
 import { Paginator } from '@/common/Paginator';
 import { SearchBar } from '@/common/SearchBar';
+import { SkuPreview } from '@/common/SkuPreview';
 import { StatusBadge } from '@/common/StatusBadge';
 import { Button } from '@/components/ui/button';
 import {
@@ -86,6 +87,10 @@ function PriceCell({ row }: { row: Row<Product> }) {
     return formatCurrency(row.original.price);
 }
 
+function DateCell({ row }: { row: Row<Product> }) {
+    return new Date(row.original.updated_at).toLocaleDateString();
+}
+
 function createActionsColumn(
     onEdit: (p: Product) => void,
     onDelete: (id: number) => void,
@@ -132,6 +137,10 @@ export default function ProductsIndex({
     const [sheetOpen, setSheetOpen] = useState(false);
     const [editing, setEditing] = useState<Product | null>(null);
     const [deleteId, setDeleteId] = useState<number | null>(null);
+    const [previewName, setPreviewName] = useState('');
+    const [previewCategoryId, setPreviewCategoryId] = useState<number | string>(
+        '',
+    );
 
     const canManage = auth.user['role'] === 'admin';
     const activeSupplierOptions = suppliers.map((supplier) => ({
@@ -192,9 +201,17 @@ export default function ProductsIndex({
             enableSorting: true,
             cell: PriceCell,
         },
+        {
+            accessorKey: 'updated_at',
+            header: 'Updated',
+            enableSorting: true,
+            cell: DateCell,
+        },
         createActionsColumn(
             (p) => {
                 setEditing(p);
+                setPreviewName(p.name);
+                setPreviewCategoryId(p.category_id);
                 setSheetOpen(true);
             },
             setDeleteId,
@@ -205,6 +222,8 @@ export default function ProductsIndex({
     function openCreate() {
         setEditing(null);
         setSheetOpen(true);
+        setPreviewName('');
+        setPreviewCategoryId('');
     }
 
     return (
@@ -287,6 +306,8 @@ export default function ProductsIndex({
 
                     if (!open) {
                         setEditing(null);
+                        setPreviewName('');
+                        setPreviewCategoryId('');
                     }
                 }}
             >
@@ -314,86 +335,171 @@ export default function ProductsIndex({
                                             : 'Add a new product to your catalog.'}
                                     </SheetDescription>
                                 </SheetHeader>
-                                <div className="mt-6 space-y-4">
+                                <div className="mt-8 space-y-3 px-8">
+                                    <div className="space-y-3">
+                                        <div className="grid grid-cols-3 gap-4">
+                                            <div className="col-span-2 space-y-1.5">
+                                                <Label htmlFor="name">
+                                                    Name
+                                                </Label>
+                                                <Input
+                                                    id="name"
+                                                    name="name"
+                                                    defaultValue={
+                                                        editing?.name ?? ''
+                                                    }
+                                                    placeholder="e.g. Wireless Mouse"
+                                                    onChange={(e) =>
+                                                        setPreviewName(
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                />
+                                                {errors['name'] && (
+                                                    <p className="text-sm text-destructive">
+                                                        {errors['name']}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <Label htmlFor="unit">
+                                                    Unit
+                                                </Label>
+                                                <Input
+                                                    id="unit"
+                                                    name="unit"
+                                                    defaultValue={
+                                                        editing?.unit ?? 'pcs'
+                                                    }
+                                                    placeholder="pcs, kg, L"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-1.5">
+                                                <Label htmlFor="category_id">
+                                                    Category
+                                                </Label>
+                                                <select
+                                                    id="category_id"
+                                                    name="category_id"
+                                                    defaultValue={
+                                                        editing?.category_id ??
+                                                        ''
+                                                    }
+                                                    onChange={(e) =>
+                                                        setPreviewCategoryId(
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:ring-2 focus:ring-ring focus:outline-none"
+                                                >
+                                                    <option value="">
+                                                        Select category
+                                                    </option>
+                                                    {categories.map((cat) => (
+                                                        <option
+                                                            key={cat.id}
+                                                            value={cat.id}
+                                                        >
+                                                            {cat.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                {errors['category_id'] && (
+                                                    <p className="text-sm text-destructive">
+                                                        {errors['category_id']}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <Label htmlFor="supplier_id">
+                                                    Supplier
+                                                </Label>
+                                                <select
+                                                    id="supplier_id"
+                                                    name="supplier_id"
+                                                    defaultValue={
+                                                        editing?.supplier_id ??
+                                                        ''
+                                                    }
+                                                    className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:ring-2 focus:ring-ring focus:outline-none"
+                                                >
+                                                    <option value="">
+                                                        Select supplier
+                                                    </option>
+                                                    {supplierOptions.map(
+                                                        (sup) => (
+                                                            <option
+                                                                key={sup.id}
+                                                                value={sup.id}
+                                                            >
+                                                                {sup.name}
+                                                                {sup.isCurrent
+                                                                    ? ' (current)'
+                                                                    : ''}
+                                                            </option>
+                                                        ),
+                                                    )}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div className="space-y-1.5">
-                                        <Label htmlFor="name">Name</Label>
-                                        <Input
-                                            id="name"
-                                            name="name"
-                                            defaultValue={editing?.name ?? ''}
-                                            placeholder="e.g. Wireless Mouse"
+                                        <SkuPreview
+                                            categoryId={previewCategoryId}
+                                            categories={categories}
+                                            productName={previewName}
                                         />
-                                        {errors['name'] && (
-                                            <p className="text-sm text-destructive">
-                                                {errors['name']}
-                                            </p>
-                                        )}
                                     </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-1.5">
-                                            <Label htmlFor="sku">SKU</Label>
-                                            <Input
-                                                id="sku"
-                                                name="sku"
-                                                defaultValue={
-                                                    editing?.sku ?? ''
-                                                }
-                                                placeholder="e.g. WM-001"
-                                            />
-                                            {errors['sku'] && (
-                                                <p className="text-sm text-destructive">
-                                                    {errors['sku']}
-                                                </p>
-                                            )}
-                                        </div>
-                                        <div className="space-y-1.5">
-                                            <Label htmlFor="unit">Unit</Label>
-                                            <Input
-                                                id="unit"
-                                                name="unit"
-                                                defaultValue={
-                                                    editing?.unit ?? 'pcs'
-                                                }
-                                                placeholder="pcs, kg, L"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-1.5">
-                                            <Label htmlFor="price">Price</Label>
-                                            <Input
-                                                id="price"
-                                                name="price"
-                                                type="number"
-                                                step="0.01"
-                                                min="0"
-                                                defaultValue={
-                                                    editing?.price ?? ''
-                                                }
-                                                placeholder="0.00"
-                                            />
-                                            {errors['price'] && (
-                                                <p className="text-sm text-destructive">
-                                                    {errors['price']}
-                                                </p>
-                                            )}
-                                        </div>
-                                        <div className="space-y-1.5">
-                                            <Label htmlFor="cost">Cost</Label>
-                                            <Input
-                                                id="cost"
-                                                name="cost"
-                                                type="number"
-                                                step="0.01"
-                                                min="0"
-                                                defaultValue={
-                                                    editing?.cost ?? ''
-                                                }
-                                                placeholder="0.00"
-                                            />
+
+                                    <div className="space-y-3">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-1.5">
+                                                <Label htmlFor="price">
+                                                    Price
+                                                </Label>
+                                                <Input
+                                                    id="price"
+                                                    name="price"
+                                                    type="number"
+                                                    step="0.01"
+                                                    min="0"
+                                                    defaultValue={
+                                                        editing?.price ?? ''
+                                                    }
+                                                    placeholder="0.00"
+                                                />
+                                                {errors['price'] && (
+                                                    <p className="text-sm text-destructive">
+                                                        {errors['price']}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <Label htmlFor="cost">
+                                                    Cost
+                                                </Label>
+                                                <Input
+                                                    id="cost"
+                                                    name="cost"
+                                                    type="number"
+                                                    step="0.01"
+                                                    min="0"
+                                                    defaultValue={
+                                                        editing?.cost ?? ''
+                                                    }
+                                                    placeholder="0.00"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-4">
+
+                                    <div className="space-y-3">
                                         <div className="space-y-1.5">
                                             <Label htmlFor="reorder_level">
                                                 Reorder Level
@@ -408,79 +514,25 @@ export default function ProductsIndex({
                                                 }
                                             />
                                         </div>
+                                    </div>
+
+                                    <div className="space-y-3">
                                         <div className="space-y-1.5">
-                                            <Label htmlFor="category_id">
-                                                Category
+                                            <Label htmlFor="description">
+                                                Description
                                             </Label>
-                                            <select
-                                                id="category_id"
-                                                name="category_id"
+                                            <Textarea
+                                                id="description"
+                                                name="description"
                                                 defaultValue={
-                                                    editing?.category_id ?? ''
+                                                    editing?.description ?? ''
                                                 }
-                                                className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:ring-2 focus:ring-ring focus:outline-none"
-                                            >
-                                                <option value="">
-                                                    Select category
-                                                </option>
-                                                {categories.map((cat) => (
-                                                    <option
-                                                        key={cat.id}
-                                                        value={cat.id}
-                                                    >
-                                                        {cat.name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            {errors['category_id'] && (
-                                                <p className="text-sm text-destructive">
-                                                    {errors['category_id']}
-                                                </p>
-                                            )}
+                                                rows={3}
+                                                placeholder="Optional description"
+                                            />
                                         </div>
                                     </div>
-                                    <div className="space-y-1.5">
-                                        <Label htmlFor="supplier_id">
-                                            Supplier
-                                        </Label>
-                                        <select
-                                            id="supplier_id"
-                                            name="supplier_id"
-                                            defaultValue={
-                                                editing?.supplier_id ?? ''
-                                            }
-                                            className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus:ring-2 focus:ring-ring focus:outline-none"
-                                        >
-                                            <option value="">
-                                                Select supplier
-                                            </option>
-                                            {supplierOptions.map((sup) => (
-                                                <option
-                                                    key={sup.id}
-                                                    value={sup.id}
-                                                >
-                                                    {sup.name}
-                                                    {sup.isCurrent
-                                                        ? ' (current)'
-                                                        : ''}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <Label htmlFor="description">
-                                            Description
-                                        </Label>
-                                        <Textarea
-                                            id="description"
-                                            name="description"
-                                            defaultValue={
-                                                editing?.description ?? ''
-                                            }
-                                            rows={3}
-                                            placeholder="Optional description"
-                                        />
-                                    </div>
+
                                     <div className="space-y-1.5">
                                         <Label htmlFor="image">Image</Label>
                                         <Input
