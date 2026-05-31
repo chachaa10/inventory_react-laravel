@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import {
     LayoutGrid,
     Package,
@@ -6,6 +6,7 @@ import {
     ArrowLeftRight,
     Truck,
     ShoppingCart,
+    Users,
 } from 'lucide-react';
 
 import AppLogo from '@/components/app-logo';
@@ -54,7 +55,14 @@ const salesGroup: NavGroup = {
     items: [{ title: 'Orders', href: '/orders', icon: ShoppingCart }],
 };
 
+const administrationGroup: NavGroup = {
+    label: 'Administration',
+    items: [{ title: 'Staff Management', href: '/staff', icon: Users }],
+};
+
 export function AppSidebar() {
+    const canManageStaff = usePage().props.auth.user['role'] === 'admin';
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -74,6 +82,9 @@ export function AppSidebar() {
                 <NavGroupSection group={inventoryGroup} />
                 <NavGroupSection group={purchasingGroup} />
                 <NavGroupSection group={salesGroup} />
+                {canManageStaff && (
+                    <NavGroupSection group={administrationGroup} />
+                )}
             </SidebarContent>
 
             <SidebarFooter>
