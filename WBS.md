@@ -136,10 +136,10 @@
 
 ### 7.1 In-App Notifications
 
-- [ ] 7.1.1 Create `NotificationController` + route
-- [ ] 7.1.2 Build notification badge in sidebar
-- [ ] 7.1.3 Build `Notifications/Index.tsx` (list of database notifications)
-- [ ] 7.1.4 Mark-as-read functionality
+- [x] 7.1.1 Create `NotificationController` + route
+- [x] 7.1.2 Build notification badge in sidebar
+- [x] 7.1.3 Build `Notifications/Index.tsx` (list of database notifications)
+- [x] 7.1.4 Mark-as-read functionality
 
 ### 7.2 CSV Export
 
