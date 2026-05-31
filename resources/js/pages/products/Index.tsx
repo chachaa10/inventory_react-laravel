@@ -248,11 +248,17 @@ export default function ProductsIndex({
                             size="sm"
                             type="button"
                             onClick={() => {
-                                router.post(exportProducts.url(), {}, {
-                                    onSuccess: () => {
-                                        toast.success('Product export has been queued.');
+                                router.post(
+                                    exportProducts.url(),
+                                    {},
+                                    {
+                                        onSuccess: () => {
+                                            toast.success(
+                                                'Product export has been queued.',
+                                            );
+                                        },
                                     },
-                                });
+                                );
                             }}
                         >
                             <Download className="h-4 w-4" />
