@@ -143,11 +143,11 @@
 
 ### 7.2 CSV Export
 
-- [ ] 7.2.1 Create `ExportController` + route
-- [ ] 7.2.2 Create `Jobs/ExportProductsCsv` queued job
-- [ ] 7.2.3 Create notification "Export Ready" on job completion
-- [ ] 7.2.4 Build download link in export notification
-- [ ] 7.2.5 Write Pest feature tests for export job + notification
+- [x] 7.2.1 Create `ExportController` + route
+- [x] 7.2.2 Create `Jobs/ExportProductsCsv` queued job
+- [x] 7.2.3 Create notification "Export Ready" on job completion
+- [x] 7.2.4 Build download link in export notification
+- [x] 7.2.5 Write Pest feature tests for export job + notification
 
 ## 8. User Management (Admin)
 
