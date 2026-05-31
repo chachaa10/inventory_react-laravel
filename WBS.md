@@ -153,10 +153,14 @@
 
 ### 8.1 Staff Management
 
-- [ ] 8.1.1 Create `StaffController` + routes (under Settings)
-- [ ] 8.1.2 Create `StoreStaffRequest` / `UpdateStaffRequest`
-- [ ] 8.1.3 Create `Actions/Admin/InviteStaffAction`
-- [ ] 8.1.4 Create `Actions/Admin/UpdateStaffAction`
-- [ ] 8.1.5 Create `Actions/Admin/DeactivateStaffAction`
-- [ ] 8.1.6 Build `Settings/Staff/Index.tsx` (admin-only, DataGrid + Sheet-based CRUD)
-- [ ] 8.1.7 Write Pest feature tests for staff management + policy
+- [ ] 8.1.1 Create migration: add `is_active` boolean to `users` table
+- [ ] 8.1.2 Update `User` model (`is_active` fillable, cast, scope)
+- [ ] 8.1.3 Create `StaffController` + routes (no store route — registration is open)
+- [ ] 8.1.4 Create `UpdateStaffRequest`
+- [ ] 8.1.5 Create `Actions/Admin/UpdateStaffAction`
+- [ ] 8.1.6 Create `Actions/Admin/DeactivateStaffAction`
+- [ ] 8.1.7 Create `StaffPolicy` (admin: all, staff: no access)
+- [ ] 8.1.8 Build `Settings/Staff/Index.tsx` (admin-only, DataGrid + Sheet for role change)
+- [ ] 8.1.9 Add sidebar navigation item under Settings (admin-only)
+- [ ] 8.1.10 Write Pest feature tests for staff management + policy
+- [ ] 8.1.11 Run `php artisan wayfinder:generate`

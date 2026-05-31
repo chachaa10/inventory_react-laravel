@@ -45,8 +45,8 @@ Build a dual-role (admin + staff) inventory management system with 6 database en
 31. As an inventory manager, I want to access all inventory features via a sidebar navigation, so that I can move between sections efficiently.
 32. As a developer, I want Pest feature tests covering all critical flows, so that I can verify the system works correctly.
 33. As a developer, I want realistic demo data via seeders and factories, so that I can demonstrate the application immediately.
-34. As an admin, I want to invite staff users to the system, so that I can delegate daily operations.
-35. As an admin, I want to manage staff accounts (create, deactivate, change role), so that I can control access to the system.
+34. As an admin, I want to manage staff accounts (view, change role, deactivate), so that I can control access to the system.
+35. As an admin, I want to manage staff accounts (deactivate, change role), so that I can control access to the system.
 36. As a staff user, I want to view products, categories, suppliers, and stock movements, so that I can do my daily work.
 37. As a staff user, I want to record stock movements and create orders, so that I can handle inventory and sales operations.
 38. As a staff user, I want to be prevented from deleting products, suppliers, or categories, so that I don't accidentally destroy data.
@@ -60,7 +60,7 @@ Build a dual-role (admin + staff) inventory management system with 6 database en
 - **Actions Pattern (enforced)**: All business logic uses single-action classes. No service classes. Stock movement orchestration uses `RecordMovementAction` with DB transactions and `lockForUpdate()` for race-condition safety. Order-linked movements call the action directly.
 - **Wayfinder**: All route-to-controller calls from frontend use Wayfinder-generated typed functions. No hardcoded URLs or raw `router.post()` calls.
 - **Role Model**: A `role` enum column on the `users` table (`admin`, `staff`). No separate roles/pivot table — 80/20. Admin has full access. Staff is restricted to operational tasks via Policies.
-- **Policies**: `ProductPolicy`, `OrderPolicy`, `StockMovementPolicy`, `CategoryPolicy`, `SupplierPolicy` control authorization. Permission matrix:
+- **Policies**: `ProductPolicy`, `OrderPolicy`, `StockMovementPolicy`, `CategoryPolicy`, `SupplierPolicy`, `StaffPolicy` control authorization. Permission matrix:
 
     | Action                                | Admin | Staff |
     | ------------------------------------- | ----- | ----- |
@@ -72,8 +72,9 @@ Build a dual-role (admin + staff) inventory management system with 6 database en
     | Delete any entity                     | ✅    | ❌    |
     | Export CSV                            | ✅    | ❌    |
     | Manage staff accounts                 | ✅    | ❌    |
+    | View staff list                       | ✅    | ❌    |
 
-- **Form Requests**: One `Store{Entity}Request` and one `Update{Entity}Request` per entity with validation rules, authorization logic, and custom error messages.
+- **Form Requests**: One `Store{Entity}Request` and one `Update{Entity}Request` per entity with validation rules, authorization logic, and custom error messages. Staff management uses only `UpdateStaffRequest` (no store — staff self-registers via Fortify).
 
 ### Database Schema
 
@@ -81,7 +82,7 @@ Build a dual-role (admin + staff) inventory management system with 6 database en
 
 **users** (extends default Laravel users table)
 
-- Adds: role (enum: admin/staff, default: staff)
+- Adds: role (enum: admin/staff, default: staff), is_active (boolean, default true)
 
 **categories**
 
@@ -161,7 +162,7 @@ GET|POST  /orders                            → OrderController@index / store
 GET|PUT   /orders/{order}                    → OrderController@edit / update (cancel)
 POST      /exports/products                  → ExportController@products (queued CSV)
 GET       /notifications                     → NotificationController@index
-GET|POST  /settings/staff                    → StaffController@index / store
+GET      /settings/staff                    → StaffController@index
 PUT|DELETE /settings/staff/{user}            → StaffController@update / destroy
 ```
 
@@ -265,12 +266,14 @@ The following decisions were made during schema review and deviate from the init
 
 ### Behavioral Changes
 
-| Behavior             | Original                 | Revised                                                | Rationale                                                                                                                              |
-| -------------------- | ------------------------ | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| SKU uniqueness       | unique (deleted ignored) | **permanently unique** (including soft-deleted)        | Reusing a SKU from a discontinued product confuses old orders and movements.                                                           |
-| Product->category FK | cascadeOnDelete          | **nullOnDelete**                                       | Category deletion archived → products lose category reference but survive.                                                             |
-| Order tax/discount   | unspecified              | **skipped for MVP**                                    | 80/20 — line item subtotals + total cover the MVP. Tax logic adds complexity without proportional learning value.                      |
-| Customer entity      | separate entity + CRUD   | **removed** — inline `customer_name`/`email` on orders | 80/20 — managing customer master data adds ~200 lines of code for no inventory logic benefit. Staff types customer name on order form. |
+| Behavior             | Original                  | Revised                                                | Rationale                                                                                                                              |
+| -------------------- | ------------------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| SKU uniqueness       | unique (deleted ignored)  | **permanently unique** (including soft-deleted)        | Reusing a SKU from a discontinued product confuses old orders and movements.                                                           |
+| Product->category FK | cascadeOnDelete           | **nullOnDelete**                                       | Category deletion archived → products lose category reference but survive.                                                             |
+| Order tax/discount   | unspecified               | **skipped for MVP**                                    | 80/20 — line item subtotals + total cover the MVP. Tax logic adds complexity without proportional learning value.                      |
+| Customer entity      | separate entity + CRUD    | **removed** — inline `customer_name`/`email` on orders | 80/20 — managing customer master data adds ~200 lines of code for no inventory logic benefit. Staff types customer name on order form. |
+| Staff invite flow    | store + InviteStaffAction | **removed** — no create/invite                         | Registration is open via Fortify. Admin only needs view, role change, and deactivate.                                                  |
+| `users.is_active`    | (not present)             | **added** — boolean, default true                      | Enables deactivation without soft-deleting users. Preserves audit trail FK integrity.                                                  |
 
 ## Further Notes
 
