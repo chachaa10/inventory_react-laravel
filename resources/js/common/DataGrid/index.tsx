@@ -62,10 +62,13 @@ export function DataGrid<TData>({ columns, data }: DataGridProps<TData>) {
                         ))}
                     </thead>
                     <tbody>
-                        {table.getRowModel().rows.map((row) => (
+                        {table.getRowModel().rows.map((row, index) => (
                             <tr
                                 key={row.id}
-                                className="border-b border-border last:border-0 hover:bg-muted/50"
+                                className="animate-fade-in-up border-b border-border last:border-0 hover:bg-muted/50"
+                                style={{
+                                    animationDelay: `${index * 40}ms`,
+                                }}
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <td
