@@ -42,6 +42,7 @@ export type Category = {
     name: string;
     slug: string;
     description: string | null;
+    prefix: string | null;
     products_count: number;
 };
 
