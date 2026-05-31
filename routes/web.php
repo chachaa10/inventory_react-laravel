@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
@@ -48,6 +49,9 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('orders/create', [OrderController::class, 'create'])->name('orders.create');
     Route::get('orders/{order}', [OrderController::class, 'edit'])->name('orders.edit');
     Route::put('orders/{order}', [OrderController::class, 'update'])->name('orders.update');
+
+    Route::post('exports/products', [ExportController::class, 'products'])->name('exports.products');
+    Route::get('exports/products/download/{file}', [ExportController::class, 'download'])->name('exports.download');
 });
 
 require __DIR__.'/settings.php';
