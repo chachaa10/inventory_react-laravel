@@ -63,6 +63,13 @@ Known quirk: `tsc --noEmit` errors on `.form()` are pre-existing across the proj
 
 - **`lockForUpdate()` + stale reference**: Locking a row but discarding the result leaves stale data. Read the column directly from the locked query in one round-trip.
 - **`SoftDeletes` + eager loading**: `->with('relation')` implicitly adds `WHERE deleted_at IS NULL` on the related model. Use `LEFT JOIN` with aliased columns instead of eager loading when trashed rows should still appear.
+- **`DatabaseNotification::markAsRead()` → INSERT instead of UPDATE**: If `$exists` is false (e.g., from a failed implicit route binding), `save()` inside `markAsRead()` runs `performInsert()` with no `id`, causing a NOT NULL constraint failure. The model must have `exists = true`.
+- **Implicit route binding parameter name mismatch**: The controller parameter name (e.g., `$databaseNotification`) must match the route param (`{notification}`) — otherwise binding silently skips and the controller gets an empty model. When rector's `RenameParamToMatchTypeRector` renames params away from the route param, use `Route::model('notification', DatabaseNotification::class)` in `AppServiceProvider::boot()` to bind explicitly.
+
+### Event System Gotchas
+
+- **Laravel 11 double event registration**: Both `App\Providers\EventServiceProvider` AND the base `Illuminate\Foundation\Support\Providers\EventServiceProvider` are registered. The base class's `shouldDiscoverEvents()` returns `true` for itself (`get_class($this) === __CLASS__`), so auto-discovery runs independently of the subclass. A listener registered via `$listen` AND auto-discovered fires twice. Fix: call `EventServiceProvider::disableEventDiscovery()` in `AppServiceProvider::register()`.
+- **Low stock notification duplication**: Every stock movement that leaves stock `≤ reorder_level` fires a notification. If stock was already low, subsequent movements create duplicates. Fix: check transition — only fire when `$beforeQty > reorder_level && $afterQty <= reorder_level`.
 
 ## Frontend: Inertia + React
 
