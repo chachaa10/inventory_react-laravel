@@ -61,7 +61,7 @@ class RecordMovementAction
 
             event(new StockMoved($stockMovement));
 
-            if ($afterQty <= $product->reorder_level) {
+            if ($beforeQty > $product->reorder_level && $afterQty <= $product->reorder_level) {
                 event(new LowStockDetected($product));
             }
 

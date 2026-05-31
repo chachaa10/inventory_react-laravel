@@ -16,4 +16,9 @@ class EventServiceProvider extends ServiceProvider
             HandleLowStock::class,
         ],
     ];
+
+    public function shouldDiscoverEvents(): bool
+    {
+        return false;
+    }
 }

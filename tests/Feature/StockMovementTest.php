@@ -146,7 +146,7 @@ describe('Low Stock Notifications', function (): void {
         $admin = User::factory()->create(['role' => 'admin']);
         $user = User::factory()->create(['role' => 'staff']);
         $product = Product::factory()->create([
-            'stock_qty' => 5,
+            'stock_qty' => 6,
             'reorder_level' => 5,
         ]);
 
@@ -182,6 +182,62 @@ describe('Low Stock Notifications', function (): void {
         Notification::assertNotSentTo(
             [$admin],
             ProductLowStock::class,
+        );
+    });
+
+    it('does not dispatch duplicate notifications on subsequent movements while already low', function (): void {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $user = User::factory()->create(['role' => 'staff']);
+        $product = Product::factory()->create([
+            'stock_qty' => 6,
+            'reorder_level' => 5,
+        ]);
+
+        actingAs($user)->post(route('stock-movements.store'), [
+            'product_id' => $product->id,
+            'type' => 'out',
+            'qty' => 1,
+        ]);
+
+        Notification::assertSentTo(
+            [$admin],
+            ProductLowStock::class,
+        );
+
+        Notification::fake();
+
+        actingAs($user)->post(route('stock-movements.store'), [
+            'product_id' => $product->id,
+            'type' => 'out',
+            'qty' => 1,
+        ]);
+
+        Notification::assertNotSentTo(
+            [$admin],
+            ProductLowStock::class,
+        );
+    });
+
+    it('sends only one notification per admin for a single stock movement', function (): void {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $user = User::factory()->create(['role' => 'staff']);
+        $product = Product::factory()->create([
+            'stock_qty' => 6,
+            'reorder_level' => 5,
+        ]);
+
+        Notification::fake();
+
+        actingAs($user)->post(route('stock-movements.store'), [
+            'product_id' => $product->id,
+            'type' => 'out',
+            'qty' => 1,
+        ]);
+
+        Notification::assertSentTo(
+            [$admin],
+            ProductLowStock::class,
+            1,
         );
     });
 });
