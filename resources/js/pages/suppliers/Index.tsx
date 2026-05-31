@@ -350,49 +350,57 @@ export default function SuppliersIndex({
                                             : 'Add a new supplier to your catalog.'}
                                     </SheetDescription>
                                 </SheetHeader>
-                                <div className="mt-6 space-y-4">
-                                    <div className="space-y-1.5">
-                                        <Label htmlFor="name">Name</Label>
-                                        <Input
-                                            id="name"
-                                            name="name"
-                                            defaultValue={editing?.name ?? ''}
-                                            placeholder="e.g. TechSupply Co."
-                                        />
-                                        {errors['name'] && (
-                                            <p className="text-sm text-destructive">
-                                                {errors['name']}
-                                            </p>
-                                        )}
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <Label htmlFor="email">Email</Label>
-                                        <Input
-                                            id="email"
-                                            name="email"
-                                            type="email"
-                                            defaultValue={editing?.email ?? ''}
-                                            placeholder="orders@supplier.com"
-                                        />
-                                        {errors['email'] && (
-                                            <p className="text-sm text-destructive">
-                                                {errors['email']}
-                                            </p>
-                                        )}
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <Label htmlFor="phone">Phone</Label>
-                                        <Input
-                                            id="phone"
-                                            name="phone"
-                                            defaultValue={editing?.phone ?? ''}
-                                            placeholder="+1-555-0100"
-                                        />
-                                        {errors['phone'] && (
-                                            <p className="text-sm text-destructive">
-                                                {errors['phone']}
-                                            </p>
-                                        )}
+                                <div className="mt-8 space-y-3 px-8">
+                                    <div className="space-y-3">
+                                        <div className="space-y-1.5">
+                                            <Label htmlFor="name">Name</Label>
+                                            <Input
+                                                id="name"
+                                                name="name"
+                                                defaultValue={
+                                                    editing?.name ?? ''
+                                                }
+                                                placeholder="e.g. TechSupply Co."
+                                            />
+                                            {errors['name'] && (
+                                                <p className="text-sm text-destructive">
+                                                    {errors['name']}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <Label htmlFor="email">Email</Label>
+                                            <Input
+                                                id="email"
+                                                name="email"
+                                                type="email"
+                                                defaultValue={
+                                                    editing?.email ?? ''
+                                                }
+                                                placeholder="orders@supplier.com"
+                                            />
+                                            {errors['email'] && (
+                                                <p className="text-sm text-destructive">
+                                                    {errors['email']}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <Label htmlFor="phone">Phone</Label>
+                                            <Input
+                                                id="phone"
+                                                name="phone"
+                                                defaultValue={
+                                                    editing?.phone ?? ''
+                                                }
+                                                placeholder="+1-555-0100"
+                                            />
+                                            {errors['phone'] && (
+                                                <p className="text-sm text-destructive">
+                                                    {errors['phone']}
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
                                     <div className="space-y-1.5">
                                         <Label htmlFor="address">Address</Label>

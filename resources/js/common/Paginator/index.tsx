@@ -34,7 +34,7 @@ export function Paginator({
     }
 
     return (
-        <div className="flex items-center justify-between">
+        <div className="mt-6 flex items-center justify-between">
             <span className="text-xs text-muted-foreground">
                 {from}–{to} of {total}
             </span>

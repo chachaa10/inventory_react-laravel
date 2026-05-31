@@ -146,34 +146,38 @@ export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
                                             : 'Add a new category to organize products.'}
                                     </SheetDescription>
                                 </SheetHeader>
-                                <div className="mt-6 space-y-4">
-                                    <div className="space-y-1.5">
-                                        <Label htmlFor="name">Name</Label>
-                                        <Input
-                                            id="name"
-                                            name="name"
-                                            defaultValue={editing?.name ?? ''}
-                                            placeholder="e.g. Electronics"
-                                        />
-                                        {errors['name'] && (
-                                            <p className="text-sm text-destructive">
-                                                {errors['name']}
-                                            </p>
-                                        )}
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <Label htmlFor="description">
-                                            Description
-                                        </Label>
-                                        <Textarea
-                                            id="description"
-                                            name="description"
-                                            defaultValue={
-                                                editing?.description ?? ''
-                                            }
-                                            rows={3}
-                                            placeholder="Optional description"
-                                        />
+                                <div className="mt-8 space-y-3 px-8">
+                                    <div className="space-y-3">
+                                        <div className="space-y-1.5">
+                                            <Label htmlFor="name">Name</Label>
+                                            <Input
+                                                id="name"
+                                                name="name"
+                                                defaultValue={
+                                                    editing?.name ?? ''
+                                                }
+                                                placeholder="e.g. Electronics"
+                                            />
+                                            {errors['name'] && (
+                                                <p className="text-sm text-destructive">
+                                                    {errors['name']}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <Label htmlFor="description">
+                                                Description
+                                            </Label>
+                                            <Textarea
+                                                id="description"
+                                                name="description"
+                                                defaultValue={
+                                                    editing?.description ?? ''
+                                                }
+                                                rows={3}
+                                                placeholder="Optional description"
+                                            />
+                                        </div>
                                     </div>
                                     <div className="pt-4">
                                         <Button

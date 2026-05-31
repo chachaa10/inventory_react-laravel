@@ -168,135 +168,137 @@ export default function StockMovementsIndex({
                                         Adjust inventory quantities.
                                     </SheetDescription>
                                 </SheetHeader>
-                                <div className="mt-6 space-y-4">
-                                    <div className="space-y-1.5">
-                                        <Label htmlFor="product_id">
-                                            Product
-                                        </Label>
-                                        <input
-                                            type="hidden"
-                                            name="product_id"
-                                            value={productId}
-                                        />
-                                        <Select
-                                            value={productId}
-                                            onValueChange={(value) =>
-                                                setProductId(value)
-                                            }
-                                        >
-                                            <SelectTrigger id="product_id">
-                                                <SelectValue placeholder="Select product" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {products.map((product) => (
-                                                    <SelectItem
-                                                        key={product.id}
-                                                        value={String(
-                                                            product.id,
-                                                        )}
-                                                    >
-                                                        {product.name} (Stock:{' '}
-                                                        {product.stock_qty})
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        {errors['product_id'] && (
-                                            <p className="text-sm text-destructive">
-                                                {errors['product_id']}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    <div className="space-y-1.5">
-                                        <Label>Movement Type</Label>
-                                        <input
-                                            type="hidden"
-                                            name="type"
-                                            value={type}
-                                        />
-                                        <div className="flex gap-2">
-                                            {(
-                                                [
-                                                    'in',
-                                                    'out',
-                                                    'adjustment',
-                                                ] as const
-                                            ).map((mtype) => (
-                                                <button
-                                                    key={mtype}
-                                                    type="button"
-                                                    onClick={() =>
-                                                        setType(mtype)
-                                                    }
-                                                    className={`flex-1 cursor-pointer rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
-                                                        type === mtype
-                                                            ? 'border-primary bg-primary/10 text-primary'
-                                                            : 'border-input text-muted-foreground hover:bg-muted'
-                                                    }`}
-                                                >
-                                                    {mtype
-                                                        .charAt(0)
-                                                        .toUpperCase() +
-                                                        mtype.slice(1)}
-                                                </button>
-                                            ))}
+                                <div className="mt-8 space-y-3 px-8">
+                                    <div className="space-y-3">
+                                        <div className="space-y-1.5">
+                                            <Label htmlFor="product_id">
+                                                Product
+                                            </Label>
+                                            <input
+                                                type="hidden"
+                                                name="product_id"
+                                                value={productId}
+                                            />
+                                            <Select
+                                                value={productId}
+                                                onValueChange={(value) =>
+                                                    setProductId(value)
+                                                }
+                                            >
+                                                <SelectTrigger id="product_id">
+                                                    <SelectValue placeholder="Select product" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {products.map((product) => (
+                                                        <SelectItem
+                                                            key={product.id}
+                                                            value={String(
+                                                                product.id,
+                                                            )}
+                                                        >
+                                                            {product.name}{' '}
+                                                            (Stock:{' '}
+                                                            {product.stock_qty})
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            {errors['product_id'] && (
+                                                <p className="text-sm text-destructive">
+                                                    {errors['product_id']}
+                                                </p>
+                                            )}
                                         </div>
-                                        {errors['type'] && (
-                                            <p className="text-sm text-destructive">
-                                                {errors['type']}
-                                            </p>
-                                        )}
+
+                                        <div className="space-y-1.5">
+                                            <Label>Movement Type</Label>
+                                            <input
+                                                type="hidden"
+                                                name="type"
+                                                value={type}
+                                            />
+                                            <div className="flex gap-2">
+                                                {(
+                                                    [
+                                                        'in',
+                                                        'out',
+                                                        'adjustment',
+                                                    ] as const
+                                                ).map((mtype) => (
+                                                    <button
+                                                        key={mtype}
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setType(mtype)
+                                                        }
+                                                        className={`flex-1 cursor-pointer rounded-lg border px-4 py-2 text-sm font-medium transition-colors duration-150 ${
+                                                            type === mtype
+                                                                ? 'border-primary bg-primary/10 text-primary'
+                                                                : 'border-input text-muted-foreground hover:bg-muted'
+                                                        }`}
+                                                    >
+                                                        {mtype
+                                                            .charAt(0)
+                                                            .toUpperCase() +
+                                                            mtype.slice(1)}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            {errors['type'] && (
+                                                <p className="text-sm text-destructive">
+                                                    {errors['type']}
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
 
-                                    <div className="space-y-1.5">
-                                        <Label htmlFor="qty">Quantity</Label>
-                                        <Input
-                                            id="qty"
-                                            name="qty"
-                                            type="number"
-                                            min="1"
-                                            placeholder="e.g. 10"
-                                            defaultValue=""
-                                        />
-                                        {errors['qty'] && (
-                                            <p className="text-sm text-destructive">
-                                                {errors['qty']}
-                                            </p>
-                                        )}
-                                    </div>
+                                    <div className="space-y-3">
+                                        <div className="space-y-1.5">
+                                            <Label htmlFor="qty">
+                                                Quantity
+                                            </Label>
+                                            <Input
+                                                id="qty"
+                                                name="qty"
+                                                type="number"
+                                                min="1"
+                                                placeholder="e.g. 10"
+                                                defaultValue=""
+                                            />
+                                            {errors['qty'] && (
+                                                <p className="text-sm text-destructive">
+                                                    {errors['qty']}
+                                                </p>
+                                            )}
+                                        </div>
 
-                                    <div className="space-y-1.5">
-                                        <Label htmlFor="reference">
-                                            Reference
-                                        </Label>
-                                        <Input
-                                            id="reference"
-                                            name="reference"
-                                            placeholder="e.g. PO-001 or Order #1001"
-                                            defaultValue=""
-                                        />
-                                        {errors['reference'] && (
-                                            <p className="text-sm text-destructive">
-                                                {errors['reference']}
-                                            </p>
-                                        )}
-                                    </div>
+                                        <div className="space-y-1.5">
+                                            <Label htmlFor="reference">
+                                                Reference
+                                            </Label>
+                                            <Input
+                                                id="reference"
+                                                name="reference"
+                                                placeholder="e.g. PO-001 or Order #1001"
+                                                defaultValue=""
+                                            />
+                                            {errors['reference'] && (
+                                                <p className="text-sm text-destructive">
+                                                    {errors['reference']}
+                                                </p>
+                                            )}
+                                        </div>
 
-                                    <div className="space-y-1.5">
-                                        <Label htmlFor="notes">Notes</Label>
-                                        <Textarea
-                                            id="notes"
-                                            name="notes"
-                                            rows={3}
-                                            placeholder="Optional notes about this movement"
-                                            defaultValue=""
-                                        />
-                                        {errors['notes'] && (
-                                            <p className="text-sm text-destructive">
-                                                {errors['notes']}
-                                            </p>
-                                        )}
+                                        <div className="space-y-1.5">
+                                            <Label htmlFor="notes">Notes</Label>
+                                            <Textarea
+                                                id="notes"
+                                                name="notes"
+                                                rows={3}
+                                                placeholder="Optional notes about this movement"
+                                                defaultValue=""
+                                            />
+                                        </div>
                                     </div>
 
                                     <div className="pt-4">
