@@ -17,22 +17,25 @@ test('product name is required', function (): void {
     $this->actingAs($admin);
 
     $this->post(route('products.store'), [])
-        ->assertSessionHasErrors(['name', 'sku', 'price', 'category_id']);
+        ->assertSessionHasErrors(['name', 'price', 'category_id']);
 });
 
-test('sku must be unique', function (): void {
+test('sku is auto-generated on create', function (): void {
     $admin = User::factory()->create(['role' => 'admin']);
     $this->actingAs($admin);
 
-    $category = Category::factory()->create();
-    Product::factory()->create(['sku' => 'TEST-SKU']);
+    $category = Category::factory()->create(['prefix' => 'TEST']);
 
     $this->post(route('products.store'), [
         'name' => 'Test Product',
-        'sku' => 'TEST-SKU',
         'price' => 10.00,
         'category_id' => $category->id,
-    ])->assertSessionHasErrors('sku');
+        'unit' => 'pcs',
+        'reorder_level' => 5,
+    ])->assertRedirect();
+
+    $product = Product::query()->latest()->first();
+    expect($product->sku)->toMatch('/^TEST-TP-\d{3}$/');
 });
 
 test('admin can create a product', function (): void {
@@ -43,7 +46,6 @@ test('admin can create a product', function (): void {
 
     $this->post(route('products.store'), [
         'name' => 'Test Product',
-        'sku' => 'SKU-TEST-001',
         'price' => 29.99,
         'cost' => 15.50,
         'unit' => 'pcs',
@@ -51,12 +53,11 @@ test('admin can create a product', function (): void {
         'category_id' => $category->id,
     ])->assertRedirect();
 
-    $this->assertDatabaseHas('products', [
-        'name' => 'Test Product',
-        'sku' => 'SKU-TEST-001',
-        'price' => 29.99,
-        'cost' => 15.50,
-    ]);
+    $product = Product::query()->where('name', 'Test Product')->first();
+    expect($product)->not->toBeNull();
+    expect($product->price)->toBe(29.99);
+    expect($product->cost)->toBe(15.50);
+    expect($product->sku)->toMatch('/^[A-Z]+-[A-Z]+-\d{3}$/');
 });
 
 test('product cannot be created with an archived supplier', function (): void {
@@ -71,7 +72,6 @@ test('product cannot be created with an archived supplier', function (): void {
 
     $this->post(route('products.store'), [
         'name' => 'Test Product',
-        'sku' => 'SKU-TEST-ARCHIVED',
         'price' => 29.99,
         'unit' => 'pcs',
         'reorder_level' => 10,
@@ -89,7 +89,6 @@ test('admin can create a product with image', function (): void {
 
     $this->post(route('products.store'), [
         'name' => 'Product With Image',
-        'sku' => 'SKU-IMG-001',
         'price' => 19.99,
         'unit' => 'pcs',
         'reorder_level' => 5,
@@ -97,7 +96,7 @@ test('admin can create a product with image', function (): void {
         'image' => $image,
     ])->assertRedirect();
 
-    $product = Product::query()->where('sku', 'SKU-IMG-001')->first();
+    $product = Product::query()->where('name', 'Product With Image')->first();
     expect($product)->not->toBeNull();
     expect($product->getFirstMedia('image'))->not->toBeNull();
 });
@@ -114,7 +113,6 @@ test('admin can update a product', function (): void {
 
     $this->put(route('products.update', $product), [
         'name' => 'New Name',
-        'sku' => $product->sku,
         'price' => 49.99,
         'unit' => 'pcs',
         'reorder_level' => 5,
@@ -139,7 +137,6 @@ test('product cannot be updated to an archived supplier', function (): void {
 
     $this->put(route('products.update', $product), [
         'name' => $product->name,
-        'sku' => $product->sku,
         'price' => $product->price,
         'unit' => $product->unit,
         'reorder_level' => $product->reorder_level,
@@ -164,7 +161,6 @@ test('product can keep its current archived supplier when updated', function ():
 
     $this->put(route('products.update', $product), [
         'name' => 'Updated Product',
-        'sku' => $product->sku,
         'price' => $product->price,
         'unit' => $product->unit,
         'reorder_level' => $product->reorder_level,
@@ -193,7 +189,6 @@ test('admin can update a product with image replacement', function (): void {
 
     $this->put(route('products.update', $product), [
         'name' => $product->name,
-        'sku' => $product->sku,
         'price' => $product->price,
         'unit' => $product->unit,
         'reorder_level' => $product->reorder_level,
@@ -229,7 +224,6 @@ test('staff can create a product', function (): void {
 
     $this->post(route('products.store'), [
         'name' => 'Staff Product',
-        'sku' => 'SKU-STAFF-001',
         'price' => 15.00,
         'unit' => 'pcs',
         'reorder_level' => 5,
@@ -238,7 +232,6 @@ test('staff can create a product', function (): void {
 
     $this->assertDatabaseHas('products', [
         'name' => 'Staff Product',
-        'sku' => 'SKU-STAFF-001',
     ]);
 });
 
@@ -250,7 +243,6 @@ test('staff can update a product', function (): void {
 
     $this->put(route('products.update', $product), [
         'name' => 'Updated By Staff',
-        'sku' => $product->sku,
         'price' => $product->price,
         'unit' => $product->unit,
         'reorder_level' => $product->reorder_level,

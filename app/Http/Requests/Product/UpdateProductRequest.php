@@ -18,7 +18,7 @@ class UpdateProductRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:255'],
-            'sku' => ['required', 'string', 'max:50', Rule::unique('products')->ignore($this->route('product'))],
+            'sku' => ['nullable', 'string', 'max:50', Rule::unique('products')->ignore($this->route('product'))],
             'description' => ['nullable', 'string', 'max:5000'],
             'price' => ['required', 'numeric', 'min:0'],
             'cost' => ['nullable', 'numeric', 'min:0'],
