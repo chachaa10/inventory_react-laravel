@@ -44,33 +44,6 @@ Known quirk: `tsc --noEmit` errors on `.form()` are pre-existing across the proj
 - Eloquent/API: Use API Resources & versioning for APIs (unless convention differs). Use `route()` for links.
 - **Exceptions**: Never use bare `RuntimeException` or `\Exception` directly. Always create a dedicated class in `app/Exceptions/` extending `RuntimeException` with a `render()` method that flashes an Inertia toast and redirects.
 
-### PHPStan Max Level Gotchas
-
-- **Never use `@phpstan-ignore`** — find a real fix.
-- **`findOrFail`/`find` returns `Model|Collection`** → Use `$query->where('id', $id)->firstOrFail()` or `->first()` for narrow `TModel` type.
-- **"Dynamic call to static method" false positive** on `orderBy`, `reorder`, `lockForUpdate`, `select`, `addSelect`, `leftJoin`, `lockForUpdate`. Fix: `$builder->getQuery()->methodName()`. Expands to ALL fluent/terminal methods on Eloquent Builder — `count`, `sum`, `whereColumn`, `groupBy`, `join`, `orderByDesc`, `selectRaw`, `take`, `limit` also need it.
-- **`fake()->randomElement(Enum::cases())->value`** → `randomElement` returns `mixed`. Fix: `array_map(fn($t) => $t->value, Enum::cases())` to produce typed `list<string>` before `randomElement`.
-- **`intval(mixed)` also rejected** → use `is_int()` guard with `throw` instead.
-- **`throw_if` inside closures corrupts PHPStan cache**: fresh analysis passes, cached run fails with `Unreachable statement` / `Property never read`. Fix: extract guard logic into private methods where `throw_if` is the **last statement** so nothing follows that could be flagged unreachable.
-- **`always-read-written-properties` blind to reads inside closures**: property reads inside `DB::transaction` closures aren't tracked. Extract a private method that reads the property at the class level to make it visible.
-- **Enum-casted attributes read `string` inside closures**: `$movement->type->value` inside a `map()` closure is seen as `string->value` (error). Fix: `is_string($movement->type) ? $movement->type : $movement->type->value` — or extract to private method with `is_string` guard.
-- **`getQuery()->take(5)` mutates the Eloquent builder by reference**: calling `$q->getQuery()->take(5)` then `$q->with('...')->latest()->get()` returns Eloquent models (not stdClass). The constraint persists, only the terminal method swap is needed.
-- **`selectRaw` via `getQuery()` returns `Collection<stdClass>` with `mixed` properties**: every column needs `is_string`/`is_int` guard with `throw` — bare casts on `mixed` are rejected.
-- **`Number::currency()` returns `string|false`**: use long ternary (`$x !== false ? $x : '$0.00'`), not `?:` (banned by `ternary.shortNotAllowed`).
-- **Tracked-file revert warning**: `git checkout` on a tracked file only reverts that file — but untracked files (`??`) survive. If a tracked controller or route file was modified alongside new untracked files, a revert silently kills the controller logic while the actions/exceptions still exist. Always `git status` after a reset to check what actually changed.
-
-### Eloquent Gotchas
-
-- **`lockForUpdate()` + stale reference**: Locking a row but discarding the result leaves stale data. Read the column directly from the locked query in one round-trip.
-- **`SoftDeletes` + eager loading**: `->with('relation')` implicitly adds `WHERE deleted_at IS NULL` on the related model. Use `LEFT JOIN` with aliased columns instead of eager loading when trashed rows should still appear.
-- **`DatabaseNotification::markAsRead()` → INSERT instead of UPDATE**: If `$exists` is false (e.g., from a failed implicit route binding), `save()` inside `markAsRead()` runs `performInsert()` with no `id`, causing a NOT NULL constraint failure. The model must have `exists = true`.
-- **Implicit route binding parameter name mismatch**: The controller parameter name (e.g., `$databaseNotification`) must match the route param (`{notification}`) — otherwise binding silently skips and the controller gets an empty model. When rector's `RenameParamToMatchTypeRector` renames params away from the route param, use `Route::model('notification', DatabaseNotification::class)` in `AppServiceProvider::boot()` to bind explicitly.
-
-### Event System Gotchas
-
-- **Laravel 11 double event registration**: Both `App\Providers\EventServiceProvider` AND the base `Illuminate\Foundation\Support\Providers\EventServiceProvider` are registered. The base class's `shouldDiscoverEvents()` returns `true` for itself (`get_class($this) === __CLASS__`), so auto-discovery runs independently of the subclass. A listener registered via `$listen` AND auto-discovered fires twice. Fix: call `EventServiceProvider::disableEventDiscovery()` in `AppServiceProvider::register()`.
-- **Low stock notification duplication**: Every stock movement that leaves stock `≤ reorder_level` fires a notification. If stock was already low, subsequent movements create duplicates. Fix: check transition — only fire when `$beforeQty > reorder_level && $afterQty <= reorder_level`.
-
 ## Frontend: Inertia + React
 
 ### Inertia v3
@@ -96,16 +69,12 @@ Known quirk: `tsc --noEmit` errors on `.form()` are pre-existing across the proj
 
 ### Sheet/Dialog + Form Nesting
 
-- **`<Form>` goes inside `<SheetContent>`/`<DialogContent>`**, not outside. Radix renders via Portal at `<body>` level.
 - Always: `Dialog > DialogContent > Form > button[type=submit]`.
-- The `<Button>` component requires `type` explicitly — always write `type="button"` or `type="submit"`; `<button>` defaults to `"submit"` inside a `<form>`, so omitting `type` is dangerous.
 - Use `onSuccess` callback to close the Sheet/Dialog. Use `resetOnSuccess`.
 
 ### DataGrid & @tanstack/react-table
 
-- **`accessorKey` does NOT resolve nested dot notation** (`'product.name'` → `undefined`). Use `accessorFn: (row) => row.product?.name`.
-- **Cell renderers**: Extract to module-level functions taking `{ row }: { row: Row<T> }`. Never define inline (oxlint blocks it).
-- **Pagination**: Always `->paginate()` on server. DataGrid renders rows only — use `<Paginator>` below it.
+- Pagination: Always `->paginate()` on server. DataGrid renders rows only — use `<Paginator>` below it.
 
 ### Authorization-based UI Hiding
 
