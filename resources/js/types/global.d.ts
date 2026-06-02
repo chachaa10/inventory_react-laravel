@@ -2,7 +2,6 @@ import type { Auth } from '@/types/auth';
 import type { AppNotification } from '@/types/inventory';
 
 declare module 'react' {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface InputHTMLAttributes<T> {
         passwordrules?: string;
     }
