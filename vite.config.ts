@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
 import { defineConfig } from 'vite';
+import viteQRCode from 'vite-qr';
 
 export default defineConfig({
     plugins: [
@@ -23,6 +24,7 @@ export default defineConfig({
         wayfinder({
             formVariants: true,
         }),
+        viteQRCode(),
     ],
     test: {
         globals: true,

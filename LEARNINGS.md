@@ -57,4 +57,7 @@
 - **fake()->randomElement(Enum::cases()) returns mixed**: [×1, 2026-05-31] fake()->randomElement(Enum::cases())->value is rejected because randomElement returns mixed. Fix: `array_map(fn($t) => $t->value, Enum::cases())` to produce typed list<string>, then use randomElement on that.
 - **Enum-casted attributes read as string inside closures**: [×1, 2026-05-31] Enum-casted model attributes ->value inside map() closures is seen as 'string->value'. Fix: `is_string($movement->type) ? $movement->type : $movement->type->value` — or extract to private method with is_string guard.
 
+### Vite/Dev Environment
+- **Mobile dev access setup**: [×1, 2026-06-04] Vite hot file uses server.host — 0.0.0.0 is not routable from mobile. pnpm run dev -- --host doesn't pass args correctly (use pnpm vite --host directly). .env.local can break Laravel env loading causing MissingAppKeyException. APP_URL must match access origin for Vite CORS.
+
 ## Database

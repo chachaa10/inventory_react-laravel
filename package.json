@@ -30,6 +30,7 @@
         "jsdom": "^29.1.1",
         "oxfmt": "^0.53.0",
         "oxlint": "^1.68.0",
+        "vite-qr": "^1.2.0",
         "vitest": "^4.1.8"
     },
     "dependencies": {
