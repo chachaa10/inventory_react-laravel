@@ -7,6 +7,7 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,10 @@ Route::get('auth/google/callback', [GoogleAuthController::class, 'callback'])->n
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
+
+    Route::get('staff', [StaffController::class, 'index'])->name('staff.index');
+    Route::put('staff/{user}', [StaffController::class, 'update'])->name('staff.update');
+    Route::delete('staff/{user}', [StaffController::class, 'destroy'])->name('staff.destroy');
 
     Route::get('products', [ProductController::class, 'index'])->name('products.index');
     Route::post('products', [ProductController::class, 'store'])->name('products.store');

@@ -144,7 +144,7 @@ export default function ProductsIndex({
         '',
     );
 
-    const canManage = auth.user['role'] === 'admin';
+    const canManage = auth.user.role === 'admin';
     const activeSupplierOptions = suppliers.map((supplier) => ({
         id: supplier.id,
         name: supplier.name,

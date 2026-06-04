@@ -48,6 +48,7 @@
 
 ### Validation
 
+- **FormRequest boolean string from Inertia FormData**: [×1, 2026-06-04] Inertia Form sends string "true"/"false" via FormData → JSON. Laravel boolean rule rejects string "true". Fix: add prepareForValidation() with filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) to cast before validation.
 - **intval() on mixed rejected by PHPStan**: [×1, 2026-05-31] intval(mixed) is rejected by PHPStan max level. Use is_int() guard with throw instead of bare intval() cast.
 - **Number::currency returns string|false**: [×1, 2026-05-31] Number::currency() returns string|false. Use long ternary (`$x !== false ? $x : '$0.00'`), not short ternary ?: (banned by ternary.shortNotAllowed rule).
 

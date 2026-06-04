@@ -20,15 +20,12 @@ class OrderSeeder extends Seeder
         $hdmiCable = Product::query()->where('sku', 'SKU-ELEC-003')->firstOrFail();
         $mouse = Product::query()->where('sku', 'SKU-ELEC-001')->firstOrFail();
 
-        $order = Order::factory()->create([
-            'customer_name' => 'Alice Johnson',
-            'customer_email' => 'alice@example.com',
-            'order_number' => 'ORD-20260527-0001',
-            'status' => 'completed',
-            'total' => 55.97,
-            'notes' => 'First customer order',
-            'user_id' => $user->id,
-        ]);
+        $order = Order::query()
+            ->firstOrCreate(['order_number' => 'ORD-20260527-0001'], ['customer_name' => 'Alice Johnson', 'customer_email' => 'alice@example.com', 'order_number' => 'ORD-20260527-0001', 'status' => 'completed', 'total' => 55.97, 'notes' => 'First customer order', 'user_id' => $user->id]);
+
+        if (! $order->wasRecentlyCreated) {
+            return;
+        }
 
         $lineItems = [
             [$hdmiCable, 2, 100],
