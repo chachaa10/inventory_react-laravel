@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use App\Enums\Role;
 use App\Models\Product;
 use App\Models\User;
 
@@ -31,11 +32,11 @@ class ProductPolicy
 
     public function delete(User $user, Product $product): bool
     {
-        return $user->role === 'admin';
+        return $user->role === Role::Admin;
     }
 
     public function export(User $user): bool
     {
-        return $user->role === 'admin';
+        return $user->role === Role::Admin;
     }
 }
