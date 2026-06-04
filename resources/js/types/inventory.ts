@@ -121,6 +121,18 @@ export type DashboardData = {
     recentOrdersCount: number;
     totalRevenue: string;
     stockByCategory: Array<{ category: string; count: number }>;
+    monthlyRevenue: Array<{ month: string; revenue: number }>;
+    monthlyOrders: Array<{ month: string; count: number }>;
+    ordersByStatus: Array<{ status: string; count: number }>;
+    topSellingProducts: Array<{ name: string; qty: number }>;
+    supplierDistribution: Array<{ supplier: string; count: number }>;
+    stockLevelDistribution: Array<{ range: string; count: number }>;
+    stockMovementsTrend: Array<{
+        month: string;
+        in: number;
+        out: number;
+        adjustment: number;
+    }>;
     recentMovements: Array<{
         id: number;
         product: string;
