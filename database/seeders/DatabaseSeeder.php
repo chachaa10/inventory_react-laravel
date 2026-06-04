@@ -7,9 +7,9 @@ namespace Database\Seeders;
 use App\Enums\Role;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\StockMovement;
 use App\Models\Supplier;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -41,6 +41,18 @@ class DatabaseSeeder extends Seeder
             ->firstOrCreate(['slug' => 'packaging'], ['name' => 'Packaging', 'description' => 'Boxes, tape, and shipping materials']);
         $beverages = Category::query()
             ->firstOrCreate(['slug' => 'beverages'], ['name' => 'Beverages', 'description' => 'Drinks and refreshments']);
+        $furniture = Category::query()
+            ->firstOrCreate(['slug' => 'furniture'], ['name' => 'Furniture', 'description' => 'Chairs, desks, and office furniture']);
+        $food = Category::query()
+            ->firstOrCreate(['slug' => 'food-snacks'], ['name' => 'Food & Snacks', 'description' => 'Non-perishable food items and snacks']);
+        $safety = Category::query()
+            ->firstOrCreate(['slug' => 'safety-equipment'], ['name' => 'Safety Equipment', 'description' => 'PPE and safety gear']);
+        $clothing = Category::query()
+            ->firstOrCreate(['slug' => 'clothing'], ['name' => 'Clothing', 'description' => 'Uniforms and apparel']);
+        $tools = Category::query()
+            ->firstOrCreate(['slug' => 'tools-hardware'], ['name' => 'Tools & Hardware', 'description' => 'Hand tools and hardware supplies']);
+
+        $allCategories = [$category, $office, $cleaning, $packaging, $beverages, $furniture, $food, $safety, $clothing, $tools];
 
         $supplier = Supplier::query()
             ->firstOrCreate(['email' => 'orders@techdistributor.com'], ['name' => 'TechDistributor Inc.', 'phone' => '555-0101', 'address' => '123 Tech Lane, Silicon Valley, CA']);
@@ -52,7 +64,20 @@ class DatabaseSeeder extends Seeder
             ->firstOrCreate(['email' => 'hello@packright.com'], ['name' => 'PackRight Ltd.', 'phone' => '555-0104', 'address' => '321 Warehouse Dr, Houston, TX']);
         $bevDistro = Supplier::query()
             ->firstOrCreate(['email' => 'contact@bevdistro.com'], ['name' => 'BevDistro', 'phone' => '555-0105', 'address' => '654 Beverage St, Portland, OR']);
+        $furnitureWorld = Supplier::query()
+            ->firstOrCreate(['email' => 'orders@furnitureworld.com'], ['name' => 'Furniture World', 'phone' => '555-0106', 'address' => '987 Design Ave, Seattle, WA']);
+        $snackFactory = Supplier::query()
+            ->firstOrCreate(['email' => 'sales@snackfactory.com'], ['name' => 'Snack Factory', 'phone' => '555-0107', 'address' => '246 Food St, Denver, CO']);
+        $safetyFirst = Supplier::query()
+            ->firstOrCreate(['email' => 'info@safetyfirst.com'], ['name' => 'SafetyFirst Supplies', 'phone' => '555-0108', 'address' => '135 Protection Blvd, Miami, FL']);
+        $wearablesInc = Supplier::query()
+            ->firstOrCreate(['email' => 'hello@wearablesinc.com'], ['name' => 'Wearables Inc.', 'phone' => '555-0109', 'address' => '753 Fashion Rd, Los Angeles, CA']);
+        $hardwarePro = Supplier::query()
+            ->firstOrCreate(['email' => 'parts@hardwarepro.com'], ['name' => 'HardwarePro', 'phone' => '555-0110', 'address' => '888 Tool St, Detroit, MI']);
 
+        $allSuppliers = [$supplier, $officeMart, $cleanSupply, $packRight, $bevDistro, $furnitureWorld, $snackFactory, $safetyFirst, $wearablesInc, $hardwarePro];
+
+        // Core manual products
         $product = Product::query()
             ->firstOrCreate(['sku' => 'SKU-ELEC-001'], ['name' => 'Wireless Mouse', 'price' => 29.99, 'cost' => 12.50, 'stock_qty' => 44, 'reorder_level' => 10, 'category_id' => $category->id, 'supplier_id' => $supplier->id]);
         $usbHub = Product::query()
@@ -82,25 +107,9 @@ class DatabaseSeeder extends Seeder
         $sparklingWater = Product::query()
             ->firstOrCreate(['sku' => 'SKU-BEV-003'], ['name' => 'Sparkling Water Can (Case/12)', 'price' => 22.99, 'cost' => 11.00, 'stock_qty' => 0, 'reorder_level' => 15, 'category_id' => $beverages->id, 'supplier_id' => $bevDistro->id]);
 
-        StockMovement::factory()->create(['product_id' => $product->id, 'type' => 'in', 'qty' => 45, 'before_qty' => 0, 'after_qty' => 45, 'reference' => 'INITIAL', 'notes' => 'Initial stock', 'user_id' => $user->id]);
-        StockMovement::factory()->create(['product_id' => $usbHub->id, 'type' => 'in', 'qty' => 30, 'before_qty' => 0, 'after_qty' => 30, 'reference' => 'INITIAL', 'notes' => 'Initial stock', 'user_id' => $user->id]);
-        StockMovement::factory()->create(['product_id' => $hdmiCable->id, 'type' => 'in', 'qty' => 100, 'before_qty' => 0, 'after_qty' => 100, 'reference' => 'INITIAL', 'notes' => 'Initial stock', 'user_id' => $user->id]);
-        StockMovement::factory()->create(['product_id' => $a4Paper->id, 'type' => 'in', 'qty' => 200, 'before_qty' => 0, 'after_qty' => 200, 'reference' => 'INITIAL', 'notes' => 'Initial stock', 'user_id' => $user->id]);
-        StockMovement::factory()->create(['product_id' => $pens->id, 'type' => 'in', 'qty' => 150, 'before_qty' => 0, 'after_qty' => 150, 'reference' => 'INITIAL', 'notes' => 'Initial stock', 'user_id' => $user->id]);
-        StockMovement::factory()->create(['product_id' => $stickyNotes->id, 'type' => 'in', 'qty' => 75, 'before_qty' => 0, 'after_qty' => 75, 'reference' => 'INITIAL', 'notes' => 'Initial stock', 'user_id' => $user->id]);
-        StockMovement::factory()->create(['product_id' => $cleaner->id, 'type' => 'in', 'qty' => 60, 'before_qty' => 0, 'after_qty' => 60, 'reference' => 'INITIAL', 'notes' => 'Initial stock', 'user_id' => $user->id]);
-        StockMovement::factory()->create(['product_id' => $cloth->id, 'type' => 'in', 'qty' => 40, 'before_qty' => 0, 'after_qty' => 40, 'reference' => 'INITIAL', 'notes' => 'Initial stock', 'user_id' => $user->id]);
-        StockMovement::factory()->create(['product_id' => $boxS->id, 'type' => 'in', 'qty' => 50, 'before_qty' => 0, 'after_qty' => 50, 'reference' => 'INITIAL', 'notes' => 'Initial stock', 'user_id' => $user->id]);
-        StockMovement::factory()->create(['product_id' => $tape->id, 'type' => 'in', 'qty' => 30, 'before_qty' => 0, 'after_qty' => 30, 'reference' => 'INITIAL', 'notes' => 'Initial stock', 'user_id' => $user->id]);
-        StockMovement::factory()->create(['product_id' => $bubbleWrap->id, 'type' => 'in', 'qty' => 10, 'before_qty' => 0, 'after_qty' => 10, 'reference' => 'INITIAL', 'notes' => 'Initial stock', 'user_id' => $user->id]);
-        StockMovement::factory()->create(['product_id' => $water->id, 'type' => 'in', 'qty' => 80, 'before_qty' => 0, 'after_qty' => 80, 'reference' => 'INITIAL', 'notes' => 'Initial stock', 'user_id' => $user->id]);
-        StockMovement::factory()->create(['product_id' => $greenTea->id, 'type' => 'in', 'qty' => 35, 'before_qty' => 0, 'after_qty' => 35, 'reference' => 'INITIAL', 'notes' => 'Initial stock', 'user_id' => $user->id]);
-        StockMovement::factory()->create(['product_id' => $sparklingWater->id, 'type' => 'in', 'qty' => 50, 'before_qty' => 0, 'after_qty' => 50, 'reference' => 'INITIAL', 'notes' => 'Initial stock', 'user_id' => $user->id]);
+        $manualProducts = [$product, $usbHub, $hdmiCable, $a4Paper, $pens, $stickyNotes, $cleaner, $cloth, $boxS, $tape, $bubbleWrap, $water, $greenTea, $sparklingWater];
 
-        StockMovement::factory()->create(['product_id' => $sparklingWater->id, 'type' => 'out', 'qty' => 50, 'before_qty' => 50, 'after_qty' => 0, 'reference' => 'ORD-20260527-0002', 'notes' => 'Bulk order fulfillment', 'user_id' => $user->id]);
-        StockMovement::factory()->create(['product_id' => $bubbleWrap->id, 'type' => 'out', 'qty' => 9, 'before_qty' => 10, 'after_qty' => 1, 'reference' => 'ORD-20260527-0003', 'notes' => 'Order fulfillment', 'user_id' => $user->id]);
-        StockMovement::factory()->create(['product_id' => $tape->id, 'type' => 'out', 'qty' => 28, 'before_qty' => 30, 'after_qty' => 2, 'reference' => 'ORD-20260527-0004', 'notes' => 'Order fulfillment', 'user_id' => $user->id]);
-        StockMovement::factory()->create(['product_id' => $boxS->id, 'type' => 'out', 'qty' => 47, 'before_qty' => 50, 'after_qty' => 3, 'reference' => 'ORD-20260527-0005', 'notes' => 'Order fulfillment', 'user_id' => $user->id]);
+        BulkProductSeeder::run(new EloquentCollection($allCategories), new EloquentCollection($allSuppliers), new EloquentCollection($manualProducts), $user);
 
         $this->callOnce(OrderSeeder::class);
     }
