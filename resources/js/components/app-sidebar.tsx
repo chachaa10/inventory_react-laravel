@@ -61,7 +61,8 @@ const administrationGroup: NavGroup = {
 };
 
 export function AppSidebar() {
-    const canManageStaff = usePage().props.auth.user['role'] === 'admin';
+    const userRole = usePage().props.auth.user.role;
+    const canManageStaff = userRole === 'superadmin' || userRole === 'admin';
 
     return (
         <Sidebar collapsible="icon" variant="inset">

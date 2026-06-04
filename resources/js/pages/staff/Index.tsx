@@ -1,4 +1,4 @@
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
 import {
@@ -31,6 +31,7 @@ import {
     SheetTitle,
 } from '@/components/ui/sheet';
 import type { Paginated } from '@/types';
+import type { Role } from '@/types/auth';
 
 import { StaffTable } from './components/StaffTable';
 import type { StaffUser } from './components/StaffTable';
@@ -40,13 +41,25 @@ type StaffIndexProps = {
 };
 
 export default function StaffIndex({ users }: StaffIndexProps) {
+    const currentUser = usePage().props.auth.user;
+    const currentUserId = currentUser.id;
+
     const [sheetOpen, setSheetOpen] = useState(false);
     const [editing, setEditing] = useState<StaffUser | null>(null);
     const [deactivateId, setDeactivateId] = useState<number | null>(null);
+    const [activateId, setActivateId] = useState<number | null>(null);
 
     function openEdit(user: StaffUser) {
         setEditing(user);
         setSheetOpen(true);
+    }
+
+    function handleToggleActive(id: number, isActive: boolean) {
+        if (isActive) {
+            setDeactivateId(id);
+        } else {
+            setActivateId(id);
+        }
     }
 
     return (
@@ -78,6 +91,7 @@ export default function StaffIndex({ users }: StaffIndexProps) {
                     {editing && (
                         <Form
                             {...updateUser.form(editing.id)}
+                            method="put"
                             key={editing.id}
                             onSuccess={() => {
                                 setSheetOpen(false);
@@ -90,8 +104,7 @@ export default function StaffIndex({ users }: StaffIndexProps) {
                                     <SheetHeader>
                                         <SheetTitle>Edit Staff User</SheetTitle>
                                         <SheetDescription>
-                                            Update user role or re-activate an
-                                            inactive account.
+                                            Update user details and role.
                                         </SheetDescription>
                                     </SheetHeader>
                                     <div className="mt-8 space-y-3 px-8">
@@ -127,53 +140,57 @@ export default function StaffIndex({ users }: StaffIndexProps) {
                                                     </p>
                                                 )}
                                             </div>
-                                            <div className="space-y-1.5">
-                                                <Label htmlFor="role">
-                                                    Role
-                                                </Label>
-                                                <input
-                                                    type="hidden"
-                                                    name="role"
-                                                    value={
-                                                        editing.role === 'admin'
-                                                            ? 'admin'
-                                                            : 'staff'
-                                                    }
-                                                />
-                                                <Select
-                                                    value={
-                                                        editing.role === 'admin'
-                                                            ? 'admin'
-                                                            : 'staff'
-                                                    }
-                                                    onValueChange={(value) =>
-                                                        setEditing(
-                                                            (prev) =>
-                                                                prev && {
-                                                                    ...prev,
-                                                                    role: value,
-                                                                },
-                                                        )
-                                                    }
-                                                >
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue placeholder="Select role" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="admin">
-                                                            Admin
-                                                        </SelectItem>
-                                                        <SelectItem value="staff">
-                                                            Staff
-                                                        </SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                                {errors['role'] && (
-                                                    <p className="text-sm text-destructive">
-                                                        {errors['role']}
+                                            {editing.id === currentUserId ? (
+                                                <div className="space-y-1.5">
+                                                    <Label>Role</Label>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        You cannot change your
+                                                        own role.
                                                     </p>
-                                                )}
-                                            </div>
+                                                </div>
+                                            ) : (
+                                                <div className="space-y-1.5">
+                                                    <Label htmlFor="role">
+                                                        Role
+                                                    </Label>
+                                                    <input
+                                                        type="hidden"
+                                                        name="role"
+                                                        value={editing.role}
+                                                    />
+                                                    <Select
+                                                        value={editing.role}
+                                                        onValueChange={(
+                                                            value,
+                                                        ) =>
+                                                            setEditing(
+                                                                (prev) =>
+                                                                    prev && {
+                                                                        ...prev,
+                                                                        role: value as Role,
+                                                                    },
+                                                            )
+                                                        }
+                                                    >
+                                                        <SelectTrigger className="w-full">
+                                                            <SelectValue placeholder="Select role" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem value="admin">
+                                                                Admin
+                                                            </SelectItem>
+                                                            <SelectItem value="staff">
+                                                                Staff
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                    {errors['role'] && (
+                                                        <p className="text-sm text-destructive">
+                                                            {errors['role']}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            )}
                                             {!editing.is_active && (
                                                 <div className="flex items-center gap-2">
                                                     <input
@@ -210,7 +227,7 @@ export default function StaffIndex({ users }: StaffIndexProps) {
             <StaffTable
                 users={users}
                 onEdit={openEdit}
-                onDeactivate={setDeactivateId}
+                onToggleActive={handleToggleActive}
             />
 
             {deactivateId !== null && (
@@ -228,6 +245,7 @@ export default function StaffIndex({ users }: StaffIndexProps) {
                     >
                         <Form
                             {...deactivateUser.form(deactivateId)}
+                            method="delete"
                             key={deactivateId}
                             onSuccess={() => setDeactivateId(null)}
                         >
@@ -260,6 +278,63 @@ export default function StaffIndex({ users }: StaffIndexProps) {
                                             disabled={processing}
                                         >
                                             Deactivate
+                                        </Button>
+                                    </DialogFooter>
+                                </>
+                            )}
+                        </Form>
+                    </DialogContent>
+                </Dialog>
+            )}
+
+            {activateId !== null && (
+                <Dialog
+                    open
+                    onOpenChange={(open) => {
+                        if (!open) {
+                            setActivateId(null);
+                        }
+                    }}
+                >
+                    <DialogContent
+                        showCloseButton={false}
+                        className="sm:max-w-sm"
+                    >
+                        <Form
+                            {...updateUser.form(activateId)}
+                            method="put"
+                            key={`activate-${activateId}`}
+                            onSuccess={() => setActivateId(null)}
+                            resetOnSuccess
+                        >
+                            {({ processing }) => (
+                                <>
+                                    <input
+                                        type="hidden"
+                                        name="is_active"
+                                        value="true"
+                                    />
+                                    <DialogHeader>
+                                        <DialogTitle>Activate User</DialogTitle>
+                                        <DialogDescription>
+                                            Are you sure? The user will be
+                                            reactivated and able to log in
+                                            again.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                        <Button
+                                            variant="outline"
+                                            type="button"
+                                            onClick={() => setActivateId(null)}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            type="submit"
+                                            disabled={processing}
+                                        >
+                                            Activate
                                         </Button>
                                     </DialogFooter>
                                 </>
