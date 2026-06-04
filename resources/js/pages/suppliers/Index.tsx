@@ -264,7 +264,7 @@ export default function SuppliersIndex({
         setSheetOpen(true);
     }
 
-    const canManage = usePage().props.auth.user['role'] === 'admin';
+    const canManage = usePage().props.auth.user.role === 'admin';
 
     function applyStatusFilter(status: SupplierStatusFilter) {
         visit(

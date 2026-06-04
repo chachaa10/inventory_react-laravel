@@ -80,7 +80,7 @@ export default function CategoriesIndex({ categories }: CategoriesIndexProps) {
         setSheetOpen(true);
     }
 
-    const canManage = usePage().props.auth.user['role'] === 'admin';
+    const canManage = usePage().props.auth.user.role === 'admin';
 
     const columns: ColumnDef<Category>[] = [
         { accessorKey: 'name', header: 'Name' },
