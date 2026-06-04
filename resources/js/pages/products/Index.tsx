@@ -369,7 +369,7 @@ export default function ProductsIndex({
                                                     defaultValue={
                                                         editing?.name ?? ''
                                                     }
-                                                    placeholder="e.g. Wireless Mouse"
+                                                    placeholder="Product name"
                                                     onChange={(e) =>
                                                         setPreviewName(
                                                             e.target.value,
