@@ -28,6 +28,46 @@ test('category name must be unique', function (): void {
         ->assertSessionHasErrors('name');
 });
 
+test('superadmin can create a category', function (): void {
+    $superadmin = User::factory()->create(['role' => 'superadmin']);
+    $this->actingAs($superadmin);
+
+    $this->post(route('categories.store'), [
+        'name' => 'Super Category',
+    ])->assertRedirect();
+
+    $this->assertDatabaseHas('categories', [
+        'name' => 'Super Category',
+        'slug' => 'super-category',
+    ]);
+});
+
+test('superadmin can update a category', function (): void {
+    $superadmin = User::factory()->create(['role' => 'superadmin']);
+    $this->actingAs($superadmin);
+
+    $category = Category::factory()->create(['name' => 'Old Name']);
+
+    $this->put(route('categories.update', $category), [
+        'name' => 'New Name',
+    ])->assertRedirect();
+
+    $category->refresh();
+    expect($category->name)->toBe('New Name');
+});
+
+test('superadmin can delete a category', function (): void {
+    $superadmin = User::factory()->create(['role' => 'superadmin']);
+    $this->actingAs($superadmin);
+
+    $category = Category::factory()->create();
+
+    $this->delete(route('categories.destroy', $category))
+        ->assertRedirect();
+
+    $this->assertSoftDeleted($category);
+});
+
 test('admin can create a category', function (): void {
     $admin = User::factory()->create(['role' => 'admin']);
     $this->actingAs($admin);

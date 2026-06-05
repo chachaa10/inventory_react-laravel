@@ -59,6 +59,31 @@ test('creates processing notification synchronously on trigger', function (): vo
     expect($notification->data['status'])->toBe('processing');
 });
 
+test('superadmin can trigger product export via endpoint', function (): void {
+    $superadmin = User::factory()->create(['role' => 'superadmin']);
+    Product::factory()->count(2)->create();
+
+    Storage::fake('local');
+
+    $this->actingAs($superadmin)
+        ->post(route('exports.products'))
+        ->assertRedirect();
+
+    $files = Storage::disk('local')->files('exports');
+    expect($files)->toHaveCount(1);
+});
+
+test('superadmin can download exports', function (): void {
+    $superadmin = User::factory()->create(['role' => 'superadmin']);
+
+    Storage::fake('local');
+    Storage::disk('local')->put('exports/test-products.csv', "Name,SKU\nTest,ABC123");
+
+    $this->actingAs($superadmin)
+        ->get(route('exports.download', 'test-products.csv'))
+        ->assertOk();
+});
+
 test('staff cannot export products', function (): void {
     $staff = User::factory()->create(['role' => 'staff']);
 

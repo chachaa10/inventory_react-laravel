@@ -197,6 +197,18 @@ test('admin can update a product with image replacement', function (): void {
     ])->assertRedirect();
 });
 
+test('superadmin can delete a product', function (): void {
+    $superadmin = User::factory()->create(['role' => 'superadmin']);
+    $this->actingAs($superadmin);
+
+    $product = Product::factory()->create();
+
+    $this->delete(route('products.destroy', $product))
+        ->assertRedirect();
+
+    $this->assertSoftDeleted($product);
+});
+
 test('admin can delete a product', function (): void {
     $admin = User::factory()->create(['role' => 'admin']);
     $this->actingAs($admin);

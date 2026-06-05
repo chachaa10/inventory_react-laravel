@@ -28,6 +28,102 @@ test('supplier name must be unique', function (): void {
         ->assertSessionHasErrors('name');
 });
 
+test('superadmin can create a supplier', function (): void {
+    $superadmin = User::factory()->create(['role' => 'superadmin']);
+    $this->actingAs($superadmin);
+
+    $this->post(route('suppliers.store'), [
+        'name' => 'SuperSupplier',
+        'email' => 'super@supplier.com',
+        'phone' => '+1-555-0200',
+    ])->assertRedirect();
+
+    $this->assertDatabaseHas('suppliers', [
+        'name' => 'SuperSupplier',
+        'email' => 'super@supplier.com',
+    ]);
+});
+
+test('superadmin can update a supplier', function (): void {
+    $superadmin = User::factory()->create(['role' => 'superadmin']);
+    $this->actingAs($superadmin);
+
+    $supplier = Supplier::factory()->create(['name' => 'Old Name']);
+
+    $this->put(route('suppliers.update', $supplier), [
+        'name' => 'New Name',
+        'email' => 'new@supplier.com',
+    ])->assertRedirect();
+
+    $supplier->refresh();
+    expect($supplier->name)->toBe('New Name');
+});
+
+test('superadmin can deactivate a supplier', function (): void {
+    $superadmin = User::factory()->create(['role' => 'superadmin']);
+    $this->actingAs($superadmin);
+
+    $supplier = Supplier::factory()->create(['is_active' => true]);
+
+    $this->delete(route('suppliers.destroy', $supplier))
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('suppliers', [
+        'id' => $supplier->id,
+        'is_active' => 0,
+    ]);
+});
+
+test('superadmin can reactivate a supplier', function (): void {
+    $superadmin = User::factory()->create(['role' => 'superadmin']);
+    $this->actingAs($superadmin);
+
+    $supplier = Supplier::factory()->create([
+        'is_active' => false,
+        'deactivated_at' => now()->subMonth(),
+    ]);
+
+    $this->put(route('suppliers.activate', $supplier))
+        ->assertRedirect();
+
+    $supplier->refresh();
+    expect($supplier->is_active)->toBeTrue();
+    expect($supplier->deactivated_at)->toBeNull();
+});
+
+test('superadmin can archive an inactive supplier', function (): void {
+    $superadmin = User::factory()->create(['role' => 'superadmin']);
+    $this->actingAs($superadmin);
+
+    $supplier = Supplier::factory()->create(['is_active' => false]);
+
+    $this->put(route('suppliers.archive', $supplier))
+        ->assertRedirect();
+
+    $supplier->refresh();
+    expect($supplier->is_active)->toBeFalse();
+    expect($supplier->archived_at)->not->toBeNull();
+});
+
+test('superadmin can restore an archived supplier', function (): void {
+    $superadmin = User::factory()->create(['role' => 'superadmin']);
+    $this->actingAs($superadmin);
+
+    $supplier = Supplier::factory()->create([
+        'is_active' => false,
+        'deactivated_at' => now()->subMonth(),
+        'archived_at' => now()->subDay(),
+    ]);
+
+    $this->put(route('suppliers.restore', $supplier))
+        ->assertRedirect();
+
+    $supplier->refresh();
+    expect($supplier->is_active)->toBeFalse();
+    expect($supplier->deactivated_at)->not->toBeNull();
+    expect($supplier->archived_at)->toBeNull();
+});
+
 test('admin can create a supplier', function (): void {
     $admin = User::factory()->create(['role' => 'admin']);
     $this->actingAs($admin);

@@ -129,6 +129,39 @@ test('staff can create an order', function (): void {
     expect($order->user_id)->toBe($staff->id);
 });
 
+test('superadmin can cancel an order and restore stock', function (): void {
+    $superadmin = User::factory()->create(['role' => 'superadmin']);
+    $this->actingAs($superadmin);
+
+    $category = Category::factory()->create();
+    $product = Product::factory()->create([
+        'name' => 'Cancellable Product',
+        'price' => 10.00,
+        'stock_qty' => 5,
+        'category_id' => $category->id,
+    ]);
+
+    $this->post(route('orders.store'), [
+        'customer_name' => 'Super Cancel Test',
+        'items' => json_encode([
+            ['product_id' => $product->id, 'qty' => 3],
+        ]),
+    ]);
+
+    $order = Order::query()->first();
+
+    $this->put(route('orders.update', [$order->id]))
+        ->assertRedirect();
+
+    $order->refresh();
+    expect($order->status)->toBe(OrderStatus::Cancelled);
+
+    expect($order->stockMovements()->count())->toBe(2);
+
+    $product->refresh();
+    expect($product->stock_qty)->toBe(5);
+});
+
 test('admin can cancel an order and restore stock', function (): void {
     $admin = User::factory()->create(['role' => 'admin']);
     $this->actingAs($admin);
