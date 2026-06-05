@@ -58,19 +58,17 @@ export function Paginator({
                 >
                     <ChevronLeft className="h-4 w-4" />
                 </Button>
-                {getPageNumbers(currentPage, lastPage).map(
-                    (page) => (
-                        <Button
-                            key={page}
-                            variant={currentPage === page ? 'default' : 'ghost'}
-                            size="xs"
-                            type="button"
-                            onClick={() => goToPage(page)}
-                        >
-                            {page}
-                        </Button>
-                    ),
-                )}
+                {getPageNumbers(currentPage, lastPage).map((page) => (
+                    <Button
+                        key={page}
+                        variant={currentPage === page ? 'default' : 'ghost'}
+                        size="xs"
+                        type="button"
+                        onClick={() => goToPage(page)}
+                    >
+                        {page}
+                    </Button>
+                ))}
                 <Button
                     variant="ghost"
                     size="xs"
