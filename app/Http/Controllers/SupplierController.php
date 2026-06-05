@@ -23,7 +23,7 @@ class SupplierController extends Controller
     public function index(Request $request): Response
     {
         $status = $request->string('status')->toString();
-        $status = in_array($status, ['active', 'inactive', 'archived', 'all'], true) ? $status : 'active';
+        $status = in_array($status, ['active', 'inactive', 'archived', 'all'], true) ? $status : 'all';
 
         $builder = Supplier::query()->withCount('products');
 
@@ -69,15 +69,15 @@ class SupplierController extends Controller
         return to_route('suppliers.index');
     }
 
-    public function destroy(DeactivateSupplierAction $deactivateSupplierAction, Supplier $supplier): RedirectResponse
+    public function deactivate(DeactivateSupplierAction $deactivateSupplierAction, Supplier $supplier): RedirectResponse
     {
-        $this->authorize('delete', $supplier);
+        $this->authorize('deactivate', $supplier);
 
         $deactivateSupplierAction->execute($supplier);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Supplier deactivated successfully.']);
 
-        return to_route('suppliers.index');
+        return to_route('suppliers.index', ['status' => 'all']);
     }
 
     public function activate(ActivateSupplierAction $activateSupplierAction, Supplier $supplier): RedirectResponse
@@ -90,7 +90,7 @@ class SupplierController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Supplier reactivated successfully.']);
 
-        return to_route('suppliers.index');
+        return to_route('suppliers.index', ['status' => 'all']);
     }
 
     public function archive(ArchiveSupplierAction $archiveSupplierAction, Supplier $supplier): RedirectResponse
@@ -102,7 +102,7 @@ class SupplierController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Supplier archived successfully.']);
 
-        return to_route('suppliers.index');
+        return to_route('suppliers.index', ['status' => 'all']);
     }
 
     public function restore(RestoreSupplierAction $restoreSupplierAction, Supplier $supplier): RedirectResponse
@@ -114,6 +114,6 @@ class SupplierController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Supplier restored successfully.']);
 
-        return to_route('suppliers.index');
+        return to_route('suppliers.index', ['status' => 'all']);
     }
 }

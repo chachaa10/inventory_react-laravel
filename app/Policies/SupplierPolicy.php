@@ -34,4 +34,9 @@ class SupplierPolicy
     {
         return $user->role === Role::Admin || $user->role === Role::Superadmin;
     }
+
+    public function deactivate(User $user, Supplier $supplier): bool
+    {
+        return $user->role === Role::Admin || $user->role === Role::Superadmin;
+    }
 }

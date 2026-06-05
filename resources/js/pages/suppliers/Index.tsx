@@ -7,18 +7,18 @@ import {
     Plus,
     Pencil,
     RotateCcw,
-    Trash2,
+    UserMinus,
 } from 'lucide-react';
 import { useState } from 'react';
 
 import {
     activate as reactivateSupplier,
     archive as archiveSupplier,
+    deactivate as deactivateSupplier,
     index as suppliersIndex,
     restore as restoreSupplier,
     store as createSupplier,
     update as updateSupplier,
-    destroy as deactivateSupplier,
 } from '@/actions/App/Http/Controllers/SupplierController';
 import { DataGrid } from '@/common/DataGrid';
 import { EmptyState } from '@/common/EmptyState';
@@ -211,7 +211,7 @@ function createActionsColumn(
                             type="button"
                             onClick={() => onDeactivate(row.original.id)}
                         >
-                            <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                            <UserMinus className="h-3.5 w-3.5 text-destructive" />
                         </Button>
                     ) : (
                         <>
@@ -270,7 +270,7 @@ export default function SuppliersIndex({
     function applyStatusFilter(status: SupplierStatusFilter) {
         visit(
             suppliersIndex.url({
-                query: status === 'active' ? {} : { status },
+                query: status === 'all' ? {} : { status },
             }),
         );
     }

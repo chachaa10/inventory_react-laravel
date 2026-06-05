@@ -65,7 +65,7 @@ test('superadmin can deactivate a supplier', function (): void {
 
     $supplier = Supplier::factory()->create(['is_active' => true]);
 
-    $this->delete(route('suppliers.destroy', $supplier))
+    $this->put(route('suppliers.deactivate', $supplier))
         ->assertRedirect();
 
     $this->assertDatabaseHas('suppliers', [
@@ -181,7 +181,7 @@ test('admin can deactivate a supplier', function (): void {
 
     $supplier = Supplier::factory()->create(['is_active' => true]);
 
-    $this->delete(route('suppliers.destroy', $supplier))
+    $this->put(route('suppliers.deactivate', $supplier))
         ->assertRedirect();
 
     $this->assertDatabaseHas('suppliers', [
@@ -224,7 +224,7 @@ test('staff cannot deactivate a supplier', function (): void {
 
     $supplier = Supplier::factory()->create();
 
-    $this->delete(route('suppliers.destroy', $supplier))
+    $this->put(route('suppliers.deactivate', $supplier))
         ->assertForbidden();
 });
 
@@ -349,7 +349,7 @@ test('admin can restore an archived supplier as inactive', function (): void {
     expect($supplier->archived_at)->toBeNull();
 });
 
-test('supplier list shows only active suppliers by default', function (): void {
+test('supplier list shows all suppliers by default', function (): void {
     $admin = User::factory()->create(['role' => 'admin']);
     $this->actingAs($admin);
 
@@ -364,9 +364,8 @@ test('supplier list shows only active suppliers by default', function (): void {
     $this->get(route('suppliers.index'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->has('suppliers.data', 1)
-            ->where('suppliers.data.0.name', 'Active Supplier')
-            ->where('filters.status', 'active')
+            ->has('suppliers.data', 3)
+            ->where('filters.status', 'all')
         );
 });
 
