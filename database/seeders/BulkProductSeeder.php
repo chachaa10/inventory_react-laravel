@@ -36,13 +36,13 @@ class BulkProductSeeder
             $manualCount = 0;
             foreach ($manualProducts as $manualProduct) {
                 if ($manualProduct->category_id === $category->id) {
-                    $manualCount++;
+                    ++$manualCount;
                 }
             }
 
             $needed = $targetPerCategory - $manualCount;
 
-            for ($i = 0; $i < $needed; $i++) {
+            for ($i = 0; $i < $needed; ++$i) {
                 $sku = self::generateUniqueSku($existingSkuMap, $category);
 
                 $supplier = $suppliers->random();

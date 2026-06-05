@@ -1,4 +1,7 @@
 {
     "preset": "laravel",
-    "exclude": ["var/cache/phpstan"]
+    "exclude": ["var/cache/phpstan"],
+    "rules": {
+        "increment_style": { "style": "pre" }
+    }
 }

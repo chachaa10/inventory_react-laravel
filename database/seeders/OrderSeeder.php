@@ -28,7 +28,7 @@ class OrderSeeder extends Seeder
 
         $orderCount = 100;
 
-        for ($i = 0; $i < $orderCount; $i++) {
+        for ($i = 0; $i < $orderCount; ++$i) {
             $daysAgo = random_int(1, 365);
             $hoursAgo = random_int(0, 23);
             $createdAt = now()->subDays($daysAgo)->subHours($hoursAgo);
@@ -85,7 +85,7 @@ class OrderSeeder extends Seeder
             $order->update(['total' => $total]);
         }
 
-        for ($i = 0; $i < 40; $i++) {
+        for ($i = 0; $i < 40; ++$i) {
             $product = $products->random();
             $qty = random_int(10, 100);
             $daysAgo = random_int(1, 365);
@@ -109,7 +109,7 @@ class OrderSeeder extends Seeder
             $product->increment('stock_qty', $qty);
         }
 
-        for ($i = 0; $i < 15; $i++) {
+        for ($i = 0; $i < 15; ++$i) {
             $product = $products->random();
             $qty = random_int(1, 10);
             $daysAgo = random_int(1, 365);
