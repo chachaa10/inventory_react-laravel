@@ -41,6 +41,10 @@ function getChartColor(index: number): string {
     return CHART_COLORS[index % CHART_COLORS.length] ?? '#2563eb';
 }
 
+function truncateLabel(label: string, max = 8): string {
+    return label.length > max ? `${label.slice(0, max)}…` : label;
+}
+
 export default function Dashboard({
     totalProducts,
     lowStockCount,
@@ -203,7 +207,7 @@ export default function Dashboard({
                                         cy="50%"
                                         outerRadius={80}
                                         label={({ payload, percent }) =>
-                                            `${payload['category']} (${((percent ?? 0) * 100).toFixed(0)}%)`
+                                            `${truncateLabel(payload['category'])} (${((percent ?? 0) * 100).toFixed(0)}%)`
                                         }
                                     >
                                         {stockByCategory.map((item, index) => (
@@ -236,7 +240,7 @@ export default function Dashboard({
                                         innerRadius={50}
                                         outerRadius={80}
                                         label={({ payload, percent }) =>
-                                            `${payload['status']} (${((percent ?? 0) * 100).toFixed(0)}%)`
+                                            `${truncateLabel(payload['status'])} (${((percent ?? 0) * 100).toFixed(0)}%)`
                                         }
                                     >
                                         {ordersByStatus.map((item, index) => (
@@ -268,7 +272,7 @@ export default function Dashboard({
                                         cy="50%"
                                         outerRadius={80}
                                         label={({ payload, percent }) =>
-                                            `${payload['supplier']} (${((percent ?? 0) * 100).toFixed(0)}%)`
+                                            `${truncateLabel(payload['supplier'])} (${((percent ?? 0) * 100).toFixed(0)}%)`
                                         }
                                     >
                                         {supplierDistribution.map(
