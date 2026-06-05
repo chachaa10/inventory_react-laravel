@@ -48,7 +48,15 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->respond(function (Response $response): RedirectResponse|Response {
-            if ($response->getStatusCode() === 419) {
+            $status = $response->getStatusCode();
+
+            if ($status === 403) {
+                Inertia::flash('toast', ['type' => 'error', 'message' => 'This action is unauthorized.']);
+
+                return back();
+            }
+
+            if ($status === 419) {
                 Inertia::flash('toast', ['type' => 'error', 'message' => 'Page expired, please try again.']);
 
                 return back();
