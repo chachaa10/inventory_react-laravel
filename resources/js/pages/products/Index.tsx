@@ -16,6 +16,8 @@ import { Paginator } from '@/common/Paginator';
 import { SearchBar } from '@/common/SearchBar';
 import { SkuPreview } from '@/common/SkuPreview';
 import { StatusBadge } from '@/common/StatusBadge';
+import { TableActions } from '@/common/TableActions';
+import type { TableAction } from '@/common/TableActions';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -100,28 +102,24 @@ function createActionsColumn(
 ): ColumnDef<Product> {
     return {
         id: 'actions',
-        cell: ({ row }) => (
-            <div className="inline-flex items-center gap-1">
-                <Button
-                    variant="ghost"
-                    size="xs"
-                    type="button"
-                    onClick={() => onEdit(row.original)}
-                >
-                    <Pencil className="h-3.5 w-3.5" />
-                </Button>
-                {canManage && (
-                    <Button
-                        variant="ghost"
-                        size="xs"
-                        type="button"
-                        onClick={() => onDelete(row.original.id)}
-                    >
-                        <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                    </Button>
-                )}
-            </div>
-        ),
+        cell: ({ row }) => {
+            const actions: TableAction[] = [
+                {
+                    icon: Pencil,
+                    label: 'Edit',
+                    onClick: () => onEdit(row.original),
+                },
+                {
+                    icon: Trash2,
+                    label: 'Delete',
+                    variant: 'destructive',
+                    hidden: !canManage,
+                    onClick: () => onDelete(row.original.id),
+                },
+            ];
+
+            return <TableActions actions={actions} />;
+        },
     };
 }
 

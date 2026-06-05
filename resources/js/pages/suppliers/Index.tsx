@@ -23,6 +23,8 @@ import {
 import { DataGrid } from '@/common/DataGrid';
 import { EmptyState } from '@/common/EmptyState';
 import { Paginator } from '@/common/Paginator';
+import { TableActions } from '@/common/TableActions';
+import type { TableAction } from '@/common/TableActions';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -179,62 +181,44 @@ function createActionsColumn(
     return {
         id: 'actions',
         cell: ({ row }) => {
+            const actions: TableAction[] = [];
+
             if (row.original.archived_at !== null) {
-                return (
-                    <div className="inline-flex items-center gap-1">
-                        <Button
-                            variant="ghost"
-                            size="xs"
-                            type="button"
-                            onClick={() => onRestore(row.original.id)}
-                        >
-                            <ArchiveRestore className="h-3.5 w-3.5 text-primary" />
-                        </Button>
-                    </div>
-                );
+                actions.push({
+                    icon: ArchiveRestore,
+                    label: 'Restore',
+                    onClick: () => onRestore(row.original.id),
+                });
+            } else {
+                actions.push({
+                    icon: Pencil,
+                    label: 'Edit',
+                    onClick: () => onEdit(row.original),
+                });
+
+                if (row.original.is_active) {
+                    actions.push({
+                        icon: UserMinus,
+                        label: 'Deactivate',
+                        variant: 'destructive',
+                        onClick: () => onDeactivate(row.original.id),
+                    });
+                } else {
+                    actions.push({
+                        icon: RotateCcw,
+                        label: 'Reactivate',
+                        onClick: () => onReactivate(row.original.id),
+                    });
+                    actions.push({
+                        icon: Archive,
+                        label: 'Archive',
+                        variant: 'destructive',
+                        onClick: () => onArchive(row.original.id),
+                    });
+                }
             }
 
-            return (
-                <div className="inline-flex items-center gap-1">
-                    <Button
-                        variant="ghost"
-                        size="xs"
-                        type="button"
-                        onClick={() => onEdit(row.original)}
-                    >
-                        <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                    {row.original.is_active ? (
-                        <Button
-                            variant="ghost"
-                            size="xs"
-                            type="button"
-                            onClick={() => onDeactivate(row.original.id)}
-                        >
-                            <UserMinus className="h-3.5 w-3.5 text-destructive" />
-                        </Button>
-                    ) : (
-                        <>
-                            <Button
-                                variant="ghost"
-                                size="xs"
-                                type="button"
-                                onClick={() => onReactivate(row.original.id)}
-                            >
-                                <RotateCcw className="h-3.5 w-3.5 text-primary" />
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                size="xs"
-                                type="button"
-                                onClick={() => onArchive(row.original.id)}
-                            >
-                                <Archive className="h-3.5 w-3.5 text-amber-600" />
-                            </Button>
-                        </>
-                    )}
-                </div>
-            );
+            return <TableActions actions={actions} />;
         },
     };
 }

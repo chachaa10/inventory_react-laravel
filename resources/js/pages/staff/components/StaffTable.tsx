@@ -5,7 +5,8 @@ import { Pencil, UserCheck, UserX } from 'lucide-react';
 import { DataGrid } from '@/common/DataGrid';
 import { EmptyState } from '@/common/EmptyState';
 import { Paginator } from '@/common/Paginator';
-import { Button } from '@/components/ui/button';
+import { TableActions } from '@/common/TableActions';
+import type { TableAction } from '@/common/TableActions';
 import type { Paginated } from '@/types';
 import type { Role } from '@/types/auth';
 
@@ -108,55 +109,39 @@ function createActionsColumn(
 ): ColumnDef<StaffUser> {
     return {
         id: 'actions',
-        cell: ({ row }) => (
-            <div className="inline-flex items-center gap-1">
-                {canEdit(currentRole, row.original.id, currentUserId) && (
-                    <Button
-                        variant="ghost"
-                        size="xs"
-                        type="button"
-                        onClick={() => onEdit(row.original)}
-                    >
-                        <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                )}
-                {canToggleActive(
-                    currentRole,
-                    row.original.role,
-                    row.original.id,
-                    currentUserId,
-                ) &&
-                    (row.original.is_active ? (
-                        <Button
-                            variant="ghost"
-                            size="xs"
-                            type="button"
-                            onClick={() =>
-                                onToggleActive(
-                                    row.original.id,
-                                    row.original.is_active,
-                                )
-                            }
-                        >
-                            <UserX className="h-3.5 w-3.5 text-destructive" />
-                        </Button>
-                    ) : (
-                        <Button
-                            variant="ghost"
-                            size="xs"
-                            type="button"
-                            onClick={() =>
-                                onToggleActive(
-                                    row.original.id,
-                                    row.original.is_active,
-                                )
-                            }
-                        >
-                            <UserCheck className="h-3.5 w-3.5 text-green-600" />
-                        </Button>
-                    ))}
-            </div>
-        ),
+        cell: ({ row }) => {
+            const user = row.original;
+            const actions: TableAction[] = [];
+
+            if (canEdit(currentRole, user.id, currentUserId)) {
+                actions.push({
+                    icon: Pencil,
+                    label: 'Edit',
+                    onClick: () => onEdit(user),
+                });
+            }
+
+            if (
+                canToggleActive(currentRole, user.role, user.id, currentUserId)
+            ) {
+                if (user.is_active) {
+                    actions.push({
+                        icon: UserX,
+                        label: 'Deactivate',
+                        variant: 'destructive',
+                        onClick: () => onToggleActive(user.id, true),
+                    });
+                } else {
+                    actions.push({
+                        icon: UserCheck,
+                        label: 'Activate',
+                        onClick: () => onToggleActive(user.id, false),
+                    });
+                }
+            }
+
+            return <TableActions actions={actions} />;
+        },
     };
 }
 

@@ -11,6 +11,8 @@ import {
 import { DataGrid } from '@/common/DataGrid';
 import { EmptyState } from '@/common/EmptyState';
 import { Paginator } from '@/common/Paginator';
+import { TableActions } from '@/common/TableActions';
+import type { TableAction } from '@/common/TableActions';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -42,26 +44,23 @@ function createActionsColumn(
 ): ColumnDef<Category> {
     return {
         id: 'actions',
-        cell: ({ row }) => (
-            <div className="inline-flex items-center gap-1">
-                <Button
-                    variant="ghost"
-                    size="xs"
-                    type="button"
-                    onClick={() => onEdit(row.original)}
-                >
-                    <Pencil className="h-3.5 w-3.5" />
-                </Button>
-                <Button
-                    variant="ghost"
-                    size="xs"
-                    type="button"
-                    onClick={() => onDelete(row.original.id)}
-                >
-                    <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                </Button>
-            </div>
-        ),
+        cell: ({ row }) => {
+            const actions: TableAction[] = [
+                {
+                    icon: Pencil,
+                    label: 'Edit',
+                    onClick: () => onEdit(row.original),
+                },
+                {
+                    icon: Trash2,
+                    label: 'Delete',
+                    variant: 'destructive',
+                    onClick: () => onDelete(row.original.id),
+                },
+            ];
+
+            return <TableActions actions={actions} />;
+        },
     };
 }
 
