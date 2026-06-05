@@ -22,6 +22,16 @@ function goToPage(page: number) {
     });
 }
 
+function getPageNumbers(current: number, last: number): number[] {
+    if (last <= 5) {
+        return Array.from({ length: last }, (_, i) => i + 1);
+    }
+
+    const start = Math.max(1, Math.min(current - 2, last - 4));
+
+    return Array.from({ length: 5 }, (_, i) => start + i);
+}
+
 export function Paginator({
     currentPage,
     lastPage,
@@ -48,7 +58,7 @@ export function Paginator({
                 >
                     <ChevronLeft className="h-4 w-4" />
                 </Button>
-                {Array.from({ length: lastPage }, (_, i) => i + 1).map(
+                {getPageNumbers(currentPage, lastPage).map(
                     (page) => (
                         <Button
                             key={page}
