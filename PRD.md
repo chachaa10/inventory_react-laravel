@@ -8,49 +8,54 @@ The user follows the 80/20 principle — maximize learning and portfolio impact 
 
 ## Solution
 
-Build a dual-role (admin + staff) inventory management system with 6 database entities organized into 4 domains (Catalog, Parties, Inventory, Sales). All business logic lives in single-action classes under `app/Actions/`. Frontend uses shadcn/ui primitives with `@tanstack/react-table` DataGrid for list views, reusable Sheet-based CRUD for simple entities, and dedicated pages for complex entities (Products, Orders). Dashboard shows KPI cards, recharts charts, and low-stock alerts. Backend demonstrates Actions pattern, service classes, events/listeners, queued jobs, notifications, policies with role-based authorization, form requests, Eloquent scopes, and Pest feature tests.
+Build a three-role (superadmin + admin + staff) inventory management system with 6 database entities organized into 4 domains (Catalog, Parties, Inventory, Sales). All business logic lives in single-action classes under `app/Actions/`. Frontend uses shadcn/ui primitives with `@tanstack/react-table` DataGrid for list views, reusable Sheet-based CRUD for simple entities, and dedicated pages for complex entities (Products, Orders). Dashboard shows KPI cards, recharts charts, and low-stock alerts. Backend demonstrates Actions pattern, service classes, events/listeners, queued jobs, notifications, policies with role-based authorization, form requests, Eloquent scopes, and Pest feature tests.
 
 ## User Stories
 
-1. As an inventory manager, I want to create categories for my products, so that I can organize my catalog.
-2. As an inventory manager, I want to edit a category, so that I can correct mistakes or update descriptions.
-3. As an inventory manager, I want to delete a category, so that I can remove unused groupings.
-4. As an inventory manager, I want to create suppliers, so that I can track who I purchase products from.
-5. As an inventory manager, I want to edit a supplier, so that I can update their contact information.
-6. As an inventory manager, I want to deactivate a supplier without deleting them, so that I keep transaction history intact.
-7. As an inventory manager, I want to create a product with name, SKU, description, price, cost, category, supplier, image, and reorder level, so that I can track my inventory items.
-8. As an inventory manager, I want to upload a product image, so that I can identify products visually.
-9. As an inventory manager, I want to edit a product's details, so that I can keep product information up to date.
-10. As an inventory manager, I want to delete a product, so that I can remove discontinued items (subject to policy — no deletion if stock movements exist).
-11. As an inventory manager, I want to view a paginated, sortable, searchable list of all products, so that I can quickly find items in my catalog.
-12. As an inventory manager, I want to filter products by category and stock status, so that I can narrow down my view.
-13. As an inventory manager, I want to search products by name or SKU with debounced input, so that I can find products quickly.
-14. As an inventory manager, I want to see a badge indicating stock status (In Stock / Low Stock / Out of Stock) for each product, so that I can identify stock issues at a glance.
-15. As an inventory manager, I want to record a stock movement (in/out/adjustment) for a product, so that I can track inventory changes.
-16. As an inventory manager, I want to see a paginated history of stock movements, so that I can audit inventory changes.
-17. As an inventory manager, I want each stock movement to be recorded with type, quantity, reference, and notes, so that I have a complete audit trail.
-18. As an inventory manager, I want stock quantity to automatically update when I record a movement, so that inventory counts stay accurate.
-19. As an inventory manager, I want low stock events to fire automatically when product stock drops below reorder level, so that I can reorder in time.
-20. As an inventory manager, I want to be notified (in-app database notification) when a product goes low on stock, so that I can take action.
-21. As an inventory manager, I want to create a sales order with multiple line items, so that I can fulfill customer purchases.
-22. As an inventory manager, I want product stock to automatically decrease when I place an order, so that inventory stays synchronized.
-23. As an inventory manager, I want stock movements to be automatically created when I place an order, so that I have a complete audit trail linking orders to inventory changes.
-24. As an inventory manager, I want to cancel an order and have stock automatically restored, so that I can handle order changes.
-25. As an inventory manager, I want to view a list of all orders with their status, so that I can track fulfillment.
-26. As an inventory manager, I want to see a dashboard with KPI cards (total products, low stock count, recent orders, total revenue), so that I can monitor my business at a glance.
-27. As an inventory manager, I want to see a chart (recharts) on the dashboard showing stock distribution by category, so that I can visualize my inventory composition.
-28. As an inventory manager, I want to export product data as CSV via a queued job, so that I can analyze data in a spreadsheet.
-29. As an inventory manager, I want to be notified when my CSV export is ready, so that I can download it.
-30. As an inventory manager, I want all destructive actions (delete, cancel, deactivate) to show a confirmation dialog, so that I don't accidentally lose data.
-31. As an inventory manager, I want to access all inventory features via a sidebar navigation, so that I can move between sections efficiently.
-32. As a developer, I want Pest feature tests covering all critical flows, so that I can verify the system works correctly.
-33. As a developer, I want realistic demo data via seeders and factories, so that I can demonstrate the application immediately.
-34. As an admin, I want to manage staff accounts (view, change role, deactivate), so that I can control access to the system.
-35. As an admin, I want to manage staff accounts (deactivate, change role), so that I can control access to the system.
-36. As a staff user, I want to view products, categories, suppliers, and stock movements, so that I can do my daily work.
-37. As a staff user, I want to record stock movements and create orders, so that I can handle inventory and sales operations.
-38. As a staff user, I want to be prevented from deleting products, suppliers, or categories, so that I don't accidentally destroy data.
-39. As a staff user, I want to be prevented from exporting data (CSV), so that sensitive business data stays controlled.
+1. As an administrator, I want to create categories for my products, so that I can organize my catalog.
+2. As an administrator, I want to edit a category, so that I can correct mistakes or update descriptions.
+3. As an administrator, I want to delete a category, so that I can remove unused groupings.
+4. As an administrator, I want to create suppliers, so that I can track who I purchase products from.
+5. As an administrator, I want to edit a supplier, so that I can update their contact information.
+6. As an administrator, I want to deactivate a supplier without deleting them, so that I keep transaction history intact.
+7. As an administrator, I want to reactivate a deactivated supplier, so that they become available for product selection again.
+8. As an administrator, I want to archive a deactivated supplier, so that I can retire them completely while preserving history.
+9. As an administrator, I want to restore an archived supplier, so that I can bring them back if needed.
+10. As an operator, I want to create a product with name, SKU, description, price, cost, category, supplier, image, and reorder level, so that I can track my inventory items.
+11. As an operator, I want to upload a product image, so that I can identify products visually.
+12. As an operator, I want to edit a product's details, so that I can keep product information up to date.
+13. As an administrator, I want to delete a product, so that I can remove discontinued items (subject to policy — no deletion if stock movements exist).
+14. As an operator, I want to view a paginated, sortable, searchable list of all products, so that I can quickly find items in my catalog.
+15. As an operator, I want to filter products by category and stock status, so that I can narrow down my view.
+16. As an operator, I want to search products by name or SKU with debounced input, so that I can find products quickly.
+17. As an operator, I want to see a badge indicating stock status (In Stock / Low Stock / Out of Stock) for each product, so that I can identify stock issues at a glance.
+18. As an operator, I want to record a stock movement (in/out/adjustment) for a product, so that I can track inventory changes.
+19. As an operator, I want to see a paginated history of stock movements, so that I can audit inventory changes.
+20. As an operator, I want each stock movement to be recorded with type, quantity, reference, and notes, so that I have a complete audit trail.
+21. As an operator, I want stock quantity to automatically update when I record a movement, so that inventory counts stay accurate.
+22. As an operator, I want low stock events to fire automatically when product stock drops below reorder level, so that I can reorder in time.
+23. As an operator, I want to be notified (in-app database notification) when a product goes low on stock, so that I can take action.
+24. As an operator, I want to create a sales order with multiple line items, so that I can fulfill customer purchases.
+25. As an operator, I want product stock to automatically decrease when I place an order, so that inventory stays synchronized.
+26. As an operator, I want stock movements to be automatically created when I place an order, so that I have a complete audit trail linking orders to inventory changes.
+27. As an operator, I want to cancel an order and have stock automatically restored, so that I can handle order changes.
+28. As an operator, I want to view a list of all orders with their status, so that I can track fulfillment.
+29. As an operator, I want to see a dashboard with KPI cards (total products, low stock count, recent orders, total revenue), so that I can monitor my business at a glance.
+30. As an operator, I want to see a chart (recharts) on the dashboard showing stock distribution by category, so that I can visualize my inventory composition.
+31. As an administrator, I want to export product data as CSV via a queued job, so that I can analyze data in a spreadsheet.
+32. As an operator, I want to be notified when my CSV export is ready, so that I can download it.
+33. As an operator, I want all destructive actions (delete, cancel, deactivate) to show a confirmation dialog, so that I don't accidentally lose data.
+34. As an operator, I want to access all inventory features via a sidebar navigation, so that I can move between sections efficiently.
+35. As a developer, I want Pest feature tests covering all critical flows, so that I can verify the system works correctly.
+36. As a developer, I want realistic demo data via seeders and factories, so that I can demonstrate the application immediately.
+37. As an administrator, I want to view the staff list with their roles and status, so that I can monitor who has access.
+38. As an administrator, I want to change a staff user's role, so that I can grant or restrict permissions.
+39. As an administrator, I want to deactivate or activate a staff user, so that I can control system access.
+40. As an administrator, I want a confirmation dialog before deactivating or activating a staff user, so that I don't change access by accident.
+41. As a staff user, I want to view products, categories, suppliers, and stock movements, so that I can do my daily work.
+42. As a staff user, I want to record stock movements and create orders, so that I can handle inventory and sales operations.
+43. As a staff user, I want to be prevented from deleting products, suppliers, or categories, so that I don't accidentally destroy data.
+44. As a staff user, I want to be prevented from exporting data (CSV), so that sensitive business data stays controlled.
 
 ## Implementation Decisions
 
@@ -59,20 +64,22 @@ Build a dual-role (admin + staff) inventory management system with 6 database en
 - **Actions Pattern**: All business logic lives in single-action classes under `app/Actions/{Domain}/`. Each Action has a single public `__invoke()` method and may use constructor injection for dependencies. Controllers are thin — they validate via FormRequest, call an Action, and return an Inertia response or redirect.
 - **Actions Pattern (enforced)**: All business logic uses single-action classes. No service classes. Stock movement orchestration uses `RecordMovementAction` with DB transactions and `lockForUpdate()` for race-condition safety. Order-linked movements call the action directly.
 - **Wayfinder**: All route-to-controller calls from frontend use Wayfinder-generated typed functions. No hardcoded URLs or raw `router.post()` calls.
-- **Role Model**: A `role` enum column on the `users` table (`admin`, `staff`). No separate roles/pivot table — 80/20. Admin has full access. Staff is restricted to operational tasks via Policies.
+- **Role Model**: A `role` enum column on the `users` table (`superadmin`, `admin`, `staff`). No separate roles/pivot table — 80/20. Superadmin has unrestricted access. Admin has full business access but can only manage staff-role users (not other admins or superadmins). Staff is restricted to operational tasks via Policies.
 - **Policies**: `ProductPolicy`, `OrderPolicy`, `StockMovementPolicy`, `CategoryPolicy`, `SupplierPolicy`, `StaffPolicy` control authorization. Permission matrix:
 
-    | Action                                | Admin | Staff |
-    | ------------------------------------- | ----- | ----- |
-    | View any entity                       | ✅    | ✅    |
-    | Create product, order, stock movement | ✅    | ✅    |
-    | Record stock movement                 | ✅    | ✅    |
-    | Update product, order                 | ✅    | ✅    |
-    | Create/edit categories, suppliers     | ✅    | ❌    |
-    | Delete any entity                     | ✅    | ❌    |
-    | Export CSV                            | ✅    | ❌    |
-    | Manage staff accounts                 | ✅    | ❌    |
-    | View staff list                       | ✅    | ❌    |
+    | Action                                | Superadmin | Admin | Staff |
+    | ------------------------------------- | ---------- | ----- | ----- |
+    | View any entity                       | ✅         | ✅    | ✅    |
+    | Create product, order, stock movement | ✅         | ✅    | ✅    |
+    | Record stock movement                 | ✅         | ✅    | ✅    |
+    | Update product, order                 | ✅         | ✅    | ✅    |
+    | Create/edit categories, suppliers     | ✅         | ✅    | ❌    |
+    | Delete any entity                     | ✅         | ✅    | ❌    |
+    | Export CSV                            | ✅         | ✅    | ❌    |
+    | View staff list                       | ✅         | ✅    | ❌    |
+    | Manage any staff user                 | ✅         | ❌    | ❌    |
+    | Manage staff-role users only          | ✅         | ✅    | ❌    |
+    | Manage admin/superadmin accounts      | ✅         | ❌    | ❌    |
 
 - **Form Requests**: One `Store{Entity}Request` and one `Update{Entity}Request` per entity with validation rules, authorization logic, and custom error messages. Staff management uses only `UpdateStaffRequest` (no store — staff self-registers via Fortify).
 
@@ -82,7 +89,7 @@ Build a dual-role (admin + staff) inventory management system with 6 database en
 
 **users** (extends default Laravel users table)
 
-- Adds: role (enum: admin/staff, default: staff), is_active (boolean, default true)
+- Adds: role (enum: superadmin/admin/staff, default: staff), is_active (boolean, default true)
 
 **categories**
 
@@ -90,7 +97,7 @@ Build a dual-role (admin + staff) inventory management system with 6 database en
 
 **suppliers**
 
-- id, name (string), email (string, nullable), phone (string, nullable), address (text, nullable), is_active (boolean, default true), timestamps
+- id, name (string), email (string, nullable), phone (string, nullable), address (text, nullable), is_active (boolean, default true), deactivated_at (timestamp, nullable), archived_at (timestamp, nullable), timestamps
 
 **products**
 
@@ -121,6 +128,7 @@ resources/js/
 │   ├── ConfirmDialog/      — modal wrapper for destructive confirmations
 │   ├── EmptyState/         — illustrated empty list placeholder
 │   ├── KPICard/            — dashboard metric card with icon
+│   ├── TableActions/       — shared dropdown menu for table row actions
 │   └── StatusBadge/        — color-coded badge (in stock/low stock/out of stock)
 ├── modules/
 │   ├── products/hooks/     — useProductFilters (URL-synced filter state)
@@ -156,7 +164,11 @@ DELETE    /products/{product}                → ProductController@destroy
 GET|POST  /categories                        → CategoryController@index / store
 PUT|DELETE /categories/{category}            → CategoryController@update / destroy
 GET|POST  /suppliers                         → SupplierController@index / store
-PUT|DELETE /suppliers/{supplier}             → SupplierController@update / destroy
+PUT       /suppliers/{supplier}              → SupplierController@update
+PUT       /suppliers/{supplier}/deactivate   → SupplierController@deactivate
+PUT       /suppliers/{supplier}/activate     → SupplierController@activate
+PUT       /suppliers/{supplier}/archive      → SupplierController@archive
+PUT       /suppliers/{supplier}/restore      → SupplierController@restore
 GET|POST  /stock-movements                   → StockMovementController@index / store
 GET|POST  /orders                            → OrderController@index / store
 GET|PUT   /orders/{order}                    → OrderController@edit / update (cancel)
@@ -266,14 +278,18 @@ The following decisions were made during schema review and deviate from the init
 
 ### Behavioral Changes
 
-| Behavior             | Original                  | Revised                                                | Rationale                                                                                                                              |
-| -------------------- | ------------------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| SKU uniqueness       | unique (deleted ignored)  | **permanently unique** (including soft-deleted)        | Reusing a SKU from a discontinued product confuses old orders and movements.                                                           |
-| Product->category FK | cascadeOnDelete           | **nullOnDelete**                                       | Category deletion archived → products lose category reference but survive.                                                             |
-| Order tax/discount   | unspecified               | **skipped for MVP**                                    | 80/20 — line item subtotals + total cover the MVP. Tax logic adds complexity without proportional learning value.                      |
-| Customer entity      | separate entity + CRUD    | **removed** — inline `customer_name`/`email` on orders | 80/20 — managing customer master data adds ~200 lines of code for no inventory logic benefit. Staff types customer name on order form. |
-| Staff invite flow    | store + InviteStaffAction | **removed** — no create/invite                         | Registration is open via Fortify. Admin only needs view, role change, and deactivate.                                                  |
-| `users.is_active`    | (not present)             | **added** — boolean, default true                      | Enables deactivation without soft-deleting users. Preserves audit trail FK integrity.                                                  |
+| Behavior                | Original                  | Revised                                                | Rationale                                                                                                                                                                                                                              |
+| ----------------------- | ------------------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SKU uniqueness          | unique (deleted ignored)  | **permanently unique** (including soft-deleted)        | Reusing a SKU from a discontinued product confuses old orders and movements.                                                                                                                                                           |
+| Product->category FK    | cascadeOnDelete           | **nullOnDelete**                                       | Category deletion archived → products lose category reference but survive.                                                                                                                                                             |
+| Order tax/discount      | unspecified               | **skipped for MVP**                                    | 80/20 — line item subtotals + total cover the MVP. Tax logic adds complexity without proportional learning value.                                                                                                                      |
+| Customer entity         | separate entity + CRUD    | **removed** — inline `customer_name`/`email` on orders | 80/20 — managing customer master data adds ~200 lines of code for no inventory logic benefit. Staff types customer name on order form.                                                                                                 |
+| Staff invite flow       | store + InviteStaffAction | **removed** — no create/invite                         | Registration is open via Fortify. Admin only needs view, role change, and deactivate.                                                                                                                                                  |
+| `users.is_active`       | (not present)             | **added** — boolean, default true                      | Enables deactivation without soft-deleting users. Preserves audit trail FK integrity.                                                                                                                                                  |
+| Supplier lifecycle      | delete only               | **deactivate → reactivate → archive → restore**        | Suppliers have a multi-stage lifecycle. Deactivation preserves history, archive is permanent retirement. `destroy` renamed to `deactivate` to match intent.                                                                            |
+| Supplier default filter | active only               | **all**                                                | Newly created suppliers are active; deactivated suppliers should remain visible. Default "all" prevents confusion when a supplier disappears after deactivation.                                                                       |
+| Table action buttons    | inline icon groups        | **unified EllipsisVertical dropdown**                  | Multiple inline icons cluttered the table. Single `⋮` dropdown with `[icon] + [label]` is cleaner and scales. Shared `TableActions` component across suppliers, categories, products, and staff. Orders excluded (single View action). |
+| Staff toggle action     | immediate on click        | **confirmation dialog**                                | Deactivating a user is destructive — now requires dialog confirmation, matching the suppliers pattern.                                                                                                                                 |
 
 ## Further Notes
 
@@ -281,5 +297,5 @@ The following decisions were made during schema review and deviate from the init
 - The build order must respect entity dependencies: Categories + Suppliers (independent) → Products → StockMovements → Orders.
 - 80/20 rule applies: simple entities (Categories, Suppliers) get Sheet-based inline CRUD; complex entities (Products, Orders) get dedicated pages. Customers are inline on the order form.
 - The Actions pattern is from nunomaduro/laravel-starter-kit. Spatie's frontend structure (common/modules/pages) informs the frontend layout. Wayfinder bridges TypeScript type safety between them.
-- Role is a simple string enum column on users — not Spatie Permission. 80/20 rule: this covers the authorization learning objective without the overhead of a full package.
+- Role is a simple string enum column on users (`superadmin`/`admin`/`staff`) — not Spatie Permission. 80/20 rule: this covers the authorization learning objective without the overhead of a full package. The three-tier hierarchy allows a superadmin to manage all accounts, an admin to manage staff-only accounts, and staff to only perform operational tasks.
 - Dashboard replaces the existing placeholder at `resources/js/pages/dashboard.tsx` and the Dashboard index file should be a directory-based page.

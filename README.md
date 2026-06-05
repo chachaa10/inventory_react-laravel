@@ -2,6 +2,18 @@
 
 A modern, single-page inventory management application built with Laravel, Inertia.js, React, and shadcn/ui.
 
+## Features
+
+- **Three-role authorization** — superadmin, admin, staff with hierarchical permissions
+- **Supplier lifecycle management** — deactivate, activate, archive, restore (no hard deletes)
+- **Product catalog with images** — Spatie Media Library for uploads
+- **Stock movement audit trail** — pessimistic locking, before/after quantities, polymorphic references
+- **Order management** — dynamic line items, auto stock deduction, cancellation with restoration
+- **Low-stock notifications** — database notifications via `LowStockDetected` event listener
+- **CSV exports** — queued jobs with download notifications
+- **Dashboard** — KPI cards + stock distribution chart (recharts)
+- **Modern stack** — Laravel 13, Inertia.js v3, React 18, TypeScript, shadcn/ui, Pest tests
+
 ## Requirements
 
 - **PHP** — see `composer.json` (`"php"` key in `require`)
@@ -24,6 +36,26 @@ composer run dev
 ```
 
 Starts the Laravel server, queue worker, log monitor, and Vite dev server concurrently.
+
+## Default Credentials
+
+The database seeder generates the following default user accounts for testing and environment setup:
+
+| Name        | Email                  | Role       |
+| ----------- | ---------------------- | ---------- |
+| Super Admin | superadmin@example.com | Superadmin |
+| Admin       | admin{1-3}@example.com | Admin      |
+
+## Tooling
+
+| Tool               | Purpose             |
+| ------------------ | ------------------- |
+| Oxlint             | JS/TS linting       |
+| Oxfmt              | JS/TS formatting    |
+| Laravel Pint       | PHP formatting      |
+| PHPStan (Larastan) | PHP static analysis |
+| Rector             | PHP refactoring     |
+| Pest               | Testing             |
 
 ## Available Commands
 
@@ -63,7 +95,7 @@ See [PRD](PRD.md) for comprehensive planning details.
 ### Backend
 
 - **Actions Pattern** — business logic in single-action classes under `app/Actions/`
-- **Role-based authorization** — two roles (admin, staff) enforced via Laravel Policies
+- **Role-based authorization** — three roles (`superadmin`, `admin`, `staff`) with hierarchy: superadmin manages all accounts, admin manages staff only, staff performs operations
 - **Events + Listeners** — `StockMoved`, `LowStockDetected`
 - **Queued Jobs** — CSV exports
 - **Database Notifications** — low stock alerts, export ready
@@ -80,38 +112,26 @@ See [PRD](PRD.md) for comprehensive planning details.
 
 ### Entities
 
-| Entity          | Domain     | CRUD                                                   |
-| --------------- | ---------- | ------------------------------------------------------ |
-| Products        | Catalog    | Dedicated page (image upload via Spatie Media Library) |
-| Categories      | Catalog    | Inline Sheet                                           |
-| Suppliers       | Purchasing | Inline Sheet                                           |
-| Customers       | Sales      | Inline Sheet                                           |
-| Stock Movements | Inventory  | Dedicated form (via StockMovementService)              |
-| Orders          | Sales      | Dedicated page (dynamic line items)                    |
+| Entity          | Domain     | CRUD                                                                |
+| --------------- | ---------- | ------------------------------------------------------------------- |
+| Products        | Catalog    | Dedicated page (image upload via Spatie Media Library)              |
+| Categories      | Catalog    | Inline Sheet                                                        |
+| Suppliers       | Purchasing | Inline Sheet (lifecycle: deactivate → activate → archive → restore) |
+| Stock Movements | Inventory  | Dedicated form (via RecordMovementAction)                           |
+| Orders          | Sales      | Dedicated page (dynamic line items)                                 |
 
 ### Permission Matrix
 
-| Action                                       | Admin | Staff |
-| -------------------------------------------- | ----- | ----- |
-| View entities                                | ✅    | ✅    |
-| Create/update products, orders, movements    | ✅    | ✅    |
-| Create/edit categories, suppliers, customers | ✅    | ❌    |
-| Delete entities                              | ✅    | ❌    |
-| Export CSV                                   | ✅    | ❌    |
-| Manage staff accounts                        | ✅    | ❌    |
-
-### Tooling
-
-| Tool               | Purpose             |
-| ------------------ | ------------------- |
-| Oxlint             | JS/TS linting       |
-| Oxfmt              | JS/TS formatting    |
-| Laravel Pint       | PHP formatting      |
-| PHPStan (Larastan) | PHP static analysis |
-| Rector             | PHP refactoring     |
-| Pest               | Testing             |
-
-## Related Documents
-
-- [PRD](PRD.md) — full product requirements, user stories, schema
-- `AGENTS.md` — development guidelines
+| Action                                | Superadmin | Admin | Staff |
+| ------------------------------------- | ---------- | ----- | ----- |
+| View any entity                       | ✅         | ✅    | ✅    |
+| Create product, order, stock movement | ✅         | ✅    | ✅    |
+| Record stock movement                 | ✅         | ✅    | ✅    |
+| Update product, order                 | ✅         | ✅    | ✅    |
+| Create/edit categories, suppliers     | ✅         | ✅    | ❌    |
+| Delete any entity                     | ✅         | ✅    | ❌    |
+| Export CSV                            | ✅         | ✅    | ❌    |
+| View staff list                       | ✅         | ✅    | ❌    |
+| Manage any staff user                 | ✅         | ❌    | ❌    |
+| Manage staff-role users only          | ✅         | ✅    | ❌    |
+| Manage admin/superadmin accounts      | ✅         | ❌    | ❌    |
