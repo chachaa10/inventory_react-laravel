@@ -6,6 +6,7 @@ import { initializeTheme } from '@/hooks/use-appearance';
 import { useFlashToast } from '@/hooks/use-flash-toast';
 import AppLayout from '@/layouts/app-layout';
 import AuthLayout from '@/layouts/auth-layout';
+import AuthSimpleLayout from '@/layouts/auth/auth-simple-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 
 const appName = import.meta.env['VITE_APP_NAME'] || 'Inventory';
@@ -22,6 +23,8 @@ createInertiaApp({
         switch (true) {
             case name === 'home':
                 return null;
+            case name === 'auth/confirm-password':
+                return AuthSimpleLayout;
             case name.startsWith('auth/'):
                 return AuthLayout;
             case name.startsWith('settings/'):

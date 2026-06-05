@@ -41,6 +41,23 @@ test('security page requires password confirmation when enabled', function (): v
     $response->assertRedirect(route('password.confirm'));
 });
 
+test('password confirmation saves intended url for redirect back', function (): void {
+    $this->skipUnlessFortifyHas(Features::twoFactorAuthentication());
+
+    Features::twoFactorAuthentication([
+        'confirm' => true,
+        'confirmPassword' => true,
+    ]);
+
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('security.edit'))
+        ->assertRedirect(route('password.confirm'));
+
+    expect(session()->get('url.intended'))->toBe(route('security.edit'));
+});
+
 test('security page does not require password confirmation when disabled', function (): void {
     $this->skipUnlessFortifyHas(Features::twoFactorAuthentication());
 
