@@ -47,16 +47,16 @@ return Application::configure(basePath: dirname(__DIR__))
             return back();
         });
 
-        $exceptions->respond(function (Response $response): RedirectResponse|Response {
+        $exceptions->respond(function (Response $response, Throwable $throwable, Request $request): RedirectResponse|Response {
             $status = $response->getStatusCode();
 
-            if ($status === 403) {
+            if ($status === 403 && $request->header('X-Inertia') !== null) {
                 Inertia::flash('toast', ['type' => 'error', 'message' => 'This action is unauthorized.']);
 
                 return back();
             }
 
-            if ($status === 419) {
+            if ($status === 419 && $request->header('X-Inertia') !== null) {
                 Inertia::flash('toast', ['type' => 'error', 'message' => 'Page expired, please try again.']);
 
                 return back();
