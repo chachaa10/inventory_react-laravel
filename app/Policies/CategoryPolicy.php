@@ -22,16 +22,16 @@ class CategoryPolicy
 
     public function create(User $user): bool
     {
-        return $user->role === Role::Admin;
+        return $user->role === Role::Admin || $user->role === Role::Superadmin;
     }
 
     public function update(User $user, Category $category): bool
     {
-        return $user->role === Role::Admin;
+        return $user->role === Role::Admin || $user->role === Role::Superadmin;
     }
 
     public function delete(User $user, Category $category): bool
     {
-        return $user->role === Role::Admin;
+        return $user->role === Role::Admin || $user->role === Role::Superadmin;
     }
 }

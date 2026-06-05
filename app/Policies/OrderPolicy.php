@@ -22,11 +22,11 @@ class OrderPolicy
 
     public function create(User $user): bool
     {
-        return in_array($user->role, [Role::Admin, Role::Staff], true);
+        return in_array($user->role, [Role::Superadmin, Role::Admin, Role::Staff], true);
     }
 
     public function cancel(User $user, Order $order): bool
     {
-        return $user->role === Role::Admin;
+        return $user->role === Role::Superadmin || $user->role === Role::Admin;
     }
 }

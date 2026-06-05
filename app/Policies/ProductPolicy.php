@@ -32,11 +32,11 @@ class ProductPolicy
 
     public function delete(User $user, Product $product): bool
     {
-        return $user->role === Role::Admin;
+        return $user->role === Role::Admin || $user->role === Role::Superadmin;
     }
 
     public function export(User $user): bool
     {
-        return $user->role === Role::Admin;
+        return $user->role === Role::Admin || $user->role === Role::Superadmin;
     }
 }
